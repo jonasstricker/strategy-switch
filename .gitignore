@@ -23,7 +23,7 @@ wf_backtest/state.json
 wf_backtest/reports/
 wf_backtest/output/
 wf_backtest/daily_runner.log
-*.png
+wf_backtest/reports/*.png
 
 # Local-only scripts
 firewall_oeffnen.bat
