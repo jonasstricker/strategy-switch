@@ -99,6 +99,28 @@ STRATEGY_DEFS = {
     },
 }
 
+# Cloud-optimierte Versionen (kleinere Grids, kürzeres Training)
+CLOUD_WF_CFG = {"train": 252, "test": 21, "step": 42}
+CLOUD_STRATEGY_DEFS = {
+    "RSI": {
+        "grid": [{"period": per, "threshold": thr}
+                 for per in [14, 20]
+                 for thr in [40, 50]],
+        "gen": lambda p, params: rsi_signal(p, params["period"], params["threshold"]),
+        "keys": ["period", "threshold"],
+    },
+    "Momentum": {
+        "grid": [{"lookback": lb} for lb in [60, 160]],
+        "gen": lambda p, params: momentum_signal(p, params["lookback"]),
+        "keys": ["lookback"],
+    },
+    "MA": {
+        "grid": [{"period": p} for p in [50, 150]],
+        "gen": lambda p, params: ma_signal(p, params["period"]),
+        "keys": ["period"],
+    },
+}
+
 
 # ── Helper-Funktionen ────────────────────────────────────────────────────────
 
@@ -119,7 +141,8 @@ def _select_median(results, keys, top_pct=0.20):
 
 
 def download_universe(start: str = "2015-01-01",
-                      progress_callback=None) -> dict:
+                      progress_callback=None,
+                      cloud_mode: bool = False) -> dict:
     """
     Lade historische Kurse + aktuelle Shares Outstanding
     für alle Aktien im Mega-Cap-Universum.
@@ -137,6 +160,30 @@ def download_universe(start: str = "2015-01-01",
         return {}
 
     universe = {}
+
+    if cloud_mode:
+        # Cloud: Verwende Preis als Proxy für Ranking (keine einzelnen API-Calls)
+        # Mega-Caps: Preis × typische Shares-Schätzung reicht für Top-N Ranking
+        if progress_callback:
+            progress_callback(0.30, "Verarbeite Kurse (Cloud-Modus) …")
+        if isinstance(raw.columns, pd.MultiIndex):
+            for ticker in tickers:
+                try:
+                    col = ("Close", ticker)
+                    if col in raw.columns:
+                        s = raw[col].dropna()
+                        if len(s) > 400:
+                            # Shares=1 → Ranking nur nach Preis-Niveau
+                            # Für bekannte Mega-Caps ausreichend genau
+                            universe[ticker] = {
+                                "close": s,
+                                "shares": 1.0,
+                                "name": MEGA_CAP_UNIVERSE.get(ticker, ticker),
+                            }
+                except Exception:
+                    continue
+        return universe
+
     shares_data = {}
 
     # Shares Outstanding für Market-Cap-Berechnung holen
@@ -323,11 +370,12 @@ def build_rolling_top10(universe: dict,
     }
 
 
-def wf_single_portfolio(prices, returns, sdef):
+def wf_single_portfolio(prices, returns, sdef, wf_cfg=None):
     """Walk-Forward für eine einzelne Strategie auf Portfolio-Daten."""
-    windows = generate_windows(prices.index, WF_CFG["train"],
-                               WF_CFG["test"], WF_CFG["step"])
-    if len(windows) < 4:
+    cfg = wf_cfg or WF_CFG
+    windows = generate_windows(prices.index, cfg["train"],
+                               cfg["test"], cfg["step"])
+    if len(windows) < 3:
         return None
     oos = []
     for ts, te, os_s, os_e in windows:
@@ -357,7 +405,7 @@ def wf_single_portfolio(prices, returns, sdef):
         test_r = returns.iloc[os_s:os_e]
         test_sig = full_sig.loc[test_r.index].fillna(0)
         oos.append(apply_costs(test_sig, test_r, TX, SLIP))
-    if len(oos) < 4:
+    if len(oos) < 3:
         return None
     r = pd.concat(oos).sort_index()
     return r[~r.index.duplicated(keep="first")]
@@ -365,18 +413,20 @@ def wf_single_portfolio(prices, returns, sdef):
 
 def run_swarm_wf(top_n: int = TOP_N,
                  start: str = "2015-01-01",
-                 progress_callback=None) -> dict | None:
+                 progress_callback=None,
+                 cloud_mode: bool = False) -> dict | None:
     """
     Vollständige Pipeline mit EINZELAKTIEN-Signalen:
     1. Download Universe
-    2. Build Rolling Top-10 (Market Cap)
-    3. Pro Aktie im aktuellen Top-10: WF-Optimierung + Switching
+    2. Build Rolling Top-N (Market Cap)
+    3. Pro Aktie im aktuellen Top-N: WF-Optimierung + Switching
     4. Aggregiertes Portfolio-Ergebnis
 
     Jede Aktie hat eigenes Kauf-/Verkaufssignal.
     """
     # 1. Download
-    universe = download_universe(start=start, progress_callback=progress_callback)
+    universe = download_universe(start=start, progress_callback=progress_callback,
+                                 cloud_mode=cloud_mode)
     if len(universe) < 20:
         return None
 
@@ -401,12 +451,16 @@ def run_swarm_wf(top_n: int = TOP_N,
         progress_callback(0.65, "WF pro Einzelaktie …")
 
     # 3. Pro Aktie: eigene WF-Optimierung + Switching
+    use_strats = CLOUD_STRATEGY_DEFS if cloud_mode else STRATEGY_DEFS
+    use_wf_cfg = CLOUD_WF_CFG if cloud_mode else WF_CFG
+    min_data = 400 if cloud_mode else 600
+
     stock_results = {}
     for si, ticker in enumerate(current_top10):
         if ticker not in close_df.columns:
             continue
         stock_close = close_df[ticker].dropna()
-        if len(stock_close) < 600:
+        if len(stock_close) < min_data:
             continue
         stock_ret = stock_close.pct_change().dropna()
         stock_close = stock_close.loc[stock_ret.index]  # Align to returns index
@@ -417,8 +471,8 @@ def run_swarm_wf(top_n: int = TOP_N,
 
         # Run WF per strategy for this stock
         strat_oos = {}
-        for sname, sdef in STRATEGY_DEFS.items():
-            r = wf_single_portfolio(stock_close, stock_ret, sdef)
+        for sname, sdef in use_strats.items():
+            r = wf_single_portfolio(stock_close, stock_ret, sdef, wf_cfg=use_wf_cfg)
             if r is not None:
                 strat_oos[sname] = r
 

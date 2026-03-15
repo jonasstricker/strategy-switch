@@ -104,6 +104,45 @@ STRATEGY_DEFS = {
     },
 }
 
+# Cloud-optimierte Versionen
+CLOUD_WF_CFG = {"train": 252, "test": 21, "step": 42}
+CLOUD_TOP_N = 5
+CLOUD_STRATEGY_DEFS = {
+    "RSI": {
+        "grid": [{"period": per, "threshold": thr}
+                 for per in [14, 20]
+                 for thr in [40, 50]],
+        "gen": lambda p, params: rsi_signal(p, params["period"], params["threshold"]),
+        "keys": ["period", "threshold"],
+    },
+    "Momentum": {
+        "grid": [{"lookback": lb} for lb in [60, 160]],
+        "gen": lambda p, params: momentum_signal(p, params["lookback"]),
+        "keys": ["lookback"],
+    },
+    "MA": {
+        "grid": [{"period": p} for p in [50, 150]],
+        "gen": lambda p, params: ma_signal(p, params["period"]),
+        "keys": ["period"],
+    },
+}
+
+# Reduziertes Universum für Cloud (nur die liquidesten → schnelleres Screening)
+CLOUD_SCREENING_UNIVERSE = {
+    "AAPL": "Apple", "MSFT": "Microsoft", "GOOGL": "Alphabet",
+    "AMZN": "Amazon", "NVDA": "NVIDIA", "META": "Meta",
+    "TSLA": "Tesla", "JPM": "JPMorgan", "V": "Visa",
+    "JNJ": "Johnson & Johnson", "XOM": "ExxonMobil",
+    "PG": "Procter & Gamble", "HD": "Home Depot",
+    "ABBV": "AbbVie", "MRK": "Merck", "KO": "Coca-Cola",
+    "PEP": "PepsiCo", "BAC": "Bank of America",
+    "NFLX": "Netflix", "AMD": "AMD", "DIS": "Disney",
+    "INTC": "Intel", "VZ": "Verizon", "T": "AT&T",
+    "PFE": "Pfizer", "BA": "Boeing", "F": "Ford",
+    "NKE": "Nike", "UPS": "UPS", "CI": "Cigna",
+    "USB": "US Bancorp", "DUK": "Duke Energy",
+}
+
 
 def _equity(ret):
     return (1 + ret).cumprod()
@@ -262,11 +301,12 @@ def select_turnaround_stocks(fundamentals: dict, top_n: int = TOP_N) -> list[str
 
 # ── WF Pipeline per Stock ────────────────────────────────────────────────────
 
-def _wf_single_stock(prices, returns, sdef):
+def _wf_single_stock(prices, returns, sdef, wf_cfg=None):
     """Walk-Forward für eine einzelne Strategie auf Einzelaktie."""
-    windows = generate_windows(prices.index, WF_CFG["train"],
-                               WF_CFG["test"], WF_CFG["step"])
-    if len(windows) < 4:
+    cfg = wf_cfg or WF_CFG
+    windows = generate_windows(prices.index, cfg["train"],
+                               cfg["test"], cfg["step"])
+    if len(windows) < 3:
         return None
     oos = []
     for ts, te, os_s, os_e in windows:
@@ -296,14 +336,15 @@ def _wf_single_stock(prices, returns, sdef):
         test_r = returns.iloc[os_s:os_e]
         test_sig = full_sig.loc[test_r.index].fillna(0)
         oos.append(apply_costs(test_sig, test_r, TX, SLIP))
-    if len(oos) < 4:
+    if len(oos) < 3:
         return None
     r = pd.concat(oos).sort_index()
     return r[~r.index.duplicated(keep="first")]
 
 
 def run_category_wf(category: str,
-                    progress_callback=None) -> dict | None:
+                    progress_callback=None,
+                    cloud_mode: bool = False) -> dict | None:
     """
     Pipeline für Value- oder Turnaround-Kategorie.
     
@@ -311,25 +352,33 @@ def run_category_wf(category: str,
     ----------
     category : str
         "value" oder "turnaround"
+    cloud_mode : bool
+        Reduziertes Universum und kleinere Grids für Cloud
     
     Returns dict mit Resultaten pro Aktie + Aggregat.
     """
-    tickers = list(SCREENING_UNIVERSE.keys())
+    use_universe = CLOUD_SCREENING_UNIVERSE if cloud_mode else SCREENING_UNIVERSE
+    use_top_n = CLOUD_TOP_N if cloud_mode else TOP_N
+    use_strats = CLOUD_STRATEGY_DEFS if cloud_mode else STRATEGY_DEFS
+    use_wf_cfg = CLOUD_WF_CFG if cloud_mode else WF_CFG
+    min_data = 400 if cloud_mode else 600
+
+    tickers = list(use_universe.keys())
 
     if progress_callback:
         progress_callback(0.05, f"{category.title()}: Lade Fundamentaldaten …")
 
     # 1. Screen fundamentals
     fundamentals = screen_fundamentals(tickers)
-    if len(fundamentals) < 10:
+    if len(fundamentals) < 5:
         log.warning(f"  {category}: Zu wenig Fundamental-Daten ({len(fundamentals)})")
         return None
 
     # 2. Select top stocks
     if category == "value":
-        selected = select_value_stocks(fundamentals, TOP_N)
+        selected = select_value_stocks(fundamentals, use_top_n)
     elif category == "turnaround":
-        selected = select_turnaround_stocks(fundamentals, TOP_N)
+        selected = select_turnaround_stocks(fundamentals, use_top_n)
     else:
         return None
 
@@ -363,15 +412,15 @@ def run_category_wf(category: str,
             else:
                 stock_close = raw["Close"].dropna()
 
-            if len(stock_close) < 600:
+            if len(stock_close) < min_data:
                 continue
             stock_ret = stock_close.pct_change().dropna()
             stock_close = stock_close.loc[stock_ret.index]  # Align
 
             # WF per strategy
             strat_oos = {}
-            for sname, sdef in STRATEGY_DEFS.items():
-                r = _wf_single_stock(stock_close, stock_ret, sdef)
+            for sname, sdef in use_strats.items():
+                r = _wf_single_stock(stock_close, stock_ret, sdef, wf_cfg=use_wf_cfg)
                 if r is not None:
                     strat_oos[sname] = r
 
@@ -415,7 +464,7 @@ def run_category_wf(category: str,
                 "bh_sharpe": sharpe_ratio(bench_s, RF),
                 "pct_invested": float((active_s != "Cash").mean()),
                 "n_trades": int((active_s != "Cash").astype(float).diff().abs().fillna(0).sum()),
-                "name": fund.get("name", SCREENING_UNIVERSE.get(ticker, ticker)),
+                "name": fund.get("name", use_universe.get(ticker, ticker)),
                 "pe": fund.get("pe"),
                 "pb": fund.get("pb"),
                 "div_yield": fund.get("div_yield"),

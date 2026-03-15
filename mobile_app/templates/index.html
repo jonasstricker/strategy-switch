@@ -46,12 +46,15 @@
         const btn = document.getElementById('recalcBtn');
         if (D.recalculating) {
           btn.disabled = true; btn.textContent = '⏳ Berechnung läuft …'; btn.classList.add('running');
-          setTimeout(fetchSignals, 5000);
+          if (!allSignals.length) {
+            document.getElementById('content').innerHTML =
+              '<div class="loading"><div>⏳ Erste Berechnung läuft …</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Daten werden geladen (ca. 2–5 Min.).<br>Die Seite aktualisiert sich automatisch.</div></div>';
+          }
+          setTimeout(fetchSignals, 8000);
         } else {
           btn.disabled = false; btn.textContent = '🔄 Neu berechnen'; btn.classList.remove('running');
         }
-        buildTabs();
-        render();
+        if (allSignals.length) { buildTabs(); render(); }
       } catch (e) {
         document.getElementById('content').innerHTML =
           '<div class="loading"><div>⚠️ Keine Daten</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Drücke "Neu berechnen" um Daten zu laden.</div></div>';

@@ -62,6 +62,9 @@ RF = 0.02
 TX = 0.0001    # 1 bp (1€ auf 10k)
 SLIP = 0.0002  # 2 bp Spread (liquide EU-ETFs)
 
+# Cloud-Modus: kleinere Grids, kürzere Trainingsperioden → schneller auf Render.com
+IS_CLOUD = bool(os.environ.get("RENDER"))
+
 ETF_DEFS = {
     "SXR8.DE":  {"name": "S&P100_EU", "start": "2010-06-01"},
     "URTH": {"name": "MSCI World",        "start": "2012-01-01"},
@@ -69,39 +72,65 @@ ETF_DEFS = {
     "VGK":  {"name": "FTSE Europe",       "start": "2005-01-01"},
 }
 
-STRATEGY_DEFS = {
-    "RSI": {
-        "grid": [{"period": per, "threshold": thr}
-                 for per in [10, 14, 20, 30]
-                 for thr in [35, 45, 50, 55]],
-        "gen": lambda p, params: rsi_signal(p, params["period"], params["threshold"]),
-        "keys": ["period", "threshold"],
-    },
-    "Momentum": {
-        "grid": [{"lookback": lb} for lb in [40, 90, 160, 252]],
-        "gen": lambda p, params: momentum_signal(p, params["lookback"]),
-        "keys": ["lookback"],
-    },
-    "MA": {
-        "grid": [{"period": p} for p in [50, 100, 200]],
-        "gen": lambda p, params: ma_signal(p, params["period"]),
-        "keys": ["period"],
-    },
-    "Double_MA": {
-        "grid": [{"fast": f, "slow": s}
-                 for f in [20, 50] for s in [150, 200] if f < s],
-        "gen": lambda p, params: double_ma_signal(p, params["fast"], params["slow"]),
-        "keys": ["fast", "slow"],
-    },
-    "Dual_Momentum": {
-        "grid": [{"abs_lookback": al, "trend_period": tp}
-                 for al in [120, 200] for tp in [150, 252]],
-        "gen": lambda p, params: dual_momentum_signal(p, params["abs_lookback"], params["trend_period"]),
-        "keys": ["abs_lookback", "trend_period"],
-    },
-}
-
-WF_CFG = {"train": 756, "test": 21, "step": 21}
+if IS_CLOUD:
+    STRATEGY_DEFS = {
+        "RSI": {
+            "grid": [{"period": per, "threshold": thr}
+                     for per in [14, 20]
+                     for thr in [40, 50]],
+            "gen": lambda p, params: rsi_signal(p, params["period"], params["threshold"]),
+            "keys": ["period", "threshold"],
+        },
+        "Momentum": {
+            "grid": [{"lookback": lb} for lb in [90, 200]],
+            "gen": lambda p, params: momentum_signal(p, params["lookback"]),
+            "keys": ["lookback"],
+        },
+        "MA": {
+            "grid": [{"period": p} for p in [50, 200]],
+            "gen": lambda p, params: ma_signal(p, params["period"]),
+            "keys": ["period"],
+        },
+        "Double_MA": {
+            "grid": [{"fast": 20, "slow": 200}],
+            "gen": lambda p, params: double_ma_signal(p, params["fast"], params["slow"]),
+            "keys": ["fast", "slow"],
+        },
+    }
+    WF_CFG = {"train": 504, "test": 21, "step": 42}
+else:
+    STRATEGY_DEFS = {
+        "RSI": {
+            "grid": [{"period": per, "threshold": thr}
+                     for per in [10, 14, 20, 30]
+                     for thr in [35, 45, 50, 55]],
+            "gen": lambda p, params: rsi_signal(p, params["period"], params["threshold"]),
+            "keys": ["period", "threshold"],
+        },
+        "Momentum": {
+            "grid": [{"lookback": lb} for lb in [40, 90, 160, 252]],
+            "gen": lambda p, params: momentum_signal(p, params["lookback"]),
+            "keys": ["lookback"],
+        },
+        "MA": {
+            "grid": [{"period": p} for p in [50, 100, 200]],
+            "gen": lambda p, params: ma_signal(p, params["period"]),
+            "keys": ["period"],
+        },
+        "Double_MA": {
+            "grid": [{"fast": f, "slow": s}
+                     for f in [20, 50] for s in [150, 200] if f < s],
+            "gen": lambda p, params: double_ma_signal(p, params["fast"], params["slow"]),
+            "keys": ["fast", "slow"],
+        },
+        "Dual_Momentum": {
+            "grid": [{"abs_lookback": al, "trend_period": tp}
+                     for al in [120, 200] for tp in [150, 252]],
+            "gen": lambda p, params: dual_momentum_signal(p, params["abs_lookback"], params["trend_period"]),
+            "keys": ["abs_lookback", "trend_period"],
+        },
+    }
+    WF_CFG = {"train": 756, "test": 21, "step": 21}
 
 
 # ── Helper functions ─────────────────────────────────────────────────────────
@@ -682,7 +711,8 @@ def main():
         try:
             log.info("Berechne Aktien-Schwarm (WF) …")
             from wf_backtest.swarm_wf import run_swarm_wf, MEGA_CAP_UNIVERSE
-            swarm = run_swarm_wf()
+            swarm = run_swarm_wf(top_n=5 if IS_CLOUD else 10,
+                                 cloud_mode=IS_CLOUD)
             if swarm is not None:
                 mobile_data["swarm"] = _build_category_json(
                     swarm, "swarm", MEGA_CAP_UNIVERSE,
@@ -697,7 +727,7 @@ def main():
         try:
             log.info("Berechne Value-Aktien …")
             from wf_backtest.stock_screener import run_category_wf
-            value = run_category_wf("value")
+            value = run_category_wf("value", cloud_mode=IS_CLOUD)
             if value is not None:
                 mobile_data["value"] = _build_category_json(value, "value")
                 n_long = sum(1 for sr in value["stock_results"].values() if sr["signal"] == "LONG")
@@ -710,7 +740,7 @@ def main():
         try:
             log.info("Berechne Turnaround-Aktien …")
             from wf_backtest.stock_screener import run_category_wf as run_cat
-            turnaround = run_cat("turnaround")
+            turnaround = run_cat("turnaround", cloud_mode=IS_CLOUD)
             if turnaround is not None:
                 mobile_data["turnaround"] = _build_category_json(turnaround, "turnaround")
                 n_long = sum(1 for sr in turnaround["stock_results"].values() if sr["signal"] == "LONG")
