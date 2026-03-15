@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: strategy-switch
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn mobile_app.server:app --bind 0.0.0.0:$PORT --timeout 900 --workers 1 --threads 2
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13"
+      - key: RENDER
+        value: "true"
+    plan: free

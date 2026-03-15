@@ -1,0 +1,8 @@
+# Strategy-Switch PWA — Cloud Dependencies (Render.com)
+flask>=3.1
+gunicorn>=23.0
+pandas>=2.1
+numpy>=1.26
+yfinance>=0.2.40
+tqdm>=4.66
+scipy>=1.11

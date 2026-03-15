@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="StrSwitch">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
+  <link rel="stylesheet" href="/static/style.css">
+  <title>Strategy Switch</title>
+</head>
+<body>
+
+  <div class="header">
+    <h1>📊 Strategy Switch</h1>
+    <div class="subtitle" id="lastUpdate">Laden …</div>
+    <button class="recalc-btn" id="recalcBtn" onclick="recalculate()">🔄 Neu berechnen</button>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="content" id="content">
+    <div class="loading" id="loader">
+      <div class="spinner"></div>
+      <div>Signale werden geladen …</div>
+    </div>
+  </div>
+
+  <script>
+    // ── State ───────────────────────────────────────────────────────────
+    let D = {};          // full data
+    let allSignals = []; // etfs
+    let activeTab = 'overview';
+    let subTab = {};     // per-tab sub-tab
+
+    // ── Fetch ───────────────────────────────────────────────────────────
+    async function fetchSignals() {
+      try {
+        const resp = await fetch('/api/signals');
+        D = await resp.json();
+        allSignals = D.etfs || [];
+        document.getElementById('lastUpdate').textContent = 'Stand: ' + (D.updated || '?');
+        const btn = document.getElementById('recalcBtn');
+        if (D.recalculating) {
+          btn.disabled = true; btn.textContent = '⏳ Berechnung läuft …'; btn.classList.add('running');
+          setTimeout(fetchSignals, 5000);
+        } else {
+          btn.disabled = false; btn.textContent = '🔄 Neu berechnen'; btn.classList.remove('running');
+        }
+        buildTabs();
+        render();
+      } catch (e) {
+        document.getElementById('content').innerHTML =
+          '<div class="loading"><div>⚠️ Keine Daten</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Drücke "Neu berechnen" um Daten zu laden.</div></div>';
+      }
+    }
+
+    // ── Recalculate ─────────────────────────────────────────────────────
+    async function recalculate() {
+      const btn = document.getElementById('recalcBtn');
+      btn.disabled = true; btn.textContent = '⏳ Berechnung läuft …'; btn.classList.add('running');
+      try { await fetch('/api/recalculate', {method: 'POST'}); pollDone(); }
+      catch(e) { btn.disabled=false; btn.textContent='🔄 Neu berechnen'; btn.classList.remove('running'); }
+    }
+    function pollDone() {
+      const poll = setInterval(async () => {
+        try {
+          const r = await fetch('/api/signals'); const d = await r.json();
+          if (!d.recalculating) {
+            clearInterval(poll); D = d; allSignals = d.etfs || [];
+            document.getElementById('lastUpdate').textContent = 'Stand: ' + (d.updated||'?');
+            const b = document.getElementById('recalcBtn');
+            b.disabled=false; b.textContent='✅ Fertig!'; b.classList.remove('running');
+            setTimeout(()=>{ b.textContent='🔄 Neu berechnen'; }, 3000);
+            buildTabs(); render();
+          }
+        } catch(e){}
+      }, 5000);
+    }
+
+    // ── Dynamic Tabs ────────────────────────────────────────────────────
+    function buildTabs() {
+      const tabBar = document.getElementById('tabs');
+      let tabs = [{key:'overview', label:'Übersicht'}];
+      for (const e of allSignals) tabs.push({key: e.ticker, label: e.ticker.replace('.DE','')});
+      if (D.swarm) tabs.push({key:'swarm', label:'🐝 Schwarm'});
+      if (D.value) tabs.push({key:'value', label:'💎 Value'});
+      if (D.turnaround) tabs.push({key:'turnaround', label:'🔄 Turnar.'});
+      tabBar.innerHTML = tabs.map(t =>
+        `<div class="tab ${activeTab===t.key?'active':''}" data-tab="${t.key}">${t.label}</div>`
+      ).join('');
+    }
+
+    document.getElementById('tabs').addEventListener('click', e => {
+      const tab = e.target.closest('.tab');
+      if (!tab) return;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeTab = tab.dataset.tab;
+      render();
+    });
+
+    // ── Main Render ─────────────────────────────────────────────────────
+    function render() {
+      if (!allSignals.length && !D.swarm) return;
+      const c = document.getElementById('content');
+      if (activeTab === 'overview') c.innerHTML = renderOverview();
+      else if (activeTab === 'swarm') { c.innerHTML = renderCategory(D.swarm, '🐝 Aktien-Schwarm (Top-10 Market Cap)'); afterCategoryRender(D.swarm); }
+      else if (activeTab === 'value') { c.innerHTML = renderCategory(D.value, '💎 Value-Aktien (Top-10 Bewertung)'); afterCategoryRender(D.value); }
+      else if (activeTab === 'turnaround') { c.innerHTML = renderCategory(D.turnaround, '🔄 Turnaround-Aktien'); afterCategoryRender(D.turnaround); }
+      else {
+        const data = allSignals.find(s => s.ticker === activeTab);
+        if (data) { c.innerHTML = renderETF(data); afterETFRender(data); }
+      }
+      wireClicks(c);
+    }
+
+    function wireClicks(c) {
+      c.querySelectorAll('.etf-mini-card').forEach(card => {
+        card.addEventListener('click', () => {
+          activeTab = card.dataset.ticker;
+          document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === activeTab));
+          render();
+        });
+      });
+      c.querySelectorAll('.sub-tab').forEach(st => {
+        st.addEventListener('click', () => { subTab[activeTab] = st.dataset.sub; render(); });
+      });
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // ── OVERVIEW ────────────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    function renderOverview() {
+      let h = '<div class="section"><div class="section-title">ETF Signale</div><div class="etf-overview">';
+      for (const s of allSignals) {
+        const isL = s.signal==='LONG';
+        h += `<div class="etf-mini-card" data-ticker="${s.ticker}">
+          <div class="etf-ticker">${s.ticker.replace('.DE','')}</div>
+          <div class="etf-name">${s.name}</div>
+          <div class="etf-signal ${isL?'long':'cash'}">${isL?'🟢 LONG':'🔴 CASH'}</div>
+          ${marginBadge(s.signal_margin, s.signal)}
+          <div style="font-size:11px;color:#8b949e;margin-top:4px;">${s.strategy}</div>
+        </div>`;
+      }
+      h += '</div></div>';
+
+      // Category cards
+      for (const [key, label, icon] of [['swarm','Schwarm','🐝'],['value','Value','💎'],['turnaround','Turnaround','🔄']]) {
+        const cat = D[key];
+        if (!cat) continue;
+        h += `<div class="section"><div class="section-title">${icon} ${label}</div>
+          <div class="etf-mini-card" data-ticker="${key}" style="margin-bottom:10px;">
+            <div class="etf-ticker">${icon} ${label}-Top-10</div>
+            <div class="etf-name">${cat.n_long}/${cat.n_total} Aktien LONG</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">`;
+        for (const st of cat.stocks) {
+          const isL = st.signal==='LONG';
+          h += `<span class="stock-chip-small ${isL?'long':'cash'}">${st.ticker} ${isL?'🟢':'🔴'}</span>`;
+        }
+        h += '</div></div></div>';
+      }
+
+      // 12M returns
+      h += '<div class="section"><div class="section-title">12 Monate Return</div>';
+      for (const s of allSignals) {
+        const sw=pct(s.return_1y_switch), bh=pct(s.return_1y_bh);
+        const cls = s.return_1y_switch>=s.return_1y_bh ? 'positive':'negative';
+        h += `<div class="metric-card" style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-weight:700;">${s.ticker.replace('.DE','')}</div><div style="font-size:11px;color:#8b949e;">${s.name}</div></div>
+          <div style="text-align:right;"><div class="metric-value ${cls}" style="font-size:18px;">${sw}%</div>
+            <div style="font-size:11px;color:#8b949e;">B&H: ${bh}%</div></div></div>`;
+      }
+      h += '</div>';
+      return h;
+    }
+
+    function marginBadge(margin, signal) {
+      if (margin == null) return '';
+      const abs = Math.abs(margin).toFixed(2);
+      const isL = signal === 'LONG';
+      const color = isL ? (margin > 0.5 ? '#3fb950' : margin > 0.2 ? '#d29922' : '#f85149')
+                        : (margin < -0.5 ? '#f85149' : margin < -0.2 ? '#d29922' : '#3fb950');
+      const label = isL ? `Marge: +${abs}` : `Marge: −${abs}`;
+      return `<div style="font-size:10px;color:${color};margin-top:2px;">📊 ${label}</div>`;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // ── ETF DETAIL ──────────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    function renderETF(d) {
+      const sub = subTab[activeTab] || 'signal';
+      let h = '<div class="sub-tabs">';
+      for (const [k,l] of [['signal','Signal'],['historie','Historie'],['matrix','Matrix'],['details','Details']]) {
+        h += `<div class="sub-tab ${sub===k?'active':''}" data-sub="${k}">${l}</div>`;
+      }
+      h += '</div>';
+      if (sub==='signal') h += renderETFSignal(d);
+      else if (sub==='historie') h += renderETFHistory(d);
+      else if (sub==='matrix') h += renderETFMatrix(d);
+      else if (sub==='details') h += renderETFDetails(d);
+      return h;
+    }
+
+    function afterETFRender(d) {
+      const sub = subTab[activeTab] || 'signal';
+      if (sub==='signal') drawChart('eqChart', d.equity_1y, true);
+      else if (sub==='historie') drawChart('fullChart', d.equity_full, false);
+    }
+
+    function renderETFSignal(d) {
+      const isL = d.signal==='LONG', cls = isL?'long':'cash';
+      let h = `<div class="signal-card ${cls}">
+        <div class="signal-etf-name">${d.ticker.replace('.DE','')} — ${d.name}</div>
+        <div class="signal-badge ${cls}">${isL?'🟢 LONG':'🔴 CASH'}</div>
+        <div class="signal-strategy">Strategie: <strong>${d.strategy}</strong></div>
+        ${marginBadge(d.signal_margin, d.signal)}
+        <div class="signal-date">Stand: ${d.last_date}</div>
+        ${d.strat_margins ? renderStrategieMargins(d.strat_margins) : ''}
+      </div>`;
+
+      const sw=pct(d.return_1y_switch), bh=pct(d.return_1y_bh), pi=Math.round((d.pct_invested_1y||0)*100);
+      h += `<div class="section"><div class="section-title">Letztes Jahr</div>
+        <div class="year-perf"><div class="year-perf-header">
+          <div class="year-perf-item"><div class="label">Switch</div>
+            <div class="value ${d.return_1y_switch>=0?'positive':'negative'}">${sw}%</div></div>
+          <div class="year-perf-item"><div class="label">B&H</div>
+            <div class="value ${d.return_1y_bh>=0?'positive':'negative'}">${bh}%</div></div>
+        </div><div class="year-perf-bar"><span>Investiert: ${pi}%</span>
+          <div class="invest-bar"><div class="fill" style="width:${pi}%"></div></div></div></div></div>`;
+
+      h += `<div class="section"><div class="section-title">12M Equity</div>
+        <div class="chart-container"><canvas id="eqChart"></canvas></div>`;
+      if (d.equity_1y && d.equity_1y.length) {
+        h += '<div class="cash-indicator">';
+        for (const p of d.equity_1y) h += `<div class="day ${p.cash?'cash':'long'}"></div>`;
+        h += '</div><div class="chart-legend"><span class="sw">Switch</span><span class="bh">B&H</span></div>';
+      }
+      h += '</div>';
+
+      h += `<div class="section"><div class="section-title">Gesamtzeitraum</div><div class="metrics-grid">
+        ${mc('CAGR',pct(d.cagr_switch)+'%','B&H: '+pct(d.cagr_bh)+'%','positive')}
+        ${mc('Sharpe',d.sharpe_switch,'B&H: '+d.sharpe_bh,'neutral')}
+        ${mc('Max DD',pct(d.max_dd_switch)+'%','B&H: '+pct(d.max_dd_bh)+'%','negative')}
+        ${mc('Investiert',Math.round(d.pct_invested*100)+'%','','neutral')}
+      </div></div>`;
+      return h;
+    }
+
+    function renderStrategieMargins(margins) {
+      if (!margins || !Object.keys(margins).length) return '';
+      let h = '<div style="margin-top:10px;text-align:left;font-size:11px;">';
+      h += '<div style="color:#8b949e;margin-bottom:4px;">Rolling Sharpe pro Strategie:</div>';
+      for (const [name, val] of Object.entries(margins)) {
+        const clr = val > 0.3 ? '#3fb950' : val > 0 ? '#d29922' : '#f85149';
+        const bar = Math.min(100, Math.abs(val) * 50);
+        h += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+          <span style="flex:0 0 75px;color:#8b949e;">${name}</span>
+          <div style="flex:1;height:6px;background:#21262d;border-radius:3px;overflow:hidden;">
+            <div style="width:${bar}%;height:100%;background:${clr};border-radius:3px;"></div>
+          </div>
+          <span style="flex:0 0 40px;text-align:right;color:${clr};font-weight:600;">${val.toFixed(2)}</span>
+        </div>`;
+      }
+      h += '</div>';
+      return h;
+    }
+
+    function renderETFHistory(d) {
+      let h = `<div class="section"><div class="section-title">${d.ticker.replace('.DE','')} — Gesamte Historie</div>
+        <div class="chart-container" style="height:260px;"><canvas id="fullChart"></canvas></div>
+        <div class="chart-legend"><span class="sw">Switch</span><span class="bh">B&H</span></div></div>`;
+      if (d.yearly_returns && d.yearly_returns.length) h += renderYearlyBars(d.yearly_returns);
+      if (d.trades && d.trades.length) h += renderTrades(d.trades);
+      return h;
+    }
+
+    function renderETFMatrix(d) {
+      const M = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+      return buildHeatmap(d.months_switch, d.ticker.replace('.DE','')+' — Switch', M) +
+             buildHeatmap(d.months_bh, d.ticker.replace('.DE','')+' — Buy & Hold', M);
+    }
+
+    function renderETFDetails(d) {
+      let h = `<div class="section"><div class="section-title">Kennzahlen</div>
+        <table class="detail-table"><thead><tr><th>Kennzahl</th><th>Switch</th><th>B&H</th></tr></thead><tbody>`;
+      const rows = [
+        ['CAGR',pct(d.cagr_switch)+'%',pct(d.cagr_bh)+'%'],
+        ['Sharpe',d.sharpe_switch,d.sharpe_bh],
+        ['Sortino',d.sortino_switch??'—',d.sortino_bh??'—'],
+        ['Calmar',d.calmar_switch??'—',d.calmar_bh??'—'],
+        ['Max DD',pct(d.max_dd_switch)+'%',pct(d.max_dd_bh)+'%'],
+        ['Max Underwater',(d.max_uw_switch??'—')+' Tg',(d.max_uw_bh??'—')+' Tg'],
+        ['Volatilität',pct(d.vol_switch)+'%',pct(d.vol_bh)+'%'],
+        ['Bestes Jahr',(d.best_year_switch??'—')+'%',(d.best_year_bh??'—')+'%'],
+        ['Schlechtestes J.',(d.worst_year_switch??'—')+'%',(d.worst_year_bh??'—')+'%'],
+        ['Win Rate',(d.win_rate_switch??'—')+'%',(d.win_rate_bh??'—')+'%'],
+        ['Investiert',Math.round(d.pct_invested*100)+'%','100%'],
+      ];
+      for (const [l,s,b] of rows) h += `<tr><td>${l}</td><td>${s}</td><td>${b}</td></tr>`;
+      h += '</tbody></table></div>';
+      if (d.equity_full && d.equity_full.length > 1) {
+        const last = d.equity_full[d.equity_full.length-1];
+        const s10=Math.round(last.switch*10000).toLocaleString('de-DE'), b10=Math.round(last.bh*10000).toLocaleString('de-DE');
+        h += `<div class="section"><div class="section-title">$10.000 investiert</div><div class="metrics-grid">
+          ${mc('Switch','$'+s10,'','positive')} ${mc('B&H','$'+b10,'','neutral')}</div></div>`;
+      }
+      return h;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // ── CATEGORY PAGE (Swarm / Value / Turnaround) ──────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    function renderCategory(cat, title) {
+      if (!cat) return '<div class="loading"><div>⚠️ Keine Daten</div></div>';
+      const sub = subTab[activeTab] || 'stocks';
+      let h = '<div class="sub-tabs">';
+      for (const [k,l] of [['stocks','Aktien'],['equity','Equity'],['matrix','Matrix']]) {
+        h += `<div class="sub-tab ${sub===k?'active':''}" data-sub="${k}">${l}</div>`;
+      }
+      h += '</div>';
+
+      if (sub === 'stocks') h += renderCategoryStocks(cat, title);
+      else if (sub === 'equity') h += renderCategoryEquity(cat, title);
+      else if (sub === 'matrix') h += renderCategoryMatrix(cat);
+      return h;
+    }
+
+    function afterCategoryRender(cat) {
+      if (!cat) return;
+      const sub = subTab[activeTab] || 'stocks';
+      if (sub === 'equity') {
+        drawChart('catChart', cat.equity, false);
+        drawStockChart('stocksChart', cat.stocks_1y);
+      }
+    }
+
+    function renderCategoryStocks(cat, title) {
+      let h = `<div class="section"><div class="section-title">${title}</div>
+        <div class="metrics-grid" style="margin-bottom:12px;">
+          ${mc('Sharpe', cat.sharpe_switch, 'B&H: '+cat.sharpe_bh, 'neutral')}
+          ${mc('CAGR', pct(cat.cagr_switch)+'%', 'B&H: '+pct(cat.cagr_bh)+'%', 'positive')}
+          ${mc(cat.n_long+'/'+cat.n_total+' LONG', (cat.n_total-cat.n_long)+' CASH', '', 'neutral')}
+          ${mc('Trades', cat.n_trades, Math.round(cat.pct_invested*100)+'% inv.', 'neutral')}
+        </div></div>`;
+
+      h += '<div class="section"><div class="section-title">Einzelaktien — Kauf/Verkauf</div>';
+      for (const st of cat.stocks) {
+        const isL = st.signal==='LONG';
+        h += `<div class="stock-card ${isL?'long':'cash'}">
+          <div class="stock-card-header">
+            <div><div class="stock-card-ticker">${st.ticker}</div>
+              <div class="stock-card-name">${st.name}</div></div>
+            <div class="stock-card-signal">
+              <div class="${isL?'long':'cash'}">${isL?'🟢 KAUFEN':'🔴 VERKAUFEN'}</div>
+              ${marginBadge(st.signal_margin, st.signal)}
+            </div>
+          </div>
+          <div class="stock-card-meta">
+            <span>Strategie: ${st.strategy}</span>
+            <span>Sharpe: ${st.sharpe}</span>
+            <span>${Math.round(st.pct_invested*100)}% inv.</span>
+            ${st.pe ? '<span>P/E: '+st.pe.toFixed(1)+'</span>' : ''}
+            ${st.div_yield ? '<span>Div: '+st.div_yield+'%</span>' : ''}
+            ${st.pct_from_high != null ? '<span>vom Hoch: '+st.pct_from_high+'%</span>' : ''}
+          </div>
+        </div>`;
+      }
+      h += '</div>';
+      return h;
+    }
+
+    function renderCategoryEquity(cat, title) {
+      let h = `<div class="section"><div class="section-title">Aggregierte Equity</div>
+        <div class="chart-container" style="height:240px;"><canvas id="catChart"></canvas></div>
+        <div class="chart-legend"><span class="sw">Switch</span><span class="bh">B&H</span></div></div>`;
+
+      if (cat.stocks_1y && Object.keys(cat.stocks_1y).length) {
+        h += `<div class="section"><div class="section-title">Einzelaktien (12M, normiert)</div>
+          <div class="chart-container" style="height:260px;"><canvas id="stocksChart"></canvas></div>
+          <div class="stock-legend" id="stockLegend"></div></div>`;
+      }
+
+      if (cat.yearly_returns && cat.yearly_returns.length) h += renderYearlyBars(cat.yearly_returns);
+      return h;
+    }
+
+    function renderCategoryMatrix(cat) {
+      const M = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+      return buildHeatmap(cat.months_switch, 'Monatsrenditen (Switch)', M);
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // ── SHARED RENDER HELPERS ───────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    function renderYearlyBars(yearly) {
+      let h = '<div class="section"><div class="section-title">Jährliche Returns</div><div class="yearly-bars">';
+      for (const yr of yearly) {
+        const mx = Math.max(Math.abs(yr.switch), Math.abs(yr.bh), 1);
+        const sw = Math.min(100, Math.abs(yr.switch)/mx*100), bh = Math.min(100, Math.abs(yr.bh)/mx*100);
+        h += `<div class="yr-row"><div class="yr-label">${yr.year}</div><div class="yr-bars">
+          <div class="yr-bar sw ${yr.switch>=0?'pos':'neg'}" style="width:${sw}%"><span>${yr.switch>0?'+':''}${yr.switch.toFixed(1)}%</span></div>
+          <div class="yr-bar bh ${yr.bh>=0?'pos':'neg'}" style="width:${bh}%"><span>${yr.bh>0?'+':''}${yr.bh.toFixed(1)}%</span></div>
+        </div></div>`;
+      }
+      h += '</div><div class="chart-legend" style="margin-top:6px;"><span class="sw">Switch</span><span class="bh">B&H</span></div></div>';
+      return h;
+    }
+
+    function renderTrades(trades) {
+      let h = '<div class="section"><div class="section-title">Letzte Trades</div><div class="trade-log">';
+      for (const t of [...trades].reverse()) {
+        const buy = t.Aktion.includes('KAUF');
+        h += `<div class="trade-row ${buy?'buy':'sell'}">
+          <div class="trade-date">${t.Datum}</div>
+          <div class="trade-action">${buy?'🟢':'🔴'} ${t.Aktion}</div>
+          <div class="trade-price">${t.Kurs}</div></div>`;
+      }
+      h += '</div></div>';
+      return h;
+    }
+
+    function buildHeatmap(data, title, M) {
+      if (!data) return '';
+      const years = Object.keys(data).map(Number).sort();
+      let h = `<div class="section"><div class="section-title">${title}</div>
+        <div class="heatmap-scroll"><table class="heatmap"><thead><tr><th></th>`;
+      for (const m of M) h += `<th>${m}</th>`;
+      h += '</tr></thead><tbody>';
+      for (const yr of years) {
+        h += `<tr><td class="yr">${yr}</td>`;
+        for (let m=1;m<=12;m++) {
+          const v = data[String(yr)]?.[String(m)];
+          if (v!=null) {
+            const c=heatClr(v), tc = Math.abs(v)>4?'#fff':'#ccc';
+            h += `<td style="background:${c};color:${tc}">${v.toFixed(1)}</td>`;
+          } else h += '<td class="empty"></td>';
+        }
+        h += '</tr>';
+      }
+      h += '</tbody></table></div></div>';
+      return h;
+    }
+
+    function heatClr(v) {
+      const t = (Math.max(-10,Math.min(10,v))+10)/20;
+      if (t<0.5) { const f=t*2; return `rgba(${200-Math.round(f*80)},${50+Math.round(f*140)},${40+Math.round(f*20)},0.85)`; }
+      else { const f=(t-0.5)*2; return `rgba(${120-Math.round(f*80)},${190-Math.round(f*20)},${60-Math.round(f*10)},0.85)`; }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // ── CHARTS ──────────────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    function drawChart(id, eq, showCash) {
+      const canvas = document.getElementById(id);
+      if (!canvas || !eq || !eq.length) return;
+      const ctx=canvas.getContext('2d'), dpr=window.devicePixelRatio||1;
+      const rect=canvas.parentElement.getBoundingClientRect();
+      canvas.width=rect.width*dpr; canvas.height=(rect.height-16)*dpr;
+      canvas.style.width=rect.width+'px'; canvas.style.height=(rect.height-16)+'px';
+      ctx.scale(dpr,dpr);
+      const W=rect.width, H=rect.height-16, pad={top:10,right:10,bottom:20,left:48};
+      const cW=W-pad.left-pad.right, cH=H-pad.top-pad.bottom;
+      const sw=eq.map(d=>d.switch), bh=eq.map(d=>d.bh), all=[...sw,...bh];
+      const mn=Math.min(...all)*.98, mx=Math.max(...all)*1.02, n=eq.length;
+      const x=i=>pad.left+(i/Math.max(1,n-1))*cW;
+      const y=v=>mx===mn?pad.top+cH/2:pad.top+(1-(v-mn)/(mx-mn))*cH;
+      ctx.fillStyle='#161b22'; ctx.fillRect(0,0,W,H);
+      if (showCash) for(let i=0;i<n;i++) if(eq[i].cash) { ctx.fillStyle='rgba(248,81,73,0.08)'; ctx.fillRect(x(i)-cW/n/2,pad.top,cW/n+.5,cH); }
+      ctx.strokeStyle='#21262d'; ctx.lineWidth=.5;
+      for(let i=0;i<=4;i++){const yy=pad.top+(i/4)*cH; ctx.beginPath();ctx.moveTo(pad.left,yy);ctx.lineTo(W-pad.right,yy);ctx.stroke();
+        const v=mx-(i/4)*(mx-mn); ctx.fillStyle='#8b949e';ctx.font='10px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText(v>=10?v.toFixed(1):v.toFixed(2),pad.left-4,yy+3);}
+      ctx.textAlign='center'; const ds=Math.max(1,Math.floor(n/5));
+      for(let i=0;i<n;i+=ds){const p=eq[i].date.split('-');ctx.fillStyle='#8b949e';ctx.fillText(p[1]+'/'+p[0].slice(2),x(i),H-4);}
+      ctx.beginPath();ctx.strokeStyle='#58a6ff';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+      for(let i=0;i<n;i++){i===0?ctx.moveTo(x(i),y(bh[i])):ctx.lineTo(x(i),y(bh[i]));}ctx.stroke();ctx.setLineDash([]);
+      ctx.beginPath();ctx.strokeStyle='#3fb950';ctx.lineWidth=2;
+      for(let i=0;i<n;i++){i===0?ctx.moveTo(x(i),y(sw[i])):ctx.lineTo(x(i),y(sw[i]));}ctx.stroke();
+    }
+
+    function drawStockChart(id, stocksData) {
+      if (!stocksData) return;
+      const canvas=document.getElementById(id); if(!canvas) return;
+      const tickers=Object.keys(stocksData); if(!tickers.length) return;
+      const ctx=canvas.getContext('2d'), dpr=window.devicePixelRatio||1;
+      const rect=canvas.parentElement.getBoundingClientRect();
+      canvas.width=rect.width*dpr; canvas.height=(rect.height-16)*dpr;
+      canvas.style.width=rect.width+'px'; canvas.style.height=(rect.height-16)+'px';
+      ctx.scale(dpr,dpr);
+      const W=rect.width,H=rect.height-16,pad={top:10,right:10,bottom:20,left:44};
+      const cW=W-pad.left-pad.right, cH=H-pad.top-pad.bottom;
+      let allV=[]; for(const t of tickers) for(const p of stocksData[t]) allV.push(p.value);
+      const mn=Math.min(...allV)*.98, mx=Math.max(...allV)*1.02;
+      const y=v=>mx===mn?pad.top+cH/2:pad.top+(1-(v-mn)/(mx-mn))*cH;
+      ctx.fillStyle='#161b22';ctx.fillRect(0,0,W,H);
+      ctx.strokeStyle='#21262d';ctx.lineWidth=.5;
+      for(let i=0;i<=4;i++){const yy=pad.top+(i/4)*cH;ctx.beginPath();ctx.moveTo(pad.left,yy);ctx.lineTo(W-pad.right,yy);ctx.stroke();
+        const v=mx-(i/4)*(mx-mn);ctx.fillStyle='#8b949e';ctx.font='10px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText(v.toFixed(2),pad.left-4,yy+3);}
+      if(mn<1&&mx>1){ctx.beginPath();ctx.strokeStyle='#484f58';ctx.lineWidth=.5;ctx.setLineDash([3,3]);ctx.moveTo(pad.left,y(1));ctx.lineTo(W-pad.right,y(1));ctx.stroke();ctx.setLineDash([]);}
+      const colors=['#3fb950','#58a6ff','#f85149','#d29922','#bc8cff','#f778ba','#79c0ff','#56d4dd','#e3b341','#adbac7'];
+      let legend='';
+      tickers.forEach((t,ti)=>{const pts=stocksData[t];if(!pts.length)return;
+        ctx.beginPath();ctx.strokeStyle=colors[ti%colors.length];ctx.lineWidth=1.5;
+        for(let i=0;i<pts.length;i++){const xi=pad.left+(i/Math.max(1,pts.length-1))*cW;i===0?ctx.moveTo(xi,y(pts[i].value)):ctx.lineTo(xi,y(pts[i].value));}
+        ctx.stroke(); const lv=((pts[pts.length-1].value-1)*100).toFixed(1);
+        legend+=`<span style="color:${colors[ti%colors.length]}">● ${t} ${lv>0?'+':''}${lv}%</span>`;});
+      const el=document.getElementById('stockLegend'); if(el) el.innerHTML=legend;
+    }
+
+    // ── Helpers ─────────────────────────────────────────────────────────
+    function pct(v){return v!=null?(v*100).toFixed(1):'—';}
+    function mc(l,v,s,c){return `<div class="metric-card"><div class="metric-label">${l}</div><div class="metric-value ${c}">${v}</div>${s?'<div class="metric-sub">'+s+'</div>':''}</div>`;}
+
+    // ── Init ────────────────────────────────────────────────────────────
+    fetchSignals();
+    setInterval(fetchSignals, 30*60*1000);
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  </script>
+</body>
+</html>

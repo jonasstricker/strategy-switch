@@ -1,0 +1,658 @@
+/* Strategy-Switch PWA — Mobile Stylesheet */
+
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --green: #3fb950;
+  --red: #f85149;
+  --blue: #58a6ff;
+  --orange: #d29922;
+  --border: #30363d;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+/* Header */
+.header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding-top: max(16px, env(safe-area-inset-top));
+}
+
+.header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.header .subtitle {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+/* Recalculate Button */
+.recalc-btn {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 16px;
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.recalc-btn:active {
+  background: var(--blue);
+  transform: scale(0.97);
+}
+.recalc-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.recalc-btn.running {
+  background: var(--bg3);
+  border-color: var(--orange);
+  color: var(--orange);
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+@keyframes pulse-border {
+  0%, 100% { border-color: var(--orange); }
+  50% { border-color: var(--border); }
+}
+
+/* Pull to refresh indicator */
+.refresh-bar {
+  text-align: center;
+  padding: 8px;
+  background: var(--bg2);
+  color: var(--text2);
+  font-size: 12px;
+  display: none;
+}
+
+.refresh-bar.visible { display: block; }
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text2);
+}
+
+.loading .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ETF Tabs */
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex: 1;
+  min-width: 80px;
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab.active {
+  color: var(--blue);
+  border-bottom-color: var(--blue);
+}
+
+/* Content */
+.content {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Signal Card */
+.signal-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.signal-card.long {
+  border-color: var(--green);
+  box-shadow: 0 0 20px rgba(63, 185, 80, 0.1);
+}
+
+.signal-card.cash {
+  border-color: var(--red);
+  box-shadow: 0 0 20px rgba(248, 81, 73, 0.1);
+}
+
+.signal-badge {
+  display: inline-block;
+  font-size: 28px;
+  font-weight: 800;
+  padding: 8px 28px;
+  border-radius: 12px;
+  letter-spacing: 1px;
+}
+
+.signal-badge.long {
+  background: rgba(63, 185, 80, 0.15);
+  color: var(--green);
+}
+
+.signal-badge.cash {
+  background: rgba(248, 81, 73, 0.15);
+  color: var(--red);
+}
+
+.signal-strategy {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text2);
+}
+
+.signal-etf-name {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.signal-date {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.metric-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.metric-value.positive { color: var(--green); }
+.metric-value.negative { color: var(--red); }
+.metric-value.neutral { color: var(--blue); }
+
+.metric-sub {
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+/* Section */
+.section {
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+
+/* Chart container */
+.chart-container {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 8px;
+  margin-bottom: 16px;
+  position: relative;
+  height: 220px;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+.chart-legend span::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 3px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.chart-legend .sw::before { background: var(--green); }
+.chart-legend .bh::before { background: var(--blue); }
+
+/* Year Performance */
+.year-perf {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.year-perf-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.year-perf-item {
+  padding: 16px;
+  text-align: center;
+}
+
+.year-perf-item:first-child {
+  border-right: 1px solid var(--border);
+}
+
+.year-perf-item .label {
+  font-size: 11px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+
+.year-perf-item .value {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.year-perf-bar {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.invest-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.invest-bar .fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 3px;
+}
+
+/* Cash phases in chart */
+.cash-indicator {
+  display: flex;
+  gap: 1px;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.cash-indicator .day {
+  flex: 1;
+  min-width: 1px;
+}
+
+.cash-indicator .day.long { background: var(--green); }
+.cash-indicator .day.cash { background: var(--red); opacity: 0.5; }
+
+/* All ETFs overview */
+.etf-overview {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.etf-mini-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.etf-mini-card:active {
+  transform: scale(0.97);
+}
+
+.etf-mini-card .etf-ticker {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.etf-mini-card .etf-name {
+  font-size: 11px;
+  color: var(--text2);
+  margin-bottom: 8px;
+}
+
+.etf-mini-card .etf-signal {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.etf-mini-card .etf-signal.long { color: var(--green); }
+.etf-mini-card .etf-signal.cash { color: var(--red); }
+
+/* Sub-tabs (Signal, Historie, Matrix, Details) */
+.sub-tabs {
+  display: flex;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.sub-tab {
+  flex: 1;
+  padding: 10px 6px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-right: 1px solid var(--border);
+}
+.sub-tab:last-child { border-right: none; }
+.sub-tab.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+/* Heatmap table */
+.heatmap-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.heatmap {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+  font-size: 10px;
+  text-align: center;
+}
+.heatmap th {
+  background: var(--bg3);
+  color: var(--text2);
+  padding: 6px 4px;
+  position: sticky;
+  top: 0;
+  font-weight: 600;
+}
+.heatmap td {
+  padding: 5px 3px;
+  border: 1px solid var(--bg);
+  font-weight: 600;
+  min-width: 32px;
+}
+.heatmap td.yr {
+  background: var(--bg3);
+  color: var(--text2);
+  font-weight: 700;
+  white-space: nowrap;
+  position: sticky;
+  left: 0;
+}
+.heatmap td.empty {
+  background: var(--bg2);
+}
+
+/* Yearly return bars */
+.yearly-bars {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.yr-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.yr-label {
+  flex: 0 0 38px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text2);
+}
+.yr-bars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.yr-bar {
+  height: 14px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  min-width: 30px;
+  transition: width 0.3s;
+}
+.yr-bar span {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+.yr-bar.sw.pos { background: rgba(63,185,80,0.35); color: var(--green); }
+.yr-bar.sw.neg { background: rgba(248,81,73,0.25); color: var(--red); }
+.yr-bar.bh.pos { background: rgba(88,166,255,0.25); color: var(--blue); }
+.yr-bar.bh.neg { background: rgba(248,81,73,0.15); color: var(--red); }
+
+/* Stock grid (swarm top-10) */
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.stock-chip {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.stock-chip strong {
+  font-size: 14px;
+}
+.stock-chip span {
+  font-size: 10px;
+  color: var(--text2);
+  max-width: 60%;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Stock legend (individual stocks chart) */
+.stock-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+/* Trade log */
+.trade-log {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.trade-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.trade-row:last-child { border-bottom: none; }
+.trade-row.buy { border-left: 3px solid var(--green); }
+.trade-row.sell { border-left: 3px solid var(--red); }
+.trade-date { color: var(--text2); flex: 0 0 80px; }
+.trade-action { font-weight: 600; flex: 1; }
+.trade-price { color: var(--text2); text-align: right; }
+
+/* Detail table */
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.detail-table th {
+  background: var(--bg3);
+  color: var(--text2);
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+}
+.detail-table td {
+  padding: 10px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+}
+.detail-table tr:last-child td { border-bottom: none; }
+.detail-table td:first-child { color: var(--text2); font-size: 12px; }
+.detail-table td:nth-child(2) { font-weight: 700; color: var(--green); }
+.detail-table td:nth-child(3) { color: var(--blue); }
+
+/* Stock cards (individual buy/sell) */
+.stock-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+.stock-card.long { border-left: 3px solid var(--green); }
+.stock-card.cash { border-left: 3px solid var(--red); }
+.stock-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.stock-card-ticker { font-size: 16px; font-weight: 700; }
+.stock-card-name { font-size: 11px; color: var(--text2); }
+.stock-card-signal { text-align: right; }
+.stock-card-signal .long { color: var(--green); font-weight: 700; font-size: 14px; }
+.stock-card-signal .cash { color: var(--red); font-weight: 700; font-size: 14px; }
+.stock-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+/* Small stock chips in overview */
+.stock-chip-small {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+}
+.stock-chip-small.long { background: rgba(63,185,80,0.15); color: var(--green); }
+.stock-chip-small.cash { background: rgba(248,81,73,0.15); color: var(--red); }

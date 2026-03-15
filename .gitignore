@@ -1,0 +1,38 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+*.code-workspace
+
+# Secrets
+email_config.json
+
+# Local-only files
+cloudflared.exe
+tunnel_url.txt
+run_mobile_app.bat
+setup_mobile_task.ps1
+
+# Generated data (recomputed in cloud)
+wf_backtest/mobile_signals.json
+wf_backtest/state.json
+wf_backtest/reports/
+wf_backtest/output/
+wf_backtest/daily_runner.log
+*.png
+
+# Local-only scripts
+firewall_oeffnen.bat
+run_daily.bat
+setup_task.ps1
+gen_icons.py
+test_swarm.py
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
