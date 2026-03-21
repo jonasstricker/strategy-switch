@@ -17,7 +17,7 @@ tunnel_url.txt
 run_mobile_app.bat
 setup_mobile_task.ps1
 
-# Generated data (recomputed in cloud)
+# Generated data (recomputed by GitHub Actions)
 wf_backtest/mobile_signals.json
 wf_backtest/state.json
 wf_backtest/reports/

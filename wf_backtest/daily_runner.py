@@ -518,14 +518,18 @@ def main():
             log.info(f"Änderungen: {changes_str}")
 
         # 4. Send email if needed
-        if send_mail:
-            subject, html = build_multi_etf_email(all_data, signal_changes)
-
-            success = send_email(subject, html)
-            if success:
-                log.info(f"✅ E-Mail gesendet: {subject}")
-            else:
-                log.error("❌ E-Mail-Versand fehlgeschlagen!")
+        if send_mail and not os.environ.get("SKIP_EMAIL"):
+            try:
+                subject, html = build_multi_etf_email(all_data, signal_changes)
+                success = send_email(subject, html)
+                if success:
+                    log.info(f"✅ E-Mail gesendet: {subject}")
+                else:
+                    log.error("❌ E-Mail-Versand fehlgeschlagen!")
+            except Exception as e:
+                log.warning(f"E-Mail übersprungen: {e}")
+        elif send_mail:
+            log.info("E-Mail übersprungen (SKIP_EMAIL gesetzt)")
 
         # 5. Save new state
         new_state = {

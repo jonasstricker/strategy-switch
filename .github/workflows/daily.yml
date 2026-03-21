@@ -1,0 +1,46 @@
+name: Daily Strategy Calculation
+
+on:
+  schedule:
+    # Mo-Fr 22:30 UTC (nach US-Börsenschluss)
+    - cron: '30 22 * * 1-5'
+  workflow_dispatch:  # Manueller Trigger über GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  compute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run daily calculation
+        env:
+          SKIP_EMAIL: "1"
+        run: python -m wf_backtest.daily_runner
+
+      - name: Copy signals to GitHub Pages
+        run: |
+          mkdir -p docs/data
+          cp wf_backtest/mobile_signals.json docs/data/mobile_signals.json
+
+      - name: Commit & push results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/mobile_signals.json
+          git diff --staged --quiet && echo "No changes" || git commit -m "📊 Signals $(date -u +%Y-%m-%d)"
+          git push

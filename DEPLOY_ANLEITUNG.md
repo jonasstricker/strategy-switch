@@ -1,126 +1,41 @@
-# Strategy-Switch App — Oracle Cloud Deployment
+# Strategy-Switch App — GitHub Actions + Pages Deployment
 
-Die App läuft auf einer kostenlosen Oracle Cloud VM (4 CPU-Kerne, 24 GB RAM).
-Always-on, kein PC nötig. Volle Rechenpower, keine Abstriche bei den Strategien.
-Tägliche automatische Neuberechnung um 22:30 UTC (Mo-Fr).
-
----
-
-## Schritt 1: GitHub-Repo erstellen + Code hochladen
-
-### 1a. GitHub-Konto erstellen (falls nötig)
-1. Gehe zu **https://github.com/signup**
-2. Registriere dich mit deiner E-Mail
-3. Bestätige die E-Mail
-
-### 1b. Repository erstellen
-1. Gehe zu **https://github.com/new**
-2. Name: `strategy-switch`
-3. Visibility: **Private**
-4. NICHT "Add a README file" ankreuzen
-5. Klicke **Create repository**
-
-### 1c. Code hochladen (PowerShell im Projektordner)
-```powershell
-cd "c:\Users\strickej\Product Spice model UI\Privat_test"
-git remote add origin https://github.com/DEIN-USERNAME/strategy-switch.git
-git branch -M main
-git push -u origin main
-```
-
-> **Passwort**: GitHub → Settings → Developer settings → Personal access tokens →
-> Tokens (classic) → Generate new token → Haken bei "repo" → Generate.
-> Dieses Token als Passwort eingeben.
+Die App läuft komplett kostenlos auf GitHub:
+- **GitHub Actions** berechnet täglich alle Signale (Mo–Fr 22:30 UTC)
+- **GitHub Pages** hostet die PWA als statische Seite
+- Kein Server, kein PC, keine Kreditkarte nötig
+- 2.000 Minuten/Monat kostenlos (wir brauchen ~220 Min.)
 
 ---
 
-## Schritt 2: Oracle Cloud Account erstellen
+## Schritt 1: GitHub Pages aktivieren
 
-1. Gehe zu **https://cloud.oracle.com/free**
-2. Klicke **Start for Free**
-3. Registriere dich (E-Mail, Name, Land: Germany)
-4. **Kreditkarte wird NICHT belastet** — nur zur Verifizierung
-5. Wähle Home Region: **Germany Central (Frankfurt)**
-6. Warte auf Bestätigungs-E-Mail (kann bis zu 30 Min. dauern)
-
----
-
-## Schritt 3: VM erstellen (kostenlos, always-on)
-
-1. Anmelden bei **https://cloud.oracle.com**
-2. Klicke **Create a VM instance** (oder: Hamburger-Menü → Compute → Instances → Create Instance)
-3. Konfiguration:
-   - **Name**: `strategy-switch`
-   - **Image**: **Ubuntu 22.04** (Canonical Ubuntu)
-   - **Shape**: Klicke **Change shape** → **Ampere** → **VM.Standard.A1.Flex**
-     - OCPUs: **4**
-     - Memory: **24 GB**
-     - (Das ist komplett kostenlos im Always-Free-Tier!)
-   - **Networking**: Default (neues VCN erstellen lassen)
-   - **SSH Key**: Klicke **Generate a key pair** → **Save Private Key** herunterladen
-     - Speichere die `.key`-Datei sicher ab (z.B. `oracle-key.key`)
-4. Klicke **Create**
-5. Warte bis Status = **RUNNING** (1-2 Min.)
-6. Notiere die **Public IP Address** (z.B. `129.159.xxx.xxx`)
+1. Gehe zu deinem Repo: **https://github.com/jonasstricker/strategy-switch**
+2. Klicke auf **Settings** (Zahnrad-Tab oben)
+3. In der linken Sidebar: **Pages**
+4. Unter **Source**: Wähle **Deploy from a branch**
+5. Unter **Branch**: Wähle **main** und Ordner **`/docs`**
+6. Klicke **Save**
+7. Warte 1–2 Minuten → Deine App ist erreichbar unter:
+   **https://jonasstricker.github.io/strategy-switch/**
 
 ---
 
-## Schritt 4: Firewall öffnen (Port 80)
+## Schritt 2: Erste Berechnung manuell starten
 
-1. Im Oracle Dashboard: Klicke auf deine VM → **Subnet** → **Security List**
-2. Klicke **Add Ingress Rules**:
-   - Source CIDR: `0.0.0.0/0`
-   - Destination Port: `80`
-   - Description: `HTTP`
-3. Klicke **Add Ingress Rules**
+Die erste Berechnung muss manuell ausgelöst werden:
 
----
-
-## Schritt 5: SSH-Verbindung + Setup
-
-### 5a. SSH-Verbindung herstellen (PowerShell)
-```powershell
-# Pfad zu deinem heruntergeladenen SSH-Key anpassen!
-ssh -i C:\Users\strickej\Downloads\oracle-key.key ubuntu@DEINE_IP
-```
-
-> Beim ersten Mal: `yes` eingeben wenn nach fingerprint gefragt wird.
-> Falls "Permission denied": Rechtsklick auf die .key-Datei → Eigenschaften →
-> Sicherheit → Erweitert → Vererbung deaktivieren → Nur eigenen Benutzer behalten.
-
-### 5b. Projekt klonen + Setup ausführen
-```bash
-# Auf der VM (nach SSH-Login):
-git clone https://github.com/DEIN-USERNAME/strategy-switch.git
-cd strategy-switch
-
-# Automatisches Setup (installiert alles, startet Service + Cron)
-bash cloud/setup.sh
-```
-
-Das Script:
-- Installiert Python, Nginx
-- Erstellt Python-Umgebung + Abhängigkeiten
-- Führt erste Berechnung aus
-- Startet den Web-Service (Gunicorn, always-on)
-- Konfiguriert Nginx (Port 80)
-- Richtet Cron-Job ein (Mo-Fr 22:30 UTC)
-
-### 5c. Ubuntu-Firewall öffnen
-```bash
-sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
-sudo netfilter-persistent save
-```
+1. Gehe zu **https://github.com/jonasstricker/strategy-switch/actions**
+2. Links klicke auf **Daily Strategy Calculation**
+3. Rechts klicke **Run workflow** → **Run workflow** (grüner Button)
+4. Warte ca. 10 Minuten bis der Job grün wird ✅
+5. Danach ist die App unter der GitHub Pages URL mit Daten befüllt
 
 ---
 
-## Schritt 6: App auf dem iPhone speichern
+## Schritt 3: App auf dem iPhone speichern
 
-Deine App ist jetzt erreichbar unter:
-**http://DEINE_IP** (z.B. http://129.159.123.45)
-
-So speicherst du sie als App:
-1. Öffne die URL in **Safari** auf dem iPhone
+1. Öffne **https://jonasstricker.github.io/strategy-switch/** in **Safari**
 2. Tippe auf das **Teilen-Symbol** (Quadrat mit Pfeil ↑)
 3. Scrolle und tippe **Zum Home-Bildschirm**
 4. Bestätige mit **Hinzufügen**
@@ -128,13 +43,13 @@ So speicherst du sie als App:
 
 ---
 
-## So funktioniert die Cloud-App
+## So funktioniert es
 
-- **Always-On**: Die VM läuft 24/7, kein "Aufwachen" nötig
-- **Tägliche Berechnung**: Cron-Job Mo-Fr 22:30 UTC (automatisch)
-- **Sofortige Anzeige**: Daten werden vorberechnet, App lädt instant
-- **Manuelle Berechnung**: Button "Neu berechnen" in der App
-- **Volle Power**: 4! Kerne + 24 GB RAM → alle Strategien, volle Grids
+- **Automatisch**: GitHub Actions Cron-Job läuft Mo–Fr um 22:30 UTC
+- **Berechnung**: ~10 Min. pro Lauf, Ergebnis wird als JSON ins Repo committed
+- **Anzeige**: GitHub Pages serviert die statische HTML-Seite + JSON instant
+- **Manuell**: Du kannst jederzeit unter Actions → Run workflow neu berechnen
+- **Kosten**: $0 (Free Tier: 2.000 Min./Monat, wir brauchen ~220)
 
 ---
 
@@ -148,30 +63,14 @@ git commit -m "Update"
 git push
 ```
 
-Dann auf der VM (SSH):
-```bash
-cd ~/strategy-switch
-git pull
-sudo systemctl restart strategy-switch
-```
+Die nächste automatische Berechnung nutzt dann den neuen Code.
+Für sofortige Neuberechnung: Actions → Run workflow.
 
 ---
 
-## Nützliche Befehle (SSH auf der VM)
+## Nützliche Links
 
-```bash
-# Service-Status prüfen
-sudo systemctl status strategy-switch
-
-# Live-Logs ansehen
-sudo journalctl -u strategy-switch -f
-
-# Manuelle Neuberechnung
-cd ~/strategy-switch && .venv/bin/python -m wf_backtest.daily_runner
-
-# Service neustarten
-sudo systemctl restart strategy-switch
-
-# Cron-Log ansehen
-tail -50 ~/strategy-switch/cron.log
-```
+- **App**: https://jonasstricker.github.io/strategy-switch/
+- **Repo**: https://github.com/jonasstricker/strategy-switch
+- **Actions**: https://github.com/jonasstricker/strategy-switch/actions
+- **Pages Settings**: https://github.com/jonasstricker/strategy-switch/settings/pages
