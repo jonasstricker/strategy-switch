@@ -62,8 +62,9 @@ RF = 0.02
 TX = 0.0001    # 1 bp (1€ auf 10k)
 SLIP = 0.0002  # 2 bp Spread (liquide EU-ETFs)
 
-# Cloud-Modus: kleinere Grids, kürzere Trainingsperioden → schneller auf Render.com
-IS_CLOUD = bool(os.environ.get("RENDER"))
+# Lite-Modus: kleinere Grids für ressourcenbegrenzte Umgebungen (z.B. Render Free)
+# Oracle Cloud (24GB RAM, 4 Kerne) braucht das NICHT
+IS_CLOUD = bool(os.environ.get("LITE_MODE"))
 
 ETF_DEFS = {
     "SXR8.DE":  {"name": "S&P100_EU", "start": "2010-06-01"},

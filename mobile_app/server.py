@@ -2,10 +2,11 @@
 """
 mobile_app/server.py — Strategy-Switch PWA (Cloud-First)
 =========================================================
-Runs on Render.com (or locally). Computes signals automatically:
+Runs on Oracle Cloud VM (or locally). Computes signals automatically:
   - On first startup if no data exists
   - When data is older than STALE_HOURS (auto-refresh on API request)
   - On manual "Recalculate" button press
+  - Via cron job daily at 22:30 UTC
 No PC needed — everything runs in the cloud.
 """
 
@@ -26,8 +27,8 @@ APP_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = APP_DIR.parent
 SIGNALS_FILE = PROJECT_DIR / "wf_backtest" / "mobile_signals.json"
 
-# Detect environment: local Windows or cloud (Render/Linux)
-IS_CLOUD = os.environ.get("RENDER") or not (PROJECT_DIR / ".venv").exists()
+# Detect environment: local Windows or cloud (Linux VM)
+IS_CLOUD = (sys.platform != "win32") or bool(os.environ.get("CLOUD"))
 if IS_CLOUD:
     PYTHON_EXE = sys.executable
 else:

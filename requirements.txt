@@ -1,4 +1,4 @@
-# Strategy-Switch PWA — Cloud Dependencies (Render.com)
+# Strategy-Switch PWA — Cloud Dependencies (Oracle Cloud / Linux)
 flask>=3.1
 gunicorn>=23.0
 pandas>=2.1

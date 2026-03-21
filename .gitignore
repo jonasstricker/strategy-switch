@@ -32,6 +32,12 @@ setup_task.ps1
 gen_icons.py
 test_swarm.py
 
+# Cloud logs
+cron.log
+
+# Render (obsolet)
+render.yaml
+
 # OS
 Thumbs.db
 Desktop.ini
