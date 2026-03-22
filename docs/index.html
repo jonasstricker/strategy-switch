@@ -63,6 +63,7 @@
       if (D.swarm) tabs.push({key:'swarm', label:'🐝 Schwarm'});
       if (D.value) tabs.push({key:'value', label:'💎 Value'});
       if (D.turnaround) tabs.push({key:'turnaround', label:'🔄 Turnar.'});
+      tabs.push({key:'compare', label:'📊 Vergleich'});
       tabs.push({key:'methodik', label:'📖 Info'});
       tabBar.innerHTML = tabs.map(t =>
         `<div class="tab ${activeTab===t.key?'active':''}" data-tab="${t.key}">${t.label}</div>`
@@ -86,6 +87,7 @@
       else if (activeTab === 'swarm') { c.innerHTML = renderCategory(D.swarm, '🐝 Aktien-Schwarm (Top-10 Market Cap)'); afterCategoryRender(D.swarm); }
       else if (activeTab === 'value') { c.innerHTML = renderCategory(D.value, '💎 Value-Aktien (Top-10 Bewertung)'); afterCategoryRender(D.value); }
       else if (activeTab === 'turnaround') { c.innerHTML = renderCategory(D.turnaround, '🔄 Turnaround-Aktien'); afterCategoryRender(D.turnaround); }
+      else if (activeTab === 'compare') c.innerHTML = renderComparison();
       else if (activeTab === 'methodik') c.innerHTML = renderMethodik();
       else {
         const data = allSignals.find(s => s.ticker === activeTab);
@@ -294,7 +296,7 @@
       if (!cat) return '<div class="loading"><div>⚠️ Keine Daten</div></div>';
       const sub = subTab[activeTab] || 'stocks';
       let h = '<div class="sub-tabs">';
-      for (const [k,l] of [['stocks','Aktien'],['equity','Equity'],['matrix','Matrix'],['trades','Trades'],['details','Details']]) {
+      for (const [k,l] of [['stocks','Aktien'],['equity','Equity'],['matrix','Matrix'],['details','Details']]) {
         h += `<div class="sub-tab ${sub===k?'active':''}" data-sub="${k}">${l}</div>`;
       }
       h += '</div>';
@@ -302,7 +304,6 @@
       if (sub === 'stocks') h += renderCategoryStocks(cat, title);
       else if (sub === 'equity') h += renderCategoryEquity(cat, title);
       else if (sub === 'matrix') h += renderCategoryMatrix(cat);
-      else if (sub === 'trades') h += renderCategoryTrades(cat);
       else if (sub === 'details') h += renderCategoryDetails(cat);
       return h;
     }
@@ -352,6 +353,22 @@
         </div>`;
       }
       h += '</div>';
+
+      // Trade history inline
+      if (cat.trades && cat.trades.length) {
+        h += '<div class="section"><div class="section-title">Letzte Trades</div><div class="trade-log">';
+        for (const t of [...cat.trades].reverse()) {
+          const buy = t.Aktion.includes('KAUF');
+          let rendite = '';
+          if (t.Rendite != null) rendite = `<div class="trade-pnl ${t.Rendite>=0?'pos':'neg'}">${t.Rendite>0?'+':''}${t.Rendite}%</div>`;
+          h += `<div class="trade-row ${buy?'buy':'sell'}">
+            <div class="trade-date">${t.Datum}</div>
+            <div class="trade-action">${buy?'🟢':'🔴'} ${t.Aktion}</div>
+            <div style="text-align:right;"><div class="trade-price">${t.Kurs}</div>${rendite}</div></div>`;
+        }
+        h += '</div></div>';
+      }
+
       return h;
     }
 
@@ -374,22 +391,6 @@
       const M = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
       let h = buildHeatmap(cat.months_switch, 'Monatsrenditen (Switch)', M);
       if (cat.months_bh) h += buildHeatmap(cat.months_bh, 'Monatsrenditen (Buy & Hold)', M);
-      return h;
-    }
-
-    function renderCategoryTrades(cat) {
-      if (!cat.trades || !cat.trades.length) return '<div class="loading"><div>Keine Trades vorhanden</div></div>';
-      let h = '<div class="section"><div class="section-title">Trade-Historie (letzte 40)</div><div class="trade-log">';
-      for (const t of [...cat.trades].reverse()) {
-        const buy = t.Aktion.includes('KAUF');
-        let rendite = '';
-        if (t.Rendite != null) rendite = `<div class="trade-pnl ${t.Rendite>=0?'pos':'neg'}">${t.Rendite>0?'+':''}${t.Rendite}%</div>`;
-        h += `<div class="trade-row ${buy?'buy':'sell'}">
-          <div class="trade-date">${t.Datum}</div>
-          <div class="trade-action">${buy?'🟢':'🔴'} ${t.Aktion}</div>
-          <div style="text-align:right;"><div class="trade-price">${t.Kurs}</div>${rendite}</div></div>`;
-      }
-      h += '</div></div>';
       return h;
     }
 
@@ -426,6 +427,88 @@
         h += `<div class="section"><div class="section-title">$10.000 investiert (seit ${cat.start})</div><div class="metrics-grid">
           ${mc('Switch','$'+s10,'','positive')} ${mc('B&H','$'+b10,'','neutral')}</div></div>`;
       }
+      return h;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // ── COMPARISON PAGE ─────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    function renderComparison() {
+      let items = [];
+      for (const s of allSignals) {
+        items.push({
+          name: s.ticker.replace('.DE',''),
+          type: 'ETF',
+          signal: s.signal,
+          cagr_sw: s.cagr_switch, cagr_bh: s.cagr_bh,
+          sharpe_sw: s.sharpe_switch, sharpe_bh: s.sharpe_bh,
+          maxdd_sw: s.max_dd_switch, maxdd_bh: s.max_dd_bh,
+          sortino_sw: s.sortino_switch, sortino_bh: s.sortino_bh,
+          vol_sw: s.vol_switch, vol_bh: s.vol_bh,
+          inv: s.pct_invested
+        });
+      }
+      for (const [key, label, icon] of [['swarm','Schwarm','🐝'],['value','Value','💎'],['turnaround','Turnaround','🔄']]) {
+        const cat = D[key];
+        if (!cat) continue;
+        items.push({
+          name: icon+' '+label,
+          type: 'Kategorie',
+          signal: cat.n_long+'/'+cat.n_total+' LONG',
+          cagr_sw: cat.cagr_switch, cagr_bh: cat.cagr_bh,
+          sharpe_sw: cat.sharpe_switch, sharpe_bh: cat.sharpe_bh,
+          maxdd_sw: cat.max_dd_switch, maxdd_bh: cat.max_dd_bh,
+          sortino_sw: cat.sortino_switch, sortino_bh: cat.sortino_bh,
+          vol_sw: cat.vol_switch, vol_bh: cat.vol_bh,
+          inv: cat.pct_invested
+        });
+      }
+
+      let h = '<div class="section"><div class="section-title">📊 Strategie-Vergleich</div>';
+      h += '<div style="overflow-x:auto;"><table class="detail-table"><thead><tr>';
+      h += '<th>Strategie</th><th>Signal</th><th>CAGR<br>Switch</th><th>CAGR<br>B&H</th>';
+      h += '<th>Sharpe<br>Sw</th><th>Sharpe<br>BH</th><th>Max DD<br>Sw</th><th>Max DD<br>BH</th><th>Inv%</th>';
+      h += '</tr></thead><tbody>';
+      for (const it of items) {
+        const sigClr = (typeof it.signal === 'string' && it.signal.includes('LONG')) ? 'var(--green)'
+                     : (typeof it.signal === 'string' && it.signal.includes('CASH')) ? 'var(--red)' : '#8b949e';
+        h += `<tr>`;
+        h += `<td style="font-weight:700;white-space:nowrap;">${it.name}</td>`;
+        h += `<td style="color:${sigClr};font-weight:600;font-size:12px;">${it.signal}</td>`;
+        h += `<td style="color:var(--green);">${pct(it.cagr_sw)}%</td><td>${pct(it.cagr_bh)}%</td>`;
+        h += `<td>${it.sharpe_sw??'—'}</td><td>${it.sharpe_bh??'—'}</td>`;
+        h += `<td style="color:var(--red);">${pct(it.maxdd_sw)}%</td><td>${pct(it.maxdd_bh)}%</td>`;
+        h += `<td>${it.inv!=null?Math.round(it.inv*100)+'%':'—'}</td>`;
+        h += `</tr>`;
+      }
+      h += '</tbody></table></div></div>';
+
+      // Additional detail: Sortino & Volatility
+      h += '<div class="section"><div class="section-title">Risiko-Kennzahlen</div>';
+      h += '<div style="overflow-x:auto;"><table class="detail-table"><thead><tr>';
+      h += '<th>Strategie</th><th>Sortino<br>Sw</th><th>Sortino<br>BH</th><th>Vol<br>Sw</th><th>Vol<br>BH</th>';
+      h += '</tr></thead><tbody>';
+      for (const it of items) {
+        h += `<tr><td style="font-weight:700;">${it.name}</td>`;
+        h += `<td>${it.sortino_sw??'—'}</td><td>${it.sortino_bh??'—'}</td>`;
+        h += `<td>${it.vol_sw!=null?pct(it.vol_sw)+'%':'—'}</td><td>${it.vol_bh!=null?pct(it.vol_bh)+'%':'—'}</td>`;
+        h += `</tr>`;
+      }
+      h += '</tbody></table></div></div>';
+
+      // Alpha: Switch CAGR minus B&H CAGR
+      h += '<div class="section"><div class="section-title">Alpha (Switch − B&H CAGR)</div><div class="yearly-bars">';
+      for (const it of items) {
+        const alpha = (it.cagr_sw!=null && it.cagr_bh!=null) ? ((it.cagr_sw - it.cagr_bh)*100).toFixed(1) : null;
+        if (alpha == null) continue;
+        const pos = alpha >= 0;
+        const w = Math.min(Math.abs(alpha)*3, 100);
+        h += `<div class="bar-row"><div class="bar-label">${it.name}</div>`;
+        h += `<div class="bar-track"><div class="bar-fill ${pos?'pos':'neg'}" style="width:${w}%;"></div></div>`;
+        h += `<div class="bar-val ${pos?'positive':'negative'}">${pos?'+':''}${alpha}%</div></div>`;
+      }
+      h += '</div></div>';
+
       return h;
     }
 
