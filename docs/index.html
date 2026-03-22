@@ -296,7 +296,7 @@
       if (!cat) return '<div class="loading"><div>⚠️ Keine Daten</div></div>';
       const sub = subTab[activeTab] || 'stocks';
       let h = '<div class="sub-tabs">';
-      for (const [k,l] of [['stocks','Aktien'],['equity','Equity'],['matrix','Matrix'],['details','Details']]) {
+      for (const [k,l] of [['stocks','Aktien'],['equity','Historie'],['matrix','Matrix'],['details','Details']]) {
         h += `<div class="sub-tab ${sub===k?'active':''}" data-sub="${k}">${l}</div>`;
       }
       h += '</div>';
@@ -354,21 +354,6 @@
       }
       h += '</div>';
 
-      // Trade history inline
-      if (cat.trades && cat.trades.length) {
-        h += '<div class="section"><div class="section-title">Letzte Trades</div><div class="trade-log">';
-        for (const t of [...cat.trades].reverse()) {
-          const buy = t.Aktion.includes('KAUF');
-          let rendite = '';
-          if (t.Rendite != null) rendite = `<div class="trade-pnl ${t.Rendite>=0?'pos':'neg'}">${t.Rendite>0?'+':''}${t.Rendite}%</div>`;
-          h += `<div class="trade-row ${buy?'buy':'sell'}">
-            <div class="trade-date">${t.Datum}</div>
-            <div class="trade-action">${buy?'🟢':'🔴'} ${t.Aktion}</div>
-            <div style="text-align:right;"><div class="trade-price">${t.Kurs}</div>${rendite}</div></div>`;
-        }
-        h += '</div></div>';
-      }
-
       return h;
     }
 
@@ -384,6 +369,22 @@
       }
 
       if (cat.yearly_returns && cat.yearly_returns.length) h += renderYearlyBars(cat.yearly_returns);
+
+      // Trade history
+      if (cat.trades && cat.trades.length) {
+        h += '<div class="section"><div class="section-title">Letzte Trades</div><div class="trade-log">';
+        for (const t of [...cat.trades].reverse()) {
+          const buy = t.Aktion.includes('KAUF');
+          let rendite = '';
+          if (t.Rendite != null) rendite = `<div class="trade-pnl ${t.Rendite>=0?'pos':'neg'}">${t.Rendite>0?'+':''}${t.Rendite}%</div>`;
+          h += `<div class="trade-row ${buy?'buy':'sell'}">
+            <div class="trade-date">${t.Datum}</div>
+            <div class="trade-action">${buy?'🟢':'🔴'} ${t.Aktion}</div>
+            <div style="text-align:right;"><div class="trade-price">${t.Kurs}</div>${rendite}</div></div>`;
+        }
+        h += '</div></div>';
+      }
+
       return h;
     }
 
@@ -598,10 +599,12 @@
       let h = '<div class="section"><div class="section-title">Letzte Trades</div><div class="trade-log">';
       for (const t of [...trades].reverse()) {
         const buy = t.Aktion.includes('KAUF');
+        let rendite = '';
+        if (t.Rendite != null) rendite = `<div class="trade-pnl ${t.Rendite>=0?'pos':'neg'}">${t.Rendite>0?'+':''}${t.Rendite}%</div>`;
         h += `<div class="trade-row ${buy?'buy':'sell'}">
           <div class="trade-date">${t.Datum}</div>
           <div class="trade-action">${buy?'🟢':'🔴'} ${t.Aktion}</div>
-          <div class="trade-price">${t.Kurs}</div></div>`;
+          <div style="text-align:right;"><div class="trade-price">${t.Kurs}</div>${rendite}</div></div>`;
       }
       h += '</div></div>';
       return h;

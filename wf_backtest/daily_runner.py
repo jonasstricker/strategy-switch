@@ -234,25 +234,32 @@ def compute_etf(ticker: str, start_date: str) -> dict:
     # Trade log
     trades = []
     prev = "Cash"
+    buy_price = None
     for idx in active_strat.index:
         cur = active_strat.loc[idx]
         if cur != prev:
             was_cash = (prev == "Cash")
             now_cash = (cur == "Cash")
             if was_cash and not now_cash:
+                buy_price = float(close.loc[idx])
                 trades.append({
                     "Datum": idx.strftime("%d.%m.%Y"),
                     "Aktion": f"KAUF {ticker}",
                     "Grund": f"Strategie {cur} aktiv",
-                    "Kurs": f"${float(close.loc[idx]):,.2f}",
+                    "Kurs": f"${buy_price:,.2f}",
+                    "Rendite": None,
                 })
             elif not was_cash and now_cash:
+                sell_price = float(close.loc[idx])
+                pnl = round((sell_price / buy_price - 1) * 100, 1) if buy_price and buy_price > 0 else None
                 trades.append({
                     "Datum": idx.strftime("%d.%m.%Y"),
                     "Aktion": f"VERKAUF {ticker}",
                     "Grund": "Keine Strategie positiv → Cash",
-                    "Kurs": f"${float(close.loc[idx]):,.2f}",
+                    "Kurs": f"${sell_price:,.2f}",
+                    "Rendite": pnl,
                 })
+                buy_price = None
             prev = cur
 
     # Current state
