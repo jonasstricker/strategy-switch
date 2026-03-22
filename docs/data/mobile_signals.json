@@ -1,5 +1,5 @@
 {
-  "updated": "22.03.2026 08:39",
+  "updated": "22.03.2026 08:49",
   "etfs": [
     {
       "ticker": "SXR8.DE",
@@ -2655,7 +2655,7 @@
       "ticker": "URTH",
       "name": "MSCI World",
       "signal": "LONG",
-      "strategy": "Momentum",
+      "strategy": "Double_MA",
       "price": 178.0,
       "last_date": "25.02.2026",
       "sharpe_switch": 1.36,
@@ -5186,7 +5186,7 @@
         {
           "Datum": "12.08.2024",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Dual_Momentum aktiv",
+          "Grund": "Strategie RSI aktiv",
           "Kurs": "$141.67",
           "Rendite": null
         },
@@ -5200,7 +5200,7 @@
         {
           "Datum": "07.01.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie MA aktiv",
           "Kurs": "$153.97",
           "Rendite": null
         },
@@ -5214,7 +5214,7 @@
         {
           "Datum": "23.01.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie MA aktiv",
           "Kurs": "$159.34",
           "Rendite": null
         },
@@ -5251,7 +5251,7 @@
       "strat_margins": {
         "RSI": 1.613,
         "Momentum": 2.798,
-        "MA": 2.17,
+        "MA": 1.33,
         "Double_MA": 2.798,
         "Dual_Momentum": 2.798
       }
@@ -5680,7 +5680,7 @@
         },
         {
           "date": "2025-09-23",
-          "switch": 1.135,
+          "switch": 1.1351,
           "bh": 1.187,
           "cash": false
         },
@@ -6234,7 +6234,7 @@
         },
         {
           "date": "2009-09-23",
-          "switch": 1.8565,
+          "switch": 1.8566,
           "bh": 1.0706
         },
         {
@@ -6429,7 +6429,7 @@
         },
         {
           "date": "2012-08-30",
-          "switch": 2.1825,
+          "switch": 2.1826,
           "bh": 1.1371
         },
         {
@@ -6449,7 +6449,7 @@
         },
         {
           "date": "2012-12-20",
-          "switch": 2.4807,
+          "switch": 2.4808,
           "bh": 1.2869
         },
         {
@@ -6644,12 +6644,12 @@
         },
         {
           "date": "2015-12-01",
-          "switch": 2.9062,
+          "switch": 2.9063,
           "bh": 1.0607
         },
         {
           "date": "2015-12-29",
-          "switch": 2.9062,
+          "switch": 2.9063,
           "bh": 1.0316
         },
         {
@@ -6839,17 +6839,17 @@
         },
         {
           "date": "2018-11-08",
-          "switch": 4.3235,
+          "switch": 4.3236,
           "bh": 1.3346
         },
         {
           "date": "2018-12-07",
-          "switch": 4.3235,
+          "switch": 4.3236,
           "bh": 1.3125
         },
         {
           "date": "2019-01-07",
-          "switch": 4.3235,
+          "switch": 4.3236,
           "bh": 1.3289
         },
         {
@@ -6924,7 +6924,7 @@
         },
         {
           "date": "2020-02-25",
-          "switch": 5.1086,
+          "switch": 5.1087,
           "bh": 1.4213
         },
         {
@@ -7009,7 +7009,7 @@
         },
         {
           "date": "2021-06-07",
-          "switch": 7.5173,
+          "switch": 7.5174,
           "bh": 1.9463
         },
         {
@@ -7145,7 +7145,7 @@
         {
           "date": "2023-06-21",
           "switch": 7.623,
-          "bh": 1.4659
+          "bh": 1.4658
         },
         {
           "date": "2023-07-19",
@@ -7304,7 +7304,7 @@
         },
         {
           "date": "2025-11-20",
-          "switch": 10.2339,
+          "switch": 10.234,
           "bh": 2.0558
         },
         {
@@ -7314,7 +7314,7 @@
         },
         {
           "date": "2026-01-16",
-          "switch": 11.3107,
+          "switch": 11.3108,
           "bh": 2.2721
         },
         {
@@ -8062,7 +8062,7 @@
         {
           "Datum": "13.09.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie MA aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$41.13",
           "Rendite": null
         },
@@ -8076,7 +8076,7 @@
         {
           "Datum": "02.12.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie MA aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$41.70",
           "Rendite": null
         },
@@ -8136,7 +8136,7 @@
       "ticker": "VGK",
       "name": "FTSE Europe",
       "signal": "LONG",
-      "strategy": "Momentum",
+      "strategy": "Double_MA",
       "price": 79.18,
       "last_date": "23.02.2026",
       "sharpe_switch": 0.95,
@@ -9171,7 +9171,7 @@
         {
           "date": "2011-08-16",
           "switch": 1.6519,
-          "bh": 0.7942
+          "bh": 0.7943
         },
         {
           "date": "2011-09-12",
@@ -9475,7 +9475,7 @@
         },
         {
           "date": "2015-12-28",
-          "switch": 2.8527,
+          "switch": 2.8528,
           "bh": 1.0461
         },
         {
@@ -9686,7 +9686,7 @@
         {
           "date": "2018-12-28",
           "switch": 3.5727,
-          "bh": 1.1062
+          "bh": 1.1063
         },
         {
           "date": "2019-01-25",
@@ -10095,7 +10095,7 @@
         },
         {
           "date": "2024-11-08",
-          "switch": 8.4261,
+          "switch": 8.4262,
           "bh": 1.8327
         },
         {
@@ -10115,12 +10115,12 @@
         },
         {
           "date": "2025-02-26",
-          "switch": 8.7652,
+          "switch": 8.7653,
           "bh": 1.9745
         },
         {
           "date": "2025-03-24",
-          "switch": 8.9164,
+          "switch": 8.9165,
           "bh": 2.0085
         },
         {
@@ -10165,12 +10165,12 @@
         },
         {
           "date": "2025-11-12",
-          "switch": 9.7174,
+          "switch": 9.7175,
           "bh": 2.3437
         },
         {
           "date": "2025-12-09",
-          "switch": 9.7778,
+          "switch": 9.7779,
           "bh": 2.3249
         },
         {
@@ -10809,7 +10809,7 @@
         {
           "Datum": "10.08.2023",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie RSI aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$57.37",
           "Rendite": null
         },
@@ -10865,7 +10865,7 @@
         {
           "Datum": "19.08.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$66.26",
           "Rendite": null
         },
@@ -10879,7 +10879,7 @@
         {
           "Datum": "12.09.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$66.00",
           "Rendite": null
         },
@@ -10893,7 +10893,7 @@
         {
           "Datum": "17.10.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$65.89",
           "Rendite": null
         },
@@ -10935,7 +10935,7 @@
         {
           "Datum": "25.11.2025",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$79.12",
           "Rendite": null
         }
@@ -11725,7 +11725,7 @@
       },
       {
         "date": "2022-01-26",
-        "switch": 7.5377,
+        "switch": 7.5378,
         "bh": 1.8726
       },
       {
@@ -11750,7 +11750,7 @@
       },
       {
         "date": "2022-04-13",
-        "switch": 8.0758,
+        "switch": 8.0759,
         "bh": 1.9216
       },
       {
@@ -11925,7 +11925,7 @@
       },
       {
         "date": "2023-10-04",
-        "switch": 14.3804,
+        "switch": 14.3805,
         "bh": 1.9258
       },
       {
@@ -11935,7 +11935,7 @@
       },
       {
         "date": "2023-11-03",
-        "switch": 14.6779,
+        "switch": 14.678,
         "bh": 1.9554
       },
       {
@@ -12020,7 +12020,7 @@
       },
       {
         "date": "2024-07-23",
-        "switch": 22.1309,
+        "switch": 22.131,
         "bh": 2.9377
       },
       {
@@ -12120,7 +12120,7 @@
       },
       {
         "date": "2025-05-27",
-        "switch": 27.0538,
+        "switch": 27.0539,
         "bh": 3.4183
       },
       {
@@ -12215,7 +12215,7 @@
       },
       {
         "date": "2026-03-13",
-        "switch": 36.9429,
+        "switch": 36.943,
         "bh": 3.9267
       }
     ],
@@ -15119,7 +15119,248 @@
         "bh": -5.6
       }
     ],
-    "trades": [],
+    "trades": [
+      {
+        "Datum": "30.12.2025",
+        "Aktion": "VERKAUF AVGO",
+        "Kurs": "$349.85",
+        "Rendite": 2.5
+      },
+      {
+        "Datum": "02.01.2026",
+        "Aktion": "VERKAUF AMZN",
+        "Kurs": "$226.50",
+        "Rendite": -1.4
+      },
+      {
+        "Datum": "06.01.2026",
+        "Aktion": "KAUF META",
+        "Kurs": "$660.05",
+        "Rendite": null
+      },
+      {
+        "Datum": "08.01.2026",
+        "Aktion": "KAUF MSFT",
+        "Kurs": "$477.02",
+        "Rendite": null
+      },
+      {
+        "Datum": "09.01.2026",
+        "Aktion": "KAUF AMZN",
+        "Kurs": "$247.38",
+        "Rendite": null
+      },
+      {
+        "Datum": "09.01.2026",
+        "Aktion": "KAUF TSLA",
+        "Kurs": "$445.01",
+        "Rendite": null
+      },
+      {
+        "Datum": "09.01.2026",
+        "Aktion": "KAUF AVGO",
+        "Kurs": "$344.97",
+        "Rendite": null
+      },
+      {
+        "Datum": "13.01.2026",
+        "Aktion": "VERKAUF AAPL",
+        "Kurs": "$260.81",
+        "Rendite": 14.1
+      },
+      {
+        "Datum": "13.01.2026",
+        "Aktion": "VERKAUF META",
+        "Kurs": "$630.55",
+        "Rendite": -4.5
+      },
+      {
+        "Datum": "15.01.2026",
+        "Aktion": "VERKAUF MSFT",
+        "Kurs": "$455.62",
+        "Rendite": -4.5
+      },
+      {
+        "Datum": "20.01.2026",
+        "Aktion": "VERKAUF AMZN",
+        "Kurs": "$231.00",
+        "Rendite": -6.6
+      },
+      {
+        "Datum": "21.01.2026",
+        "Aktion": "KAUF AAPL",
+        "Kurs": "$247.42",
+        "Rendite": null
+      },
+      {
+        "Datum": "23.01.2026",
+        "Aktion": "KAUF MSFT",
+        "Kurs": "$464.89",
+        "Rendite": null
+      },
+      {
+        "Datum": "23.01.2026",
+        "Aktion": "KAUF META",
+        "Kurs": "$658.20",
+        "Rendite": null
+      },
+      {
+        "Datum": "27.01.2026",
+        "Aktion": "KAUF AMZN",
+        "Kurs": "$244.68",
+        "Rendite": null
+      },
+      {
+        "Datum": "27.01.2026",
+        "Aktion": "VERKAUF AVGO",
+        "Kurs": "$332.79",
+        "Rendite": -3.5
+      },
+      {
+        "Datum": "27.01.2026",
+        "Aktion": "VERKAUF LLY",
+        "Kurs": "$1,037.78",
+        "Rendite": 26.1
+      },
+      {
+        "Datum": "28.01.2026",
+        "Aktion": "KAUF NVDA",
+        "Kurs": "$191.51",
+        "Rendite": null
+      },
+      {
+        "Datum": "28.01.2026",
+        "Aktion": "VERKAUF AAPL",
+        "Kurs": "$256.20",
+        "Rendite": 3.5
+      },
+      {
+        "Datum": "30.01.2026",
+        "Aktion": "VERKAUF MSFT",
+        "Kurs": "$429.31",
+        "Rendite": -7.7
+      },
+      {
+        "Datum": "04.02.2026",
+        "Aktion": "VERKAUF NVDA",
+        "Kurs": "$174.18",
+        "Rendite": -9.0
+      },
+      {
+        "Datum": "04.02.2026",
+        "Aktion": "VERKAUF TSLA",
+        "Kurs": "$406.01",
+        "Rendite": -8.8
+      },
+      {
+        "Datum": "04.02.2026",
+        "Aktion": "KAUF LLY",
+        "Kurs": "$1,105.28",
+        "Rendite": null
+      },
+      {
+        "Datum": "05.02.2026",
+        "Aktion": "VERKAUF AMZN",
+        "Kurs": "$222.69",
+        "Rendite": -9.0
+      },
+      {
+        "Datum": "05.02.2026",
+        "Aktion": "VERKAUF META",
+        "Kurs": "$669.64",
+        "Rendite": 1.7
+      },
+      {
+        "Datum": "06.02.2026",
+        "Aktion": "KAUF AAPL",
+        "Kurs": "$277.86",
+        "Rendite": null
+      },
+      {
+        "Datum": "11.02.2026",
+        "Aktion": "VERKAUF GOOGL",
+        "Kurs": "$310.74",
+        "Rendite": 85.0
+      },
+      {
+        "Datum": "13.02.2026",
+        "Aktion": "VERKAUF AAPL",
+        "Kurs": "$255.78",
+        "Rendite": -7.9
+      },
+      {
+        "Datum": "17.02.2026",
+        "Aktion": "KAUF AVGO",
+        "Kurs": "$332.54",
+        "Rendite": null
+      },
+      {
+        "Datum": "17.02.2026",
+        "Aktion": "VERKAUF LLY",
+        "Kurs": "$1,036.05",
+        "Rendite": -6.3
+      },
+      {
+        "Datum": "18.02.2026",
+        "Aktion": "KAUF NVDA",
+        "Kurs": "$187.97",
+        "Rendite": null
+      },
+      {
+        "Datum": "19.02.2026",
+        "Aktion": "KAUF GOOGL",
+        "Kurs": "$302.64",
+        "Rendite": null
+      },
+      {
+        "Datum": "20.02.2026",
+        "Aktion": "KAUF META",
+        "Kurs": "$655.10",
+        "Rendite": null
+      },
+      {
+        "Datum": "24.02.2026",
+        "Aktion": "KAUF AAPL",
+        "Kurs": "$272.14",
+        "Rendite": null
+      },
+      {
+        "Datum": "24.02.2026",
+        "Aktion": "VERKAUF AVGO",
+        "Kurs": "$325.49",
+        "Rendite": -2.1
+      },
+      {
+        "Datum": "26.02.2026",
+        "Aktion": "VERKAUF NVDA",
+        "Kurs": "$184.88",
+        "Rendite": -1.6
+      },
+      {
+        "Datum": "03.03.2026",
+        "Aktion": "VERKAUF AAPL",
+        "Kurs": "$263.75",
+        "Rendite": -3.1
+      },
+      {
+        "Datum": "09.03.2026",
+        "Aktion": "KAUF AVGO",
+        "Kurs": "$345.75",
+        "Rendite": null
+      },
+      {
+        "Datum": "10.03.2026",
+        "Aktion": "VERKAUF GOOGL",
+        "Kurs": "$307.04",
+        "Rendite": 1.5
+      },
+      {
+        "Datum": "11.03.2026",
+        "Aktion": "KAUF NVDA",
+        "Kurs": "$186.03",
+        "Rendite": null
+      }
+    ],
     "start": "2017-01-04",
     "end": "2026-03-13",
     "recent_rebalances": [
@@ -15342,7 +15583,7 @@
         "ticker": "PFE",
         "name": "Pfizer, Inc.",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "Double_MA",
         "signal_margin": 1.722,
         "sharpe": 0.97,
         "bh_sharpe": 0.17,
@@ -15920,7 +16161,7 @@
       },
       {
         "date": "2021-06-23",
-        "switch": 2.5358,
+        "switch": 2.5357,
         "bh": 1.8401
       },
       {
@@ -15976,7 +16217,7 @@
       {
         "date": "2021-12-09",
         "switch": 2.762,
-        "bh": 1.8599
+        "bh": 1.86
       },
       {
         "date": "2021-12-24",
@@ -16205,7 +16446,7 @@
       },
       {
         "date": "2023-11-17",
-        "switch": 3.4508,
+        "switch": 3.4507,
         "bh": 1.4659
       },
       {
@@ -16420,7 +16661,7 @@
       },
       {
         "date": "2025-09-10",
-        "switch": 4.9783,
+        "switch": 4.9782,
         "bh": 1.9129
       },
       {
@@ -16430,7 +16671,7 @@
       },
       {
         "date": "2025-10-10",
-        "switch": 5.0235,
+        "switch": 5.0234,
         "bh": 1.8823
       },
       {
@@ -20848,7 +21089,7 @@
       },
       {
         "date": "2026-03-13",
-        "switch": 6.9812,
+        "switch": 6.9813,
         "bh": 2.8454
       }
     ],
@@ -21338,7 +21579,7 @@
         },
         {
           "date": "2026-02-10",
-          "value": 1.0741
+          "value": 1.074
         },
         {
           "date": "2026-02-17",
