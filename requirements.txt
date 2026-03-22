@@ -6,3 +6,6 @@ numpy>=1.26
 yfinance>=0.2.40
 tqdm>=4.66
 scipy>=1.11
+
+# Optional: IBKR Auto-Trading (nur lokal, nicht in GitHub Actions)
+# ib_insync>=0.9
