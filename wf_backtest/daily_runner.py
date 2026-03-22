@@ -414,19 +414,27 @@ def _build_category_json(result: dict, category: str,
             "bh": round(float(bh_eq.iloc[-1]), 4),
         })
 
-    # Monthly heatmap
+    # Monthly heatmap (Switch + B&H)
     sw_ret = result["switch_ret"]
-    monthly = sw_ret.resample("ME").sum() * 100
-    months = {}
-    for idx_m, val in monthly.items():
+    bh_ret = result["bench_ret"]
+    monthly_sw = sw_ret.resample("ME").sum() * 100
+    monthly_bh = bh_ret.resample("ME").sum() * 100
+    months_switch = {}
+    for idx_m, val in monthly_sw.items():
         yr, mo = int(idx_m.year), int(idx_m.month)
-        if yr not in months:
-            months[yr] = {}
-        months[yr][mo] = round(float(val), 1)
+        if yr not in months_switch:
+            months_switch[yr] = {}
+        months_switch[yr][mo] = round(float(val), 1)
+    months_bh = {}
+    for idx_m, val in monthly_bh.items():
+        yr, mo = int(idx_m.year), int(idx_m.month)
+        if yr not in months_bh:
+            months_bh[yr] = {}
+        months_bh[yr][mo] = round(float(val), 1)
 
     # Yearly returns
     yr_sw = sw_ret.groupby(sw_ret.index.year).sum() * 100
-    yr_bh = result["bench_ret"].groupby(result["bench_ret"].index.year).sum() * 100
+    yr_bh = bh_ret.groupby(bh_ret.index.year).sum() * 100
     yearly = []
     for yr in sorted(set(yr_sw.index) | set(yr_bh.index)):
         yearly.append({
@@ -434,6 +442,53 @@ def _build_category_json(result: dict, category: str,
             "switch": round(float(yr_sw.get(yr, 0)), 1),
             "bh": round(float(yr_bh.get(yr, 0)), 1),
         })
+
+    # Trade history per stock
+    trades = []
+    for t, sr in stock_results.items():
+        active = sr.get("active_strat")
+        close_s = sr.get("close")
+        if active is None or close_s is None:
+            continue
+        prev = "Cash"
+        buy_price = None
+        for idx_t in active.index:
+            cur = active.loc[idx_t]
+            if cur != prev:
+                price_val = float(close_s.loc[idx_t]) if idx_t in close_s.index else 0
+                if prev == "Cash" and cur != "Cash":
+                    buy_price = price_val
+                    trades.append({
+                        "Datum": idx_t.strftime("%d.%m.%Y"),
+                        "Aktion": f"KAUF {t}",
+                        "Kurs": f"${price_val:,.2f}",
+                        "Rendite": None,
+                    })
+                elif prev != "Cash" and cur == "Cash":
+                    pnl = None
+                    if buy_price and buy_price > 0:
+                        pnl = round((price_val / buy_price - 1) * 100, 1)
+                    trades.append({
+                        "Datum": idx_t.strftime("%d.%m.%Y"),
+                        "Aktion": f"VERKAUF {t}",
+                        "Kurs": f"${price_val:,.2f}",
+                        "Rendite": pnl,
+                    })
+                    buy_price = None
+                prev = cur
+    # Sort by date, keep last 40
+    trades.sort(key=lambda x: x["Datum"].split(".")[::-1])
+    trades = trades[-40:]
+
+    # Detail metrics
+    sw_sortino = round(sortino_ratio(sw_ret, RF), 2)
+    bh_sortino = round(sortino_ratio(bh_ret, RF), 2)
+    sw_calmar = round(calmar_ratio(sw_eq), 2)
+    bh_calmar = round(calmar_ratio(bh_eq), 2)
+    sw_vol = round(float(sw_ret.std() * np.sqrt(252)), 4)
+    bh_vol = round(float(bh_ret.std() * np.sqrt(252)), 4)
+    sw_uw = time_under_water(sw_eq)
+    bh_uw = time_under_water(bh_eq)
 
     n_long = sum(1 for s in stocks if s["signal"] == "LONG")
 
@@ -448,12 +503,22 @@ def _build_category_json(result: dict, category: str,
         "cagr_bh": round(float(cagr(bh_eq)), 4),
         "max_dd_switch": round(float(max_drawdown(sw_eq)), 4),
         "max_dd_bh": round(float(max_drawdown(bh_eq)), 4),
+        "sortino_switch": sw_sortino,
+        "sortino_bh": bh_sortino,
+        "calmar_switch": sw_calmar,
+        "calmar_bh": bh_calmar,
+        "vol_switch": sw_vol,
+        "vol_bh": bh_vol,
+        "max_uw_switch": sw_uw.get("max_days", 0),
+        "max_uw_bh": bh_uw.get("max_days", 0),
         "pct_invested": round(result["pct_invested"], 4),
         "n_trades": result["n_trades"],
         "equity": equity,
         "stocks_1y": stocks_1y,
-        "months_switch": months,
+        "months_switch": months_switch,
+        "months_bh": months_bh,
         "yearly_returns": yearly,
+        "trades": trades,
         "start": result["start"].strftime("%Y-%m-%d") if hasattr(result["start"], "strftime") else str(result["start"]),
         "end": result["end"].strftime("%Y-%m-%d") if hasattr(result["end"], "strftime") else str(result["end"]),
         # Historische Rebalance-Verschiebungen (nur Swarm)

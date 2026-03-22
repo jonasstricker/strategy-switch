@@ -63,6 +63,7 @@
       if (D.swarm) tabs.push({key:'swarm', label:'🐝 Schwarm'});
       if (D.value) tabs.push({key:'value', label:'💎 Value'});
       if (D.turnaround) tabs.push({key:'turnaround', label:'🔄 Turnar.'});
+      tabs.push({key:'methodik', label:'📖 Info'});
       tabBar.innerHTML = tabs.map(t =>
         `<div class="tab ${activeTab===t.key?'active':''}" data-tab="${t.key}">${t.label}</div>`
       ).join('');
@@ -85,6 +86,7 @@
       else if (activeTab === 'swarm') { c.innerHTML = renderCategory(D.swarm, '🐝 Aktien-Schwarm (Top-10 Market Cap)'); afterCategoryRender(D.swarm); }
       else if (activeTab === 'value') { c.innerHTML = renderCategory(D.value, '💎 Value-Aktien (Top-10 Bewertung)'); afterCategoryRender(D.value); }
       else if (activeTab === 'turnaround') { c.innerHTML = renderCategory(D.turnaround, '🔄 Turnaround-Aktien'); afterCategoryRender(D.turnaround); }
+      else if (activeTab === 'methodik') c.innerHTML = renderMethodik();
       else {
         const data = allSignals.find(s => s.ticker === activeTab);
         if (data) { c.innerHTML = renderETF(data); afterETFRender(data); }
@@ -292,7 +294,7 @@
       if (!cat) return '<div class="loading"><div>⚠️ Keine Daten</div></div>';
       const sub = subTab[activeTab] || 'stocks';
       let h = '<div class="sub-tabs">';
-      for (const [k,l] of [['stocks','Aktien'],['equity','Equity'],['matrix','Matrix']]) {
+      for (const [k,l] of [['stocks','Aktien'],['equity','Equity'],['matrix','Matrix'],['trades','Trades'],['details','Details']]) {
         h += `<div class="sub-tab ${sub===k?'active':''}" data-sub="${k}">${l}</div>`;
       }
       h += '</div>';
@@ -300,6 +302,8 @@
       if (sub === 'stocks') h += renderCategoryStocks(cat, title);
       else if (sub === 'equity') h += renderCategoryEquity(cat, title);
       else if (sub === 'matrix') h += renderCategoryMatrix(cat);
+      else if (sub === 'trades') h += renderCategoryTrades(cat);
+      else if (sub === 'details') h += renderCategoryDetails(cat);
       return h;
     }
 
@@ -314,6 +318,10 @@
 
     function renderCategoryStocks(cat, title) {
       let h = `<div class="section"><div class="section-title">${title}</div>
+        <div style="font-size:12px;color:#8b949e;margin-bottom:12px;padding:8px 12px;background:#161b22;border-radius:8px;border:1px solid #30363d;">
+          ⚖️ <strong>Gleichgewichtung 1/${cat.n_total}</strong>: Jede Aktie hat gleiches Gewicht.
+          Bei ${cat.n_long} LONG + ${cat.n_total - cat.n_long} CASH → ${Math.round(cat.n_long/cat.n_total*100)}% des Portfolios investiert.
+        </div>
         <div class="metrics-grid" style="margin-bottom:12px;">
           ${mc('Sharpe', cat.sharpe_switch, 'B&H: '+cat.sharpe_bh, 'neutral')}
           ${mc('CAGR', pct(cat.cagr_switch)+'%', 'B&H: '+pct(cat.cagr_bh)+'%', 'positive')}
@@ -364,7 +372,126 @@
 
     function renderCategoryMatrix(cat) {
       const M = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-      return buildHeatmap(cat.months_switch, 'Monatsrenditen (Switch)', M);
+      let h = buildHeatmap(cat.months_switch, 'Monatsrenditen (Switch)', M);
+      if (cat.months_bh) h += buildHeatmap(cat.months_bh, 'Monatsrenditen (Buy & Hold)', M);
+      return h;
+    }
+
+    function renderCategoryTrades(cat) {
+      if (!cat.trades || !cat.trades.length) return '<div class="loading"><div>Keine Trades vorhanden</div></div>';
+      let h = '<div class="section"><div class="section-title">Trade-Historie (letzte 40)</div><div class="trade-log">';
+      for (const t of [...cat.trades].reverse()) {
+        const buy = t.Aktion.includes('KAUF');
+        let rendite = '';
+        if (t.Rendite != null) rendite = `<div class="trade-pnl ${t.Rendite>=0?'pos':'neg'}">${t.Rendite>0?'+':''}${t.Rendite}%</div>`;
+        h += `<div class="trade-row ${buy?'buy':'sell'}">
+          <div class="trade-date">${t.Datum}</div>
+          <div class="trade-action">${buy?'🟢':'🔴'} ${t.Aktion}</div>
+          <div style="text-align:right;"><div class="trade-price">${t.Kurs}</div>${rendite}</div></div>`;
+      }
+      h += '</div></div>';
+      return h;
+    }
+
+    function renderCategoryDetails(cat) {
+      let h = `<div class="section"><div class="section-title">Kennzahlen Portfolio (1/${cat.n_total} Gleichgewichtung)</div>
+        <table class="detail-table"><thead><tr><th>Kennzahl</th><th>Switch</th><th>B&H</th></tr></thead><tbody>`;
+      const rows = [
+        ['CAGR', pct(cat.cagr_switch)+'%', pct(cat.cagr_bh)+'%'],
+        ['Sharpe', cat.sharpe_switch, cat.sharpe_bh],
+        ['Sortino', cat.sortino_switch??'—', cat.sortino_bh??'—'],
+        ['Calmar', cat.calmar_switch??'—', cat.calmar_bh??'—'],
+        ['Max DD', pct(cat.max_dd_switch)+'%', pct(cat.max_dd_bh)+'%'],
+        ['Max Underwater', (cat.max_uw_switch??'—')+' Tg', (cat.max_uw_bh??'—')+' Tg'],
+        ['Volatilität', pct(cat.vol_switch)+'%', pct(cat.vol_bh)+'%'],
+        ['Investiert', Math.round(cat.pct_invested*100)+'%', '100%'],
+        ['Trades gesamt', cat.n_trades, '—'],
+        ['Aktien LONG', cat.n_long+'/'+cat.n_total, '—'],
+      ];
+      for (const [l,s,b] of rows) h += `<tr><td>${l}</td><td>${s}</td><td>${b}</td></tr>`;
+      h += '</tbody></table></div>';
+
+      h += `<div class="section"><div class="section-title">Einzelaktien-Details</div>
+        <table class="detail-table"><thead><tr><th>Aktie</th><th>Sharpe</th><th>Trades</th><th>Inv.%</th></tr></thead><tbody>`;
+      for (const st of cat.stocks) {
+        const isL = st.signal==='LONG';
+        h += `<tr><td style="color:${isL?'var(--green)':'var(--red)'};font-weight:700;">${st.ticker} ${isL?'🟢':'🔴'}</td>
+          <td>${st.sharpe}</td><td>${st.n_trades}</td><td>${Math.round(st.pct_invested*100)}%</td></tr>`;
+      }
+      h += '</tbody></table></div>';
+      
+      if (cat.equity && cat.equity.length > 1) {
+        const last = cat.equity[cat.equity.length-1];
+        const s10=Math.round(last.switch*10000).toLocaleString('de-DE'), b10=Math.round(last.bh*10000).toLocaleString('de-DE');
+        h += `<div class="section"><div class="section-title">$10.000 investiert (seit ${cat.start})</div><div class="metrics-grid">
+          ${mc('Switch','$'+s10,'','positive')} ${mc('B&H','$'+b10,'','neutral')}</div></div>`;
+      }
+      return h;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // ── METHODIK / INFO ─────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    function renderMethodik() {
+      return `
+      <div class="section">
+        <div class="section-title">📖 So funktioniert Strategy Switch</div>
+        <div class="info-block">
+          <h3>🎯 Grundprinzip</h3>
+          <p>Für jeden ETF / jede Aktie werden mehrere Strategien parallel berechnet.
+          Ein <strong>Rolling-Sharpe-Vergleich</strong> wählt automatisch die beste Strategie.
+          Ist keine Strategie profitabel → <strong>CASH</strong> (kein Investment).</p>
+
+          <h3>📊 Strategien</h3>
+          <ul>
+            <li><strong>Momentum</strong>: Kauft, wenn der Kurs über dem Kurs vor X Tagen liegt (Lookback: 60–250 Tage)</li>
+            <li><strong>MA (Moving Average)</strong>: Kauft, wenn der Kurs über dem gleitenden Durchschnitt liegt (50–200 Tage)</li>
+            <li><strong>RSI</strong>: Kauft, wenn der Relative Stärke Index über einem Schwellenwert liegt (14–30 Tage, Schwelle 30–50)</li>
+            <li><strong>Double MA</strong>: Kauft, wenn der schnelle MA über dem langsamen MA kreuzt (Fast 20–50, Slow 100–200)</li>
+            <li><strong>Dual Momentum</strong>: Kombiniert absolute + relative Stärke</li>
+          </ul>
+
+          <h3>🔄 Walk-Forward Optimierung</h3>
+          <p>Parameter werden NICHT auf die Vergangenheit überoptimiert!
+          Stattdessen wird ein <strong>rollendes Fenster</strong> verwendet:</p>
+          <ul>
+            <li>Training: 756 Tage (3 Jahre) für ETFs, 504 Tage für Aktien</li>
+            <li>Test: 21 Tage (1 Monat) out-of-sample</li>
+            <li>Das Fenster rollt Monat für Monat weiter</li>
+          </ul>
+
+          <h3>⚖️ Gewichtung (Schwarm / Value / Turnaround)</h3>
+          <p>Die Aktien-Kategorien verwenden <strong>Gleichgewichtung (1/N)</strong>:</p>
+          <ul>
+            <li>Bei 10 Aktien hat jede <strong>10% Gewicht</strong></li>
+            <li>Wenn 3 Aktien LONG und 7 CASH sind, ist das Portfolio zu <strong>30% investiert</strong></li>
+            <li>Cash-Aktien bringen 0% Tagesrendite → der Durchschnitt wird glatter, aber langsamer</li>
+            <li>Es gibt KEINE Konzentration — eine einzelne LONG-Aktie hat immer nur 1/N Gewicht</li>
+          </ul>
+
+          <h3>🐝 Schwarm (Top-10 Market Cap)</h3>
+          <p>Alle 63 Tage werden die <strong>10 größten Aktien nach Marktkapitalisierung</strong>
+          aus ~50 Mega-Caps ausgewählt. Jede bekommt ein eigenes Kauf/Verkauf-Signal.</p>
+
+          <h3>💎 Value</h3>
+          <p>Die <strong>günstigsten Aktien</strong> werden nach Fundamentaldaten ausgewählt:
+          niedriges P/E & P/B, hohe Dividendenrendite, stabile Gewinne.</p>
+
+          <h3>🔄 Turnaround</h3>
+          <p><strong>Gefallene Aktien mit Erholungspotenzial</strong>: 10–50% unter 52-Wochen-Hoch,
+          aber positives Umsatzwachstum und Profitabilität.</p>
+
+          <h3>💰 Kosten (Trade Republic)</h3>
+          <ul>
+            <li>Transaktionskosten: 1 bp (0.01%) pro Trade</li>
+            <li>Spread: 2 bp (0.02%) für ETFs, 3 bp für Aktien</li>
+            <li>Alle Backtests inkludieren diese Kosten</li>
+          </ul>
+
+          <h3>📅 Berechnung</h3>
+          <p>Automatisch <strong>Mo–Fr 22:30 UTC</strong> (nach US-Börsenschluss) via GitHub Actions.</p>
+        </div>
+      </div>`;
     }
 
     // ══════════════════════════════════════════════════════════════════════

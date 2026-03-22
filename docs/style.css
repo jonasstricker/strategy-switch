@@ -663,3 +663,36 @@ body {
 }
 .stock-chip-small.long { background: rgba(63,185,80,0.15); color: var(--green); }
 .stock-chip-small.cash { background: rgba(248,81,73,0.15); color: var(--red); }
+
+/* Trade P&L */
+.trade-pnl {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.trade-pnl.pos { color: var(--green); }
+.trade-pnl.neg { color: var(--red); }
+
+/* Info / Methodik page */
+.info-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.info-block h3 {
+  font-size: 14px;
+  margin: 16px 0 6px;
+  color: var(--text);
+}
+.info-block h3:first-child { margin-top: 0; }
+.info-block p { color: var(--text2); margin-bottom: 8px; }
+.info-block ul {
+  color: var(--text2);
+  padding-left: 18px;
+  margin-bottom: 8px;
+}
+.info-block li { margin-bottom: 3px; }
+.info-block strong { color: var(--text); }

@@ -391,8 +391,8 @@ def run_category_wf(category: str,
     if progress_callback:
         progress_callback(0.20, f"Lade Kursdaten für {len(selected)} Aktien …")
 
-    # 3. Download price data
-    raw = yf.download(selected, start="2015-01-01", auto_adjust=True, progress=False)
+    # 3. Download price data (10+ Jahre für Turnaround, Value)
+    raw = yf.download(selected, start="2014-01-01", auto_adjust=True, progress=False)
     if raw.empty:
         return None
 
