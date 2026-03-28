@@ -83,8 +83,9 @@ class AlpacaClient:
             raise
 
     def place_order(self, symbol: str, qty: int, side: str,
-                    order_type: str = "limit", time_in_force: str = "day",
+                    order_type: str = "market", time_in_force: str = "cls",
                     limit_price: float = None) -> dict:
+        """Place order. Default: Market-on-Close (type=market, tif=cls)."""
         body = {
             "symbol": symbol,
             "qty": str(qty),
@@ -199,26 +200,20 @@ def compute_orders(targets: dict, current_positions: dict,
             continue
 
         if diff > 0:
-            # Limit price: previous close + 0.1% buffer (buy slightly above)
-            limit_px = round(price * 1.001, 2)
             orders.append({
                 "symbol": symbol,
                 "side": "buy",
                 "qty": diff,
                 "reason": target.get("reason", ""),
                 "value": round(diff * price, 2),
-                "limit_price": limit_px,
             })
         elif diff < 0:
-            # Limit price: previous close - 0.1% buffer (sell slightly below)
-            limit_px = round(price * 0.999, 2)
             orders.append({
                 "symbol": symbol,
                 "side": "sell",
                 "qty": abs(diff),
                 "reason": target.get("reason", ""),
                 "value": round(abs(diff) * price, 2),
-                "limit_price": limit_px,
             })
 
     return orders
@@ -313,25 +308,23 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
         return True
 
     # Execute or dry-run
-    print(f"\n── {'⚠️  Orders (LIMIT)' if execute else 'DRY-RUN'} ──")
+    print(f"\n── {'⚠️  MOC Orders' if execute else 'DRY-RUN'} ──")
     for o in orders:
         icon = "🟢" if o["side"] == "buy" else "🔴"
-        lim = o.get("limit_price", "?")
         print(f"  {icon} {o['side'].upper():4s} {o['qty']:4d}× {o['symbol']:8s}  "
-              f"Limit ${lim}  (~${o['value']:,.0f})  — {o['reason']}")
+              f"MOC  (~${o['value']:,.0f})  — {o['reason']}")
 
     if execute:
-        print("\n── Sende Limit-Orders ──")
+        print("\n── Sende Market-on-Close Orders ──")
         for o in orders:
             try:
                 result = client.place_order(
                     o["symbol"], o["qty"], o["side"],
-                    order_type="limit",
-                    limit_price=o.get("limit_price"),
+                    order_type="market",
+                    time_in_force="cls",
                 )
                 log.info(f"  ✅ {o['side'].upper()} {o['qty']}× {o['symbol']} "
-                         f"@ Limit ${o.get('limit_price', '?')} → "
-                         f"Order {result.get('id', '?')} ({result.get('status', '?')})")
+                         f"MOC → Order {result.get('id', '?')} ({result.get('status', '?')})")
             except Exception as e:
                 log.error(f"  ❌ {o['symbol']}: {e}")
     else:

@@ -17,7 +17,7 @@
   <div class="header">
     <h1>📊 Strategy Switch</h1>
     <div class="subtitle" id="lastUpdate">Laden …</div>
-    <div class="auto-info">Berechnung Mo–Fr 21:00 UTC | Trading Di–Sa 14:35 UTC</div>
+    <div class="auto-info">Berechnung Mo–Fr 21:00 UTC | Trading Mo–Fr 19:50 UTC (MOC)</div>
   </div>
 
   <div class="tabs" id="tabs"></div>
@@ -697,8 +697,9 @@
 
           <h3>📅 Berechnung & Trading</h3>
           <p>Automatisch <strong>Mo–Fr 21:00 UTC</strong> (nach US-Börsenschluss) via GitHub Actions.</p>
-          <p>Trading: <strong>Di–Sa 14:35 UTC</strong> (5 Min nach US-Open) — Limit-Orders zum
-          Previous-Close ±0.1%. Kein Overnight-Gap-Risiko.</p>
+          <p>Trading: <strong>Mo–Fr 19:50 UTC</strong> (15:50 ET, 10 Min vor Close) —
+          Market-on-Close (MOC) Orders. Ausführung zum offiziellen Schlusskurs =
+          exakt der Preis, auf dem die Backtests basieren. Montags werden Freitags-Signale gehandelt.</p>
         </div>
       </div>`;
     }

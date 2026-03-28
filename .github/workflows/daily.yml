@@ -4,8 +4,8 @@ on:
   schedule:
     # Mo-Fr 21:00 UTC (nach US-Börsenschluss) — Berechnung & Signale
     - cron: '0 21 * * 1-5'
-    # Di-Sa 14:35 UTC (kurz nach US-Open 14:30) — Orders ausführen
-    - cron: '35 14 * * 2-6'
+    # Mo-Fr 19:50 UTC (15:50 ET, 10 Min vor Close) — MOC Orders
+    - cron: '50 19 * * 1-5'
   workflow_dispatch:  # Manueller Trigger über GitHub UI
     inputs:
       job:
@@ -63,7 +63,7 @@ jobs:
   trade:
     if: >-
       github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'both' || github.event.inputs.job == 'trade')
-      || github.event_name == 'schedule' && github.event.schedule == '35 14 * * 2-6'
+      || github.event_name == 'schedule' && github.event.schedule == '50 19 * * 1-5'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
