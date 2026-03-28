@@ -39,12 +39,12 @@
     // ── Fetch ───────────────────────────────────────────────────────────
     async function fetchSignals() {
       try {
-        const resp = await fetch('data/mobile_signals.json');
+        const resp = await fetch('data/mobile_signals.json?t=' + Date.now());
         if (!resp.ok) throw new Error('Noch keine Daten');
         D = await resp.json();
         allSignals = D.etfs || [];
         document.getElementById('lastUpdate').textContent = 'Stand: ' + (D.updated || '?');
-        if (allSignals.length) { buildTabs(); render(); }
+        if (allSignals.length || D.swarm || D.value || D.turnaround) { buildTabs(); render(); }
         else {
           document.getElementById('content').innerHTML =
             '<div class="loading"><div>⏳ Erste Berechnung steht aus</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Daten werden automatisch Mo–Fr 22:30 UTC berechnet.</div></div>';

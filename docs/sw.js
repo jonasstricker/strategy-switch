@@ -1,5 +1,5 @@
 // Service Worker for Strategy-Switch PWA (GitHub Pages)
-const CACHE_NAME = 'strat-switch-v2';
+const CACHE_NAME = 'strat-switch-v3';
 const CACHED_URLS = [
   '.',
   'style.css',
