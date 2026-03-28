@@ -667,7 +667,9 @@
 
           <h3>🐝 Schwarm (Top-10 Market Cap)</h3>
           <p>Alle 63 Tage werden die <strong>10 größten Aktien nach Marktkapitalisierung</strong>
-          aus ~50 Mega-Caps ausgewählt. Jede bekommt ein eigenes Kauf/Verkauf-Signal.</p>
+          aus ~50 Mega-Caps ausgewählt. Jede bekommt ein eigenes Kauf/Verkauf-Signal.
+          Die Market-Cap-Berechnung verwendet <strong>historische Shares Outstanding</strong>
+          (yfinance, ab 2015) — keine heutigen Werte für vergangene Rankings.</p>
 
           <h3>💎 Value</h3>
           <p>Die <strong>günstigsten Aktien</strong> werden nach Fundamentaldaten ausgewählt:
@@ -677,13 +679,15 @@
           <p><strong>Gefallene Aktien mit Erholungspotenzial</strong>: 10–50% unter 52-Wochen-Hoch,
           aber positives Umsatzwachstum und Profitabilität.</p>
 
-          <h3>⚠️ Hinweis: Survivorship / Look-Ahead Bias</h3>
-          <p>Value- und Turnaround-Aktien werden anhand <strong>aktueller Fundamentaldaten</strong>
-          ausgewählt und dann 10 Jahre zurückgerechnet. Das führt zu einem <strong>Look-Ahead Bias</strong>:
-          Aktien, die heute fundamental günstig sind, waren das nicht unbedingt auch 2016.
-          Die historische CAGR ist daher <strong>optimistisch verzerrt</strong> — die reale Out-of-Sample
-          Performance ab heute ist entscheidend. Historische yfinance-Fundamentaldaten sind leider
-          nicht verfügbar, daher ist eine korrekteren Simulation nicht möglich.</p>
+          <h3>⚠️ Hinweis: Historische Fundamentaldaten</h3>
+          <p>Value- und Turnaround-Aktien werden <strong>jährlich neu ausgewählt</strong>
+          anhand der Fundamentaldaten, die zum jeweiligen Zeitpunkt bekannt waren.
+          yfinance liefert ~4-5 Jahre Jahresabschlüsse (ab ~2021).
+          Für 2017-2020 wird der früheste verfügbare Stand (2021) verwendet —
+          dies verursacht für die ersten Jahre einen leichten Bias, der jedoch
+          deutlich geringer ist als eine feste Auswahl mit heutigen Daten.
+          Die Turnaround-Auswahl (52W-Hoch, Kurseinbruch) basiert größtenteils
+          auf Preisdaten und ist daher weniger betroffen.</p>
 
           <h3>💰 Kosten (Alpaca)</h3>
           <ul>

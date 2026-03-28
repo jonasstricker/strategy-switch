@@ -205,6 +205,173 @@ def screen_fundamentals(tickers: list[str]) -> dict:
     return fundamentals
 
 
+# ── Historical Fundamental Data ──────────────────────────────────────────────
+
+def download_historical_fundamentals(tickers: list[str],
+                                     progress_callback=None) -> dict:
+    """
+    Download annual financial statements + dividends for all tickers.
+    yfinance provides ~4-5 years of annual data (typ. 2021-2025).
+
+    Returns: {ticker: {"fiscal_years": {Timestamp: {...}}, "dividends": Series}}
+    """
+    hist = {}
+    total = len(tickers)
+
+    for i, ticker in enumerate(tickers):
+        if progress_callback and i % 15 == 0:
+            progress_callback(0.05 + 0.12 * (i / total),
+                              f"Fundamentaldaten {i+1}/{total} …")
+        try:
+            t = yf.Ticker(ticker)
+            inc = t.income_stmt
+            bs = t.balance_sheet
+            if inc is None or bs is None or inc.empty or bs.empty:
+                continue
+
+            fiscal_years = {}
+            cols = sorted(inc.columns)
+
+            for col in cols:
+                data = {}
+                ni = inc.loc["Net Income", col] if "Net Income" in inc.index else None
+                rev = inc.loc["Total Revenue", col] if "Total Revenue" in inc.index else None
+                data["net_income"] = float(ni) if pd.notna(ni) else None
+                data["revenue"] = float(rev) if pd.notna(rev) else None
+
+                eq = None
+                sh = None
+                if col in bs.columns:
+                    if "Stockholders Equity" in bs.index:
+                        eq = bs.loc["Stockholders Equity", col]
+                    if "Ordinary Shares Number" in bs.index:
+                        sh = bs.loc["Ordinary Shares Number", col]
+                data["equity"] = float(eq) if pd.notna(eq) else None
+                data["shares"] = float(sh) if pd.notna(sh) else None
+
+                if data["net_income"] and data["revenue"] and data["revenue"] > 0:
+                    data["profit_margin"] = data["net_income"] / data["revenue"]
+                else:
+                    data["profit_margin"] = None
+
+                data["revenue_growth"] = None
+                fiscal_years[col] = data
+
+            # Revenue growth vs prior year
+            sorted_dates = sorted(fiscal_years.keys())
+            for j in range(1, len(sorted_dates)):
+                prev = fiscal_years[sorted_dates[j - 1]]
+                curr = fiscal_years[sorted_dates[j]]
+                if prev.get("revenue") and curr.get("revenue") and prev["revenue"] > 0:
+                    curr["revenue_growth"] = curr["revenue"] / prev["revenue"] - 1
+
+            try:
+                divs = t.dividends
+            except Exception:
+                divs = pd.Series(dtype=float)
+
+            hist[ticker] = {
+                "fiscal_years": fiscal_years,
+                "dividends": divs if divs is not None else pd.Series(dtype=float),
+            }
+        except Exception:
+            continue
+
+    return hist
+
+
+def _compute_fundamentals_for_date(hist_fund: dict,
+                                   price_dict: dict,
+                                   date: pd.Timestamp,
+                                   tickers: list[str],
+                                   universe_names: dict) -> dict:
+    """
+    Build a fundamentals dict (same format as screen_fundamentals output)
+    at a specific historical date using point-in-time data only.
+    """
+    fundamentals = {}
+
+    for ticker in tickers:
+        if ticker not in hist_fund or ticker not in price_dict:
+            continue
+
+        hf = hist_fund[ticker]
+        prices = price_dict[ticker]
+
+        # Price at date (or closest before)
+        mask = prices.index <= date
+        if not mask.any():
+            continue
+        price = float(prices[mask].iloc[-1])
+        if price <= 0:
+            continue
+
+        # Most recent fiscal year end BEFORE this date
+        fiscal_dates = sorted(hf["fiscal_years"].keys())
+        available = [d for d in fiscal_dates if d <= date]
+        if not available:
+            if not fiscal_dates:
+                continue
+            available = [fiscal_dates[0]]  # Use earliest if nothing before date
+        fy = hf["fiscal_years"][available[-1]]
+
+        shares = fy.get("shares")
+        if not shares or shares <= 0:
+            continue
+
+        # P/E
+        pe = None
+        ni = fy.get("net_income")
+        if ni and ni > 0:
+            pe = price / (ni / shares)
+
+        # P/B
+        pb = None
+        eq = fy.get("equity")
+        if eq and eq > 0:
+            pb = price / (eq / shares)
+
+        # Market cap
+        market_cap = price * shares
+
+        # Dividend yield (trailing 12 months from historical dividends)
+        div_yield = 0.0
+        divs = hf.get("dividends")
+        if divs is not None and len(divs) > 0:
+            div_idx = divs.index
+            if hasattr(div_idx, "tz") and div_idx.tz is not None:
+                div_idx = div_idx.tz_localize(None)
+            divs_na = pd.Series(divs.values, index=div_idx)
+            one_year_ago = date - pd.Timedelta(days=365)
+            ttm = divs_na[(divs_na.index >= one_year_ago) & (divs_na.index <= date)]
+            if len(ttm) > 0:
+                div_yield = float(ttm.sum()) / price
+
+        # 52-week high (from prices — no look-ahead bias!)
+        one_year_ago = date - pd.Timedelta(days=365)
+        prices_1y = prices[(prices.index >= one_year_ago) & (prices.index <= date)]
+        if len(prices_1y) > 50:
+            w52_high = float(prices_1y.max())
+            pct_from_high = (price - w52_high) / w52_high if w52_high > 0 else None
+        else:
+            pct_from_high = None
+
+        fundamentals[ticker] = {
+            "name": universe_names.get(ticker, ticker),
+            "pe": pe,
+            "pb": pb,
+            "div_yield": div_yield,
+            "market_cap": market_cap,
+            "current_price": price,
+            "pct_from_52w_high": pct_from_high,
+            "52w_change": None,
+            "profit_margin": fy.get("profit_margin"),
+            "revenue_growth": fy.get("revenue_growth"),
+        }
+
+    return fundamentals
+
+
 def select_value_stocks(fundamentals: dict, top_n: int = TOP_N) -> list[str]:
     """
     Wählt die Top-N Value-Aktien basierend auf:
@@ -347,15 +514,17 @@ def run_category_wf(category: str,
                     cloud_mode: bool = False) -> dict | None:
     """
     Pipeline für Value- oder Turnaround-Kategorie.
-    
+
+    Jährliche Neuauswahl der Aktien anhand historischer Fundamentaldaten
+    (kein Look-Ahead Bias). yfinance liefert ~4-5 Jahre Jahresabschlüsse,
+    für ältere Zeiträume wird der früheste verfügbare Stand verwendet.
+
     Parameters
     ----------
     category : str
         "value" oder "turnaround"
     cloud_mode : bool
         Reduziertes Universum und kleinere Grids für Cloud
-    
-    Returns dict mit Resultaten pro Aktie + Aggregat.
     """
     use_universe = CLOUD_SCREENING_UNIVERSE if cloud_mode else SCREENING_UNIVERSE
     use_top_n = CLOUD_TOP_N if cloud_mode else TOP_N
@@ -365,150 +534,233 @@ def run_category_wf(category: str,
 
     tickers = list(use_universe.keys())
 
+    # ── 1. Download ALL prices for entire universe ───────────────────────
     if progress_callback:
-        progress_callback(0.05, f"{category.title()}: Lade Fundamentaldaten …")
+        progress_callback(0.03, f"{category.title()}: Lade Kursdaten …")
 
-    # 1. Screen fundamentals
-    fundamentals = screen_fundamentals(tickers)
-    if len(fundamentals) < 5:
-        log.warning(f"  {category}: Zu wenig Fundamental-Daten ({len(fundamentals)})")
-        return None
-
-    # 2. Select top stocks
-    if category == "value":
-        selected = select_value_stocks(fundamentals, use_top_n)
-    elif category == "turnaround":
-        selected = select_turnaround_stocks(fundamentals, use_top_n)
-    else:
-        return None
-
-    if len(selected) < 3:
-        log.warning(f"  {category}: Nur {len(selected)} Aktien gefunden")
-        return None
-
-    log.info(f"  {category}: {len(selected)} Aktien ausgewählt: {', '.join(selected)}")
-
-    if progress_callback:
-        progress_callback(0.20, f"Lade Kursdaten für {len(selected)} Aktien …")
-
-    # 3. Download price data (10+ Jahre)
-    raw = yf.download(selected, start="2016-01-01", auto_adjust=True, progress=False)
+    raw = yf.download(tickers, start="2016-01-01", auto_adjust=True, progress=False)
     if raw.empty:
         return None
 
-    # 4. Per-stock WF switching
-    stock_results = {}
-    for si, ticker in enumerate(selected):
-        if progress_callback:
-            progress_callback(0.25 + 0.65 * (si / len(selected)),
-                              f"WF: {ticker} ({si+1}/{len(selected)}) …")
-
-        try:
-            if isinstance(raw.columns, pd.MultiIndex):
+    price_dict = {}
+    if isinstance(raw.columns, pd.MultiIndex):
+        for ticker in tickers:
+            try:
                 col = ("Close", ticker)
-                if col not in raw.columns:
-                    continue
-                stock_close = raw[col].dropna()
-            else:
-                stock_close = raw["Close"].dropna()
-
-            if len(stock_close) < min_data:
+                if col in raw.columns:
+                    s = raw[col].dropna()
+                    if len(s) > 200:
+                        price_dict[ticker] = s
+            except Exception:
                 continue
-            stock_ret = stock_close.pct_change().dropna()
-            stock_close = stock_close.loc[stock_ret.index]  # Align
-
-            # WF per strategy
-            strat_oos = {}
-            for sname, sdef in use_strats.items():
-                r = _wf_single_stock(stock_close, stock_ret, sdef, wf_cfg=use_wf_cfg)
-                if r is not None:
-                    strat_oos[sname] = r
-
-            if len(strat_oos) < 2:
-                continue
-
-            # Align
-            s_start = max(s.first_valid_index() for s in strat_oos.values())
-            s_end = min(s.last_valid_index() for s in strat_oos.values())
-            aligned = {n: r.loc[s_start:s_end] for n, r in strat_oos.items()}
-            df_s = pd.DataFrame(aligned)
-            names_s = df_s.columns.tolist()
-
-            # Rolling Sharpe & Switching
-            roll_s = pd.DataFrame({
-                n: rolling_sharpe(df_s[n], ROLL_SHARPE_WINDOW, RF)
-                for n in names_s
-            })
-            sw_ret_s, active_s = apply_switching(
-                df_s, roll_s, tx=TX, slip=SLIP, min_hold=MIN_HOLD,
-            )
-
-            # Signal margin
-            if len(roll_s) > 0:
-                last_sharpes = roll_s.iloc[-1].dropna()
-                margin = float(last_sharpes.max()) if len(last_sharpes) > 0 else 0.0
-            else:
-                margin = 0.0
-
-            bench_s = stock_ret.loc[s_start:s_end]
-
-            fund = fundamentals.get(ticker, {})
-            stock_results[ticker] = {
-                "switch_ret": sw_ret_s,
-                "bench_ret": bench_s,
-                "active_strat": active_s,
-                "signal": "LONG" if active_s.iloc[-1] != "Cash" else "CASH",
-                "strategy": active_s.iloc[-1] if active_s.iloc[-1] != "Cash" else "—",
-                "signal_margin": round(margin, 3),
-                "sw_sharpe": sharpe_ratio(sw_ret_s, RF),
-                "bh_sharpe": sharpe_ratio(bench_s, RF),
-                "pct_invested": float((active_s != "Cash").mean()),
-                "n_trades": int((active_s != "Cash").astype(float).diff().abs().fillna(0).sum()),
-                "name": fund.get("name", use_universe.get(ticker, ticker)),
-                "pe": fund.get("pe"),
-                "pb": fund.get("pb"),
-                "div_yield": fund.get("div_yield"),
-                "pct_from_52w_high": fund.get("pct_from_52w_high"),
-                "revenue_growth": fund.get("revenue_growth"),
-                "close": stock_close,
-            }
-        except Exception as e:
-            log.warning(f"  {category}/{ticker}: {e}")
-            continue
-
-    if not stock_results:
+    if len(price_dict) < 10:
         return None
 
+    # ── 2. Download historical fundamentals ──────────────────────────────
     if progress_callback:
-        progress_callback(0.92, "Aggregation …")
+        progress_callback(0.05, f"Lade historische Fundamentaldaten …")
 
-    # 5. Aggregate portfolio
-    common_start = max(r["switch_ret"].index[0] for r in stock_results.values())
-    common_end = min(r["switch_ret"].index[-1] for r in stock_results.values())
+    hist_fund = download_historical_fundamentals(tickers, progress_callback)
 
-    agg_switch = pd.Series(0.0, index=pd.date_range(common_start, common_end, freq="B"))
-    agg_bench = pd.Series(0.0, index=agg_switch.index)
-    count = 0
+    if len(hist_fund) < 10:
+        log.warning(f"  {category}: Zu wenig Fundamental-Daten ({len(hist_fund)})")
+        return None
 
-    for ticker, sr in stock_results.items():
-        sw = sr["switch_ret"].reindex(agg_switch.index, fill_value=0.0)
-        bh = sr["bench_ret"].reindex(agg_bench.index, fill_value=0.0)
-        agg_switch += sw
-        agg_bench += bh
-        count += 1
+    # ── 3. Annual reselection ────────────────────────────────────────────
+    if progress_callback:
+        progress_callback(0.18, "Jährliche Aktienauswahl …")
 
-    if count > 0:
-        agg_switch /= count
-        agg_bench /= count
+    # Get all available trading dates from the first price series
+    ref_dates = sorted(list(price_dict.values())[0].index)
+    current_year = pd.Timestamp.now().year
 
-    agg_switch = agg_switch.loc[common_start:common_end].dropna()
-    agg_bench = agg_bench.loc[common_start:common_end].dropna()
+    rebalance_history = []
+    for year in range(2017, current_year + 1):
+        target = pd.Timestamp(f"{year}-01-15")
+        # Find nearest trading day on or after target
+        actual = [d for d in ref_dates if d >= target]
+        if not actual:
+            continue
+        rebal_date = actual[0]
+
+        # Compute point-in-time fundamentals
+        fund_at = _compute_fundamentals_for_date(
+            hist_fund, price_dict, rebal_date, tickers, use_universe
+        )
+        if len(fund_at) < 5:
+            continue
+
+        if category == "value":
+            selected = select_value_stocks(fund_at, use_top_n)
+        elif category == "turnaround":
+            selected = select_turnaround_stocks(fund_at, use_top_n)
+        else:
+            continue
+
+        if selected:
+            rebalance_history.append((rebal_date, selected))
+            log.info(f"  {category} {year}: {', '.join(selected)}")
+
+    if not rebalance_history:
+        log.warning(f"  {category}: Keine Rebalance-Punkte")
+        return None
+
+    # ── 4. Get current fundamentals for UI display ───────────────────────
+    if progress_callback:
+        progress_callback(0.20, "Aktuelle Fundamentaldaten …")
+    current_selected = rebalance_history[-1][1]
+    current_fund = screen_fundamentals(current_selected)
+
+    # ── 5. Run WF for all stocks that ever appeared ──────────────────────
+    all_ever = set()
+    for _, sel in rebalance_history:
+        all_ever.update(sel)
+
+    log.info(f"  {category}: {len(all_ever)} einzigartige Aktien über alle Jahre")
+
+    stock_wf = {}
+    sorted_ever = sorted(all_ever)
+    for si, ticker in enumerate(sorted_ever):
+        if progress_callback:
+            progress_callback(0.22 + 0.58 * (si / len(sorted_ever)),
+                              f"WF: {ticker} ({si+1}/{len(sorted_ever)}) …")
+
+        if ticker not in price_dict:
+            continue
+        stock_close = price_dict[ticker]
+        if len(stock_close) < min_data:
+            continue
+        stock_ret = stock_close.pct_change().dropna()
+        stock_close = stock_close.loc[stock_ret.index]
+
+        strat_oos = {}
+        for sname, sdef in use_strats.items():
+            r = _wf_single_stock(stock_close, stock_ret, sdef, wf_cfg=use_wf_cfg)
+            if r is not None:
+                strat_oos[sname] = r
+
+        if len(strat_oos) < 2:
+            continue
+
+        s_start = max(s.first_valid_index() for s in strat_oos.values())
+        s_end = min(s.last_valid_index() for s in strat_oos.values())
+        aligned = {n: r.loc[s_start:s_end] for n, r in strat_oos.items()}
+        df_s = pd.DataFrame(aligned)
+        names_s = df_s.columns.tolist()
+
+        roll_s = pd.DataFrame({
+            n: rolling_sharpe(df_s[n], ROLL_SHARPE_WINDOW, RF)
+            for n in names_s
+        })
+        sw_ret_s, active_s = apply_switching(
+            df_s, roll_s, tx=TX, slip=SLIP, min_hold=MIN_HOLD,
+        )
+
+        if len(roll_s) > 0:
+            last_sharpes = roll_s.iloc[-1].dropna()
+            margin = float(last_sharpes.max()) if len(last_sharpes) > 0 else 0.0
+        else:
+            margin = 0.0
+
+        bench_s = stock_ret.loc[s_start:s_end]
+
+        stock_wf[ticker] = {
+            "switch_ret": sw_ret_s,
+            "bench_ret": bench_s,
+            "active_strat": active_s,
+            "signal_margin": round(margin, 3),
+            "sw_sharpe": sharpe_ratio(sw_ret_s, RF),
+            "bh_sharpe": sharpe_ratio(bench_s, RF),
+            "pct_invested": float((active_s != "Cash").mean()),
+            "n_trades": int((active_s != "Cash").astype(float).diff().abs().fillna(0).sum()),
+            "close": stock_close,
+        }
+
+    if not stock_wf:
+        return None
+
+    # ── 6. Aggregate with rolling membership ─────────────────────────────
+    if progress_callback:
+        progress_callback(0.82, "Aggregation (rollierende Auswahl) …")
+
+    all_dates_set = set()
+    for r in stock_wf.values():
+        all_dates_set.update(r["switch_ret"].index)
+    all_dates = sorted(all_dates_set)
+    all_tickers_wf = sorted(stock_wf.keys())
+
+    # Build membership matrix (like swarm)
+    member_df = pd.DataFrame(0, index=all_dates, columns=all_tickers_wf)
+    current_members = set()
+    rebal_idx = 0
+    for d in all_dates:
+        while (rebal_idx < len(rebalance_history) and
+               rebalance_history[rebal_idx][0] <= d):
+            current_members = set(rebalance_history[rebal_idx][1])
+            rebal_idx += 1
+        for t in current_members:
+            if t in member_df.columns:
+                member_df.at[d, t] = 1
+
+    agg_switch = pd.Series(0.0, index=all_dates)
+    agg_bench = pd.Series(0.0, index=all_dates)
+
+    for d in all_dates:
+        active = [t for t in all_tickers_wf if member_df.at[d, t] == 1]
+        if not active:
+            continue
+        sw_sum, bh_sum, cnt = 0.0, 0.0, 0
+        for t in active:
+            sr = stock_wf[t]
+            if d in sr["switch_ret"].index:
+                sv = sr["switch_ret"].loc[d]
+                bv = sr["bench_ret"].loc[d] if d in sr["bench_ret"].index else 0.0
+                if not np.isnan(sv):
+                    sw_sum += sv
+                    bh_sum += bv if not np.isnan(bv) else 0.0
+                    cnt += 1
+        if cnt > 0:
+            agg_switch.loc[d] = sw_sum / cnt
+            agg_bench.loc[d] = bh_sum / cnt
+
+    # Trim to valid range
+    first_valid = rebalance_history[0][0]
+    agg_switch = agg_switch.loc[first_valid:].dropna()
+    agg_bench = agg_bench.loc[first_valid:].dropna()
     common_idx = agg_switch.index.intersection(agg_bench.index)
     agg_switch = agg_switch.loc[common_idx]
     agg_bench = agg_bench.loc[common_idx]
 
+    if len(agg_switch) < 50:
+        return None
+
     sw_eq = _equity(agg_switch)
     bh_eq = _equity(agg_bench)
+
+    # ── 7. Build stock_results for current selection (UI display) ────────
+    if progress_callback:
+        progress_callback(0.95, "Ergebnisse zusammenstellen …")
+
+    stock_results = {}
+    for ticker in current_selected:
+        if ticker not in stock_wf:
+            continue
+        wf = stock_wf[ticker]
+        fund = current_fund.get(ticker, {})
+        stock_results[ticker] = {
+            **wf,
+            "signal": "LONG" if wf["active_strat"].iloc[-1] != "Cash" else "CASH",
+            "strategy": wf["active_strat"].iloc[-1] if wf["active_strat"].iloc[-1] != "Cash" else "—",
+            "name": fund.get("name", use_universe.get(ticker, ticker)),
+            "pe": fund.get("pe"),
+            "pb": fund.get("pb"),
+            "div_yield": fund.get("div_yield"),
+            "pct_from_52w_high": fund.get("pct_from_52w_high"),
+            "revenue_growth": fund.get("revenue_growth"),
+        }
+
+    if not stock_results:
+        return None
 
     if progress_callback:
         progress_callback(1.0, "Fertig!")
@@ -524,7 +776,8 @@ def run_category_wf(category: str,
         "bh_sharpe": sharpe_ratio(agg_bench, RF),
         "pct_invested": np.mean([r["pct_invested"] for r in stock_results.values()]),
         "n_trades": sum(r["n_trades"] for r in stock_results.values()),
-        "start": common_start,
-        "end": common_end,
+        "start": agg_switch.index[0],
+        "end": agg_switch.index[-1],
         "selected_tickers": list(stock_results.keys()),
+        "rebalance_history": [(d.strftime("%Y-%m-%d"), tks) for d, tks in rebalance_history],
     }

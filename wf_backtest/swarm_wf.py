@@ -144,10 +144,12 @@ def download_universe(start: str = "2016-01-01",
                       progress_callback=None,
                       cloud_mode: bool = False) -> dict:
     """
-    Lade historische Kurse + aktuelle Shares Outstanding
+    Lade historische Kurse + historische Shares Outstanding
     für alle Aktien im Mega-Cap-Universum.
 
-    Returns: {ticker: {"close": Series, "shares": float, "name": str}}
+    Returns: {ticker: {"close": Series, "shares": Series, "name": str}}
+    shares ist jetzt eine zeitindizierte Series statt eines Skalars,
+    damit Market-Cap-Rankings historisch korrekt sind.
     """
     tickers = list(MEGA_CAP_UNIVERSE.keys())
 
@@ -162,8 +164,6 @@ def download_universe(start: str = "2016-01-01",
     universe = {}
 
     if cloud_mode:
-        # Cloud: Verwende Preis als Proxy für Ranking (keine einzelnen API-Calls)
-        # Mega-Caps: Preis × typische Shares-Schätzung reicht für Top-N Ranking
         if progress_callback:
             progress_callback(0.30, "Verarbeite Kurse (Cloud-Modus) …")
         if isinstance(raw.columns, pd.MultiIndex):
@@ -173,11 +173,9 @@ def download_universe(start: str = "2016-01-01",
                     if col in raw.columns:
                         s = raw[col].dropna()
                         if len(s) > 400:
-                            # Shares=1 → Ranking nur nach Preis-Niveau
-                            # Für bekannte Mega-Caps ausreichend genau
                             universe[ticker] = {
                                 "close": s,
-                                "shares": 1.0,
+                                "shares": pd.Series(1.0, index=s.index),
                                 "name": MEGA_CAP_UNIVERSE.get(ticker, ticker),
                             }
                 except Exception:
@@ -186,16 +184,17 @@ def download_universe(start: str = "2016-01-01",
 
     shares_data = {}
 
-    # Shares Outstanding für Market-Cap-Berechnung holen
+    # Historische Shares Outstanding für korrekte Market-Cap-Rankings
     if progress_callback:
-        progress_callback(0.15, "Lade Shares Outstanding …")
+        progress_callback(0.15, "Lade historische Shares Outstanding …")
 
     for ticker in tickers:
         try:
-            info = yf.Ticker(ticker).info
-            shares = info.get("sharesOutstanding") or info.get("impliedSharesOutstanding")
-            if shares:
-                shares_data[ticker] = float(shares)
+            sh = yf.Ticker(ticker).get_shares_full(start=start)
+            if sh is not None and len(sh) > 0:
+                # Timezone-naive machen und nach vorne füllen
+                sh.index = sh.index.tz_localize(None)
+                shares_data[ticker] = sh.sort_index()
         except Exception:
             continue
 
@@ -210,9 +209,13 @@ def download_universe(start: str = "2016-01-01",
                 if col in raw.columns:
                     s = raw[col].dropna()
                     if len(s) > 500 and ticker in shares_data:
+                        # Reindex shares auf die Kursdaten, forward-fill
+                        sh_series = shares_data[ticker].reindex(s.index, method="ffill")
+                        # Rückwärts-Fill für Daten vor erstem Shares-Eintrag
+                        sh_series = sh_series.bfill()
                         universe[ticker] = {
                             "close": s,
-                            "shares": shares_data[ticker],
+                            "shares": sh_series,
                             "name": MEGA_CAP_UNIVERSE.get(ticker, ticker),
                         }
             except Exception:
@@ -244,12 +247,12 @@ def build_rolling_top10(universe: dict,
     # Gemeinsamer Datumindex
     all_closes = {}
     all_returns = {}
-    all_shares = {}
+    all_shares = {}  # Now Series, not scalars
 
     for ticker, data in universe.items():
         all_closes[ticker] = data["close"]
         all_returns[ticker] = data["close"].pct_change().dropna()
-        all_shares[ticker] = data["shares"]
+        all_shares[ticker] = data["shares"]  # pd.Series
 
     # Finde gemeinsamen Datumsbereich
     close_df = pd.DataFrame(all_closes)
@@ -286,12 +289,19 @@ def build_rolling_top10(universe: dict,
             p = 0.35 + 0.25 * (r_idx / total_steps)
             progress_callback(p, f"Rebalance {r_idx+1}/{total_steps} …")
 
-        # Market Cap an diesem Tag berechnen
+        # Market Cap an diesem Tag berechnen (historische Shares)
         prices_at = close_df.loc[r_date].dropna()
         market_caps = {}
         for ticker in prices_at.index:
             if ticker in all_shares:
-                market_caps[ticker] = prices_at[ticker] * all_shares[ticker]
+                sh = all_shares[ticker]
+                # Nächsten verfügbaren Shares-Wert an/vor diesem Datum
+                if r_date in sh.index:
+                    shares_val = sh.loc[r_date]
+                else:
+                    mask = sh.index <= r_date
+                    shares_val = sh[mask].iloc[-1] if mask.any() else sh.iloc[0]
+                market_caps[ticker] = prices_at[ticker] * float(shares_val)
 
         if len(market_caps) < top_n:
             continue
