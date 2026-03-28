@@ -376,7 +376,7 @@ def _build_category_json(result: dict, category: str,
             # Fundamental data (Value/Turnaround only)
             "pe": sr.get("pe"),
             "pb": sr.get("pb"),
-            "div_yield": round(sr["div_yield"] * 100, 2) if sr.get("div_yield") else None,
+            "div_yield": round(sr["div_yield"] * 100, 2) if sr.get("div_yield") and sr["div_yield"] < 1 else (round(sr["div_yield"], 2) if sr.get("div_yield") else None),
             "pct_from_high": round(sr["pct_from_52w_high"] * 100, 1) if sr.get("pct_from_52w_high") else None,
         })
         # 1Y normalized chart per stock
@@ -390,17 +390,29 @@ def _build_category_json(result: dict, category: str,
             n_1y = min(252, len(s))
             s_1y = s.iloc[-n_1y:]
             norm = s_1y / s_1y.iloc[0]
+            # Get active_strat for cash markers
+            active = sr.get("active_strat")
             step_st = max(1, len(norm) // 60)
             pts = []
             for ii in range(0, len(norm), step_st):
+                idx_date = norm.index[ii]
+                is_cash = False
+                if active is not None and idx_date in active.index:
+                    is_cash = (active.loc[idx_date] == "Cash")
                 pts.append({
-                    "date": norm.index[ii].strftime("%Y-%m-%d"),
+                    "date": idx_date.strftime("%Y-%m-%d"),
                     "value": round(float(norm.iloc[ii]), 4),
+                    "cash": bool(is_cash),
                 })
             if pts[-1]["date"] != norm.index[-1].strftime("%Y-%m-%d"):
+                last_idx = norm.index[-1]
+                is_cash_last = False
+                if active is not None and last_idx in active.index:
+                    is_cash_last = (active.loc[last_idx] == "Cash")
                 pts.append({
-                    "date": norm.index[-1].strftime("%Y-%m-%d"),
+                    "date": last_idx.strftime("%Y-%m-%d"),
                     "value": round(float(norm.iloc[-1]), 4),
+                    "cash": bool(is_cash_last),
                 })
             stocks_1y[t] = pts
 

@@ -140,7 +140,7 @@ def _select_median(results, keys, top_pct=0.20):
     return out
 
 
-def download_universe(start: str = "2015-01-01",
+def download_universe(start: str = "2016-01-01",
                       progress_callback=None,
                       cloud_mode: bool = False) -> dict:
     """
@@ -412,7 +412,7 @@ def wf_single_portfolio(prices, returns, sdef, wf_cfg=None):
 
 
 def run_swarm_wf(top_n: int = TOP_N,
-                 start: str = "2015-01-01",
+                 start: str = "2016-01-01",
                  progress_callback=None,
                  cloud_mode: bool = False) -> dict | None:
     """
@@ -537,7 +537,7 @@ def run_swarm_wf(top_n: int = TOP_N,
 
     first_common = max(
         (r["switch_ret"].index[0] for r in stock_results.values()),
-        default=pd.Timestamp("2015-01-01"),
+        default=pd.Timestamp("2016-01-01"),
     )
     last_common = min(
         (r["switch_ret"].index[-1] for r in stock_results.values()),

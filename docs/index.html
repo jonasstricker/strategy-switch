@@ -677,6 +677,14 @@
           <p><strong>Gefallene Aktien mit Erholungspotenzial</strong>: 10–50% unter 52-Wochen-Hoch,
           aber positives Umsatzwachstum und Profitabilität.</p>
 
+          <h3>⚠️ Hinweis: Survivorship / Look-Ahead Bias</h3>
+          <p>Value- und Turnaround-Aktien werden anhand <strong>aktueller Fundamentaldaten</strong>
+          ausgewählt und dann 10 Jahre zurückgerechnet. Das führt zu einem <strong>Look-Ahead Bias</strong>:
+          Aktien, die heute fundamental günstig sind, waren das nicht unbedingt auch 2016.
+          Die historische CAGR ist daher <strong>optimistisch verzerrt</strong> — die reale Out-of-Sample
+          Performance ab heute ist entscheidend. Historische yfinance-Fundamentaldaten sind leider
+          nicht verfügbar, daher ist eine korrekteren Simulation nicht möglich.</p>
+
           <h3>💰 Kosten (Alpaca)</h3>
           <ul>
             <li>Transaktionskosten: $0 Kommission (Alpaca)</li>
@@ -799,6 +807,8 @@
       for(let i=0;i<n;i++){i===0?ctx.moveTo(x(i),y(bh[i])):ctx.lineTo(x(i),y(bh[i]));}ctx.stroke();ctx.setLineDash([]);
       ctx.beginPath();ctx.strokeStyle='#3fb950';ctx.lineWidth=2;
       for(let i=0;i<n;i++){i===0?ctx.moveTo(x(i),y(sw[i])):ctx.lineTo(x(i),y(sw[i]));}ctx.stroke();
+      // Store data for tooltip
+      canvas._chartData = eq.map(d=>({date:d.date, switch:d.switch, bh:d.bh, cash:d.cash}));
     }
 
     function drawStockChart(id, stocksData) {
@@ -828,6 +838,9 @@
         ctx.stroke(); const lv=((pts[pts.length-1].value-1)*100).toFixed(1);
         legend+=`<span style="color:${colors[ti%colors.length]}">● ${t} ${lv>0?'+':''}${lv}%</span>`;});
       const el=document.getElementById('stockLegend'); if(el) el.innerHTML=legend;
+      // Store data for tooltip: use first ticker's dates
+      const ft = tickers[0]; const fpts = stocksData[ft];
+      if (fpts && fpts.length) canvas._chartData = fpts.map(d=>({date:d.date, value:d.value}));
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────
@@ -835,75 +848,67 @@
     function mc(l,v,s,c){return `<div class="metric-card"><div class="metric-label">${l}</div><div class="metric-value ${c}">${v}</div>${s?'<div class="metric-sub">'+s+'</div>':''}</div>`;}
 
     // ── Stock Detail Modal ──────────────────────────────────────────────
-    // ── Pinch-Zoom for Chart Containers ─────────────────────────────────
+    // ── Interactive Chart Touch: Crosshair + Date/Value Tooltip ────────
     function enableChartZoom(container) {
       if (!container) return;
-      let scale = 1, lastScale = 1, posX = 0, posY = 0, lastPosX = 0, lastPosY = 0;
-      let pinchStartDist = 0, pinchStartScale = 1;
-      let startX = 0, startY = 0, isPanning = false;
       const canvas = container.querySelector('canvas');
       if (!canvas) return;
+      // Store chart data on the canvas for tooltip
+      if (!canvas._chartData) return;
+      const data = canvas._chartData;
 
-      container.style.overflow = 'hidden';
       container.style.touchAction = 'none';
+      container.style.position = 'relative';
 
-      function getDist(touches) {
-        const dx = touches[0].clientX - touches[1].clientX;
-        const dy = touches[0].clientY - touches[1].clientY;
-        return Math.sqrt(dx*dx+dy*dy);
+      // Tooltip element
+      let tooltip = container.querySelector('.chart-tooltip');
+      if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.className = 'chart-tooltip';
+        tooltip.style.cssText = 'position:absolute;top:4px;left:50%;transform:translateX(-50%);background:rgba(22,27,34,0.95);color:#e6edf3;padding:4px 10px;border-radius:6px;font-size:12px;pointer-events:none;display:none;white-space:nowrap;border:1px solid #30363d;z-index:10;';
+        container.appendChild(tooltip);
+      }
+      // Vertical crosshair line
+      let crosshair = container.querySelector('.chart-crosshair');
+      if (!crosshair) {
+        crosshair = document.createElement('div');
+        crosshair.className = 'chart-crosshair';
+        crosshair.style.cssText = 'position:absolute;top:10px;width:1px;background:#58a6ff;opacity:0.5;pointer-events:none;display:none;z-index:9;';
+        container.appendChild(crosshair);
       }
 
-      function clampPos() {
-        const cw = container.clientWidth, ch = container.clientHeight;
-        const maxX = Math.max(0, (scale-1)*cw/2), maxY = Math.max(0, (scale-1)*ch/2);
-        posX = Math.max(-maxX, Math.min(maxX, posX));
-        posY = Math.max(-maxY, Math.min(maxY, posY));
+      function handleTouch(clientX) {
+        const rect = canvas.getBoundingClientRect();
+        const xRel = clientX - rect.left;
+        const pad = {left:48, right:10};
+        const cW = rect.width - pad.left - pad.right;
+        const idx = Math.round(((xRel - pad.left) / cW) * (data.length - 1));
+        if (idx < 0 || idx >= data.length) { tooltip.style.display = 'none'; crosshair.style.display = 'none'; return; }
+        const d = data[idx];
+        const dateStr = d.date.split('-').reverse().join('.');
+        let valStr = '';
+        if (d.switch != null) valStr = `Sw: ${(d.switch*100-100).toFixed(1)}% | BH: ${(d.bh*100-100).toFixed(1)}%`;
+        else if (d.value != null) valStr = `${((d.value-1)*100).toFixed(1)}%`;
+        const cashStr = d.cash ? ' 🔴 CASH' : '';
+        tooltip.textContent = `${dateStr}  ${valStr}${cashStr}`;
+        tooltip.style.display = 'block';
+        crosshair.style.left = xRel + 'px';
+        crosshair.style.height = (rect.height - 30) + 'px';
+        crosshair.style.display = 'block';
       }
 
-      function apply() { canvas.style.transform = `translate(${posX}px,${posY}px) scale(${scale})`; }
-
-      container.addEventListener('touchstart', e => {
-        if (e.touches.length === 2) {
-          e.preventDefault();
-          pinchStartDist = getDist(e.touches);
-          pinchStartScale = scale;
-        } else if (e.touches.length === 1 && scale > 1) {
-          isPanning = true;
-          startX = e.touches[0].clientX - posX;
-          startY = e.touches[0].clientY - posY;
-        }
+      canvas.addEventListener('touchstart', e => {
+        if (e.touches.length === 1) { handleTouch(e.touches[0].clientX); }
+      }, {passive: true});
+      canvas.addEventListener('touchmove', e => {
+        if (e.touches.length === 1) { e.preventDefault(); handleTouch(e.touches[0].clientX); }
       }, {passive: false});
-
-      container.addEventListener('touchmove', e => {
-        if (e.touches.length === 2) {
-          e.preventDefault();
-          const dist = getDist(e.touches);
-          scale = Math.max(1, Math.min(5, pinchStartScale * (dist / pinchStartDist)));
-          clampPos(); apply();
-        } else if (e.touches.length === 1 && isPanning && scale > 1) {
-          e.preventDefault();
-          posX = e.touches[0].clientX - startX;
-          posY = e.touches[0].clientY - startY;
-          clampPos(); apply();
-        }
-      }, {passive: false});
-
-      container.addEventListener('touchend', e => {
-        isPanning = false;
-        if (e.touches.length < 2) {
-          lastScale = scale; lastPosX = posX; lastPosY = posY;
-        }
-        if (scale <= 1.05) { scale = 1; posX = 0; posY = 0; apply(); }
+      canvas.addEventListener('touchend', () => {
+        setTimeout(() => { tooltip.style.display = 'none'; crosshair.style.display = 'none'; }, 1500);
       });
-
-      // Double-tap to reset
-      let lastTap = 0;
-      container.addEventListener('touchend', e => {
-        if (e.touches.length > 0) return;
-        const now = Date.now();
-        if (now - lastTap < 300) { scale = 1; posX = 0; posY = 0; apply(); }
-        lastTap = now;
-      });
+      // Mouse support for desktop
+      canvas.addEventListener('mousemove', e => { handleTouch(e.clientX); });
+      canvas.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; crosshair.style.display = 'none'; });
     }
 
     function enableAllChartZoom() {
@@ -971,7 +976,7 @@
 
       document.body.insertAdjacentHTML('beforeend', h);
 
-      // Draw the single-stock chart
+      // Draw the single-stock chart with cash bars
       if (chartData && chartData.length > 1) {
         setTimeout(()=>{
           const canvas = document.getElementById('stockDetailChart');
@@ -988,22 +993,40 @@
           const x=i=>pad.left+(i/Math.max(1,n-1))*cW;
           const y=v=>mx===mn?pad.top+cH/2:pad.top+(1-(v-mn)/(mx-mn))*cH;
           ctx.fillStyle='#161b22';ctx.fillRect(0,0,W,H);
+          // Cash bars (red background for CASH periods)
+          for(let i=0;i<n;i++) {
+            if(chartData[i].cash) {
+              ctx.fillStyle='rgba(248,81,73,0.10)';
+              ctx.fillRect(x(i)-cW/n/2, pad.top, cW/n+.5, cH);
+            }
+          }
           // Grid
+          ctx.strokeStyle='#21262d';ctx.lineWidth=.5;
           for(let i=0;i<=4;i++){const yy=pad.top+(i/4)*cH;ctx.beginPath();ctx.moveTo(pad.left,yy);ctx.lineTo(W-pad.right,yy);ctx.stroke();
-            ctx.strokeStyle='#21262d';ctx.lineWidth=.5;
             const v=mx-(i/4)*(mx-mn);ctx.fillStyle='#8b949e';ctx.font='10px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText(v.toFixed(2),pad.left-4,yy+3);}
           // Baseline at 1.0
           if(mn<1&&mx>1){ctx.beginPath();ctx.strokeStyle='#484f58';ctx.lineWidth=.5;ctx.setLineDash([3,3]);ctx.moveTo(pad.left,y(1));ctx.lineTo(W-pad.right,y(1));ctx.stroke();ctx.setLineDash([]);}
           // Date labels
           ctx.textAlign='center';const ds=Math.max(1,Math.floor(n/5));
-          for(let i=0;i<n;i+=ds){const p=chartData[i].date.split('-');ctx.fillStyle='#8b949e';ctx.fillText(p[1]+'/'+p[0].slice(2),x(i),H-4);}
-          // Price line
-          ctx.beginPath();ctx.strokeStyle='#58a6ff';ctx.lineWidth=2;
-          for(let i=0;i<n;i++){i===0?ctx.moveTo(x(i),y(vals[i])):ctx.lineTo(x(i),y(vals[i]));}ctx.stroke();
+          for(let i=0;i<n;i+=ds){const p=chartData[i].date.split('-');ctx.fillStyle='#8b949e';ctx.fillText(p[2]+'.'+p[1]+'.'+p[0].slice(2),x(i),H-4);}
+          // Price line (green when LONG, red when CASH)
+          for(let i=1;i<n;i++){
+            ctx.beginPath();ctx.lineWidth=2;
+            ctx.strokeStyle=chartData[i].cash?'#f85149':'#58a6ff';
+            ctx.moveTo(x(i-1),y(vals[i-1]));ctx.lineTo(x(i),y(vals[i]));ctx.stroke();
+          }
+          // Cash/Long legend
+          ctx.font='10px -apple-system,sans-serif';ctx.textAlign='left';
+          ctx.fillStyle='#58a6ff'; ctx.fillText('● LONG',pad.left,H-4);
+          ctx.fillStyle='#f85149'; ctx.fillText('● CASH',pad.left+55,H-4);
           // Return label
           const ret = ((vals[vals.length-1]-1)*100).toFixed(1);
           ctx.fillStyle=ret>=0?'#3fb950':'#f85149';ctx.font='bold 12px -apple-system,sans-serif';
           ctx.textAlign='right';ctx.fillText((ret>=0?'+':'')+ret+'%',W-pad.right,pad.top+14);
+          // Store data for tooltip
+          canvas._chartData = chartData.map(d=>({date:d.date, value:d.value, cash:d.cash}));
+          // Enable crosshair on this chart too
+          enableChartZoom(canvas.parentElement);
         }, 50);
       }
     }
