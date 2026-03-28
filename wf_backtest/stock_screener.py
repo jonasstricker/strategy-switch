@@ -70,8 +70,8 @@ SCREENING_UNIVERSE = {
 
 # ── Konstanten ───────────────────────────────────────────────────────────────
 RF = 0.02
-TX = 0.0001    # Trade Republic
-SLIP = 0.0003  # Spread Einzelaktien
+TX = 0.0000    # Alpaca: $0 Kommission
+SLIP = 0.0005  # Spread Einzelaktien (konservativ)
 TOP_N = 10
 
 WF_CFG = {"train": 504, "test": 21, "step": 21}
@@ -392,7 +392,7 @@ def run_category_wf(category: str,
         progress_callback(0.20, f"Lade Kursdaten für {len(selected)} Aktien …")
 
     # 3. Download price data (10+ Jahre für Turnaround, Value)
-    raw = yf.download(selected, start="2014-01-01", auto_adjust=True, progress=False)
+    raw = yf.download(selected, start="2012-01-01", auto_adjust=True, progress=False)
     if raw.empty:
         return None
 

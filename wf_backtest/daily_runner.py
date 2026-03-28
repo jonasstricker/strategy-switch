@@ -59,8 +59,8 @@ log = logging.getLogger("daily_runner")
 RF = 0.02
 # Trade Republic Kosten: 1€ Fremdkostenpauschale pro Order
 # Bei €10.000 Portfolio → 0.01% pro Trade; Spread ca. 0.02% bei liquiden ETFs
-TX = 0.0001    # 1 bp (1€ auf 10k)
-SLIP = 0.0002  # 2 bp Spread (liquide EU-ETFs)
+TX = 0.0000    # Alpaca: $0 Kommission
+SLIP = 0.0003  # Spread ETFs (konservativ)
 
 # Lite-Modus: kleinere Grids für ressourcenbegrenzte Umgebungen (z.B. Render Free)
 # Oracle Cloud (24GB RAM, 4 Kerne) braucht das NICHT
@@ -533,6 +533,181 @@ def _build_category_json(result: dict, category: str,
     }
 
 
+def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
+    """
+    Combine Swarm, Value, Turnaround into optimal Alpha-Mix portfolio.
+    Tests weight combinations and selects the one maximizing Sharpe ratio.
+    """
+    available = {}
+    for key in ("swarm", "value", "turnaround"):
+        cat = categories.get(key)
+        if cat is not None and "switch_ret" in cat and "bench_ret" in cat:
+            available[key] = cat
+
+    if len(available) < 2:
+        return None
+
+    # Align all return series to common date range
+    starts = [cat["switch_ret"].index[0] for cat in available.values()]
+    ends = [cat["switch_ret"].index[-1] for cat in available.values()]
+    common_start = max(starts)
+    common_end = min(ends)
+
+    aligned_sw = {}
+    aligned_bh = {}
+    for key, cat in available.items():
+        sw = cat["switch_ret"].loc[common_start:common_end]
+        bh = cat["bench_ret"].loc[common_start:common_end]
+        common_idx = sw.index.intersection(bh.index)
+        aligned_sw[key] = sw.loc[common_idx]
+        aligned_bh[key] = bh.loc[common_idx]
+
+    # Use first key's index as reference
+    ref_idx = list(aligned_sw.values())[0].index
+    for key in aligned_sw:
+        aligned_sw[key] = aligned_sw[key].reindex(ref_idx, fill_value=0.0)
+        aligned_bh[key] = aligned_bh[key].reindex(ref_idx, fill_value=0.0)
+
+    # Grid search for optimal weights (5% steps)
+    keys = list(available.keys())
+    best_sharpe = -999
+    best_weights = None
+
+    step = 5
+    for w0 in range(20, 65, step):
+        for w1 in range(15, 65, step):
+            w2 = 100 - w0 - w1
+            if w2 < 10 or w2 > 60:
+                continue
+            weights = {keys[i]: w / 100.0 for i, w in enumerate([w0, w1, w2]) if i < len(keys)}
+            if len(keys) == 2:
+                weights = {keys[0]: w0 / 100.0, keys[1]: (100 - w0) / 100.0}
+                if w1 != 15:
+                    continue
+
+            mix_ret = sum(aligned_sw[k] * weights[k] for k in weights)
+            sh = sharpe_ratio(mix_ret, RF)
+            if sh > best_sharpe:
+                best_sharpe = sh
+                best_weights = dict(weights)
+
+    if best_weights is None:
+        return None
+
+    # Build the optimal mix returns
+    mix_sw = sum(aligned_sw[k] * best_weights[k] for k in best_weights)
+    mix_bh = sum(aligned_bh[k] * best_weights[k] for k in best_weights)
+
+    mix_sw_eq = _equity(mix_sw)
+    mix_bh_eq = _equity(mix_bh)
+
+    # Collect all stocks from all categories
+    all_stocks = []
+    for key in best_weights:
+        cat_data = mobile_data.get(key)
+        if cat_data and "stocks" in cat_data:
+            for st in cat_data["stocks"]:
+                st_copy = dict(st)
+                st_copy["category"] = key
+                all_stocks.append(st_copy)
+
+    n_long = sum(1 for s in all_stocks if s["signal"] == "LONG")
+
+    # Monthly heatmaps
+    monthly_sw = (mix_sw.groupby([mix_sw.index.year, mix_sw.index.month]).sum() * 100)
+    monthly_bh = (mix_bh.groupby([mix_bh.index.year, mix_bh.index.month]).sum() * 100)
+    months_switch = {}
+    for (yr, mo), val in monthly_sw.items():
+        if yr not in months_switch:
+            months_switch[yr] = {}
+        months_switch[yr][mo] = round(float(val), 1)
+    months_bh = {}
+    for (yr, mo), val in monthly_bh.items():
+        if yr not in months_bh:
+            months_bh[yr] = {}
+        months_bh[yr][mo] = round(float(val), 1)
+
+    # Yearly returns
+    yr_sw = mix_sw.groupby(mix_sw.index.year).sum() * 100
+    yr_bh = mix_bh.groupby(mix_bh.index.year).sum() * 100
+    yearly = []
+    for yr in sorted(set(yr_sw.index) | set(yr_bh.index)):
+        yearly.append({"year": int(yr), "switch": round(float(yr_sw.get(yr, 0)), 1),
+                        "bh": round(float(yr_bh.get(yr, 0)), 1)})
+
+    # Equity curve (downsampled)
+    eq_len = len(mix_sw_eq)
+    step_s = max(1, eq_len // 200)
+    equity = []
+    for i in range(0, eq_len, step_s):
+        equity.append({
+            "date": mix_sw_eq.index[i].strftime("%Y-%m-%d"),
+            "switch": round(float(mix_sw_eq.iloc[i]), 4),
+            "bh": round(float(mix_bh_eq.iloc[i]), 4),
+        })
+    if eq_len > 0:
+        equity.append({
+            "date": mix_sw_eq.index[-1].strftime("%Y-%m-%d"),
+            "switch": round(float(mix_sw_eq.iloc[-1]), 4),
+            "bh": round(float(mix_bh_eq.iloc[-1]), 4),
+        })
+
+    # Combine trades from all categories
+    all_trades = []
+    for key in best_weights:
+        cat_data = mobile_data.get(key)
+        if cat_data and cat_data.get("trades"):
+            all_trades.extend(cat_data["trades"])
+    all_trades.sort(key=lambda x: x["Datum"].split(".")[::-1])
+    all_trades = all_trades[-40:]
+
+    # Detail metrics
+    tuw_sw = time_under_water(mix_sw_eq)
+    tuw_bh = time_under_water(mix_bh_eq)
+
+    pct_invested = np.mean([
+        available[k].get("pct_invested", 0.5)
+        for k in best_weights
+    ])
+    n_trades = sum(
+        available[k].get("n_trades", 0)
+        for k in best_weights
+    )
+
+    weight_labels = {k: f"{int(v*100)}%" for k, v in best_weights.items()}
+
+    return {
+        "category": "alpha_mix",
+        "stocks": all_stocks,
+        "n_long": n_long,
+        "n_total": len(all_stocks),
+        "weights": weight_labels,
+        "sharpe_switch": round(float(best_sharpe), 2),
+        "sharpe_bh": round(float(sharpe_ratio(mix_bh, RF)), 2),
+        "cagr_switch": round(float(cagr(mix_sw_eq)), 4),
+        "cagr_bh": round(float(cagr(mix_bh_eq)), 4),
+        "max_dd_switch": round(float(max_drawdown(mix_sw_eq)), 4),
+        "max_dd_bh": round(float(max_drawdown(mix_bh_eq)), 4),
+        "sortino_switch": round(float(sortino_ratio(mix_sw, RF)), 2),
+        "sortino_bh": round(float(sortino_ratio(mix_bh, RF)), 2),
+        "calmar_switch": round(float(calmar_ratio(mix_sw_eq)), 2),
+        "calmar_bh": round(float(calmar_ratio(mix_bh_eq)), 2),
+        "vol_switch": round(float(mix_sw.std() * np.sqrt(252)), 4),
+        "vol_bh": round(float(mix_bh.std() * np.sqrt(252)), 4),
+        "max_uw_switch": tuw_sw.get("max_days", 0),
+        "max_uw_bh": tuw_bh.get("max_days", 0),
+        "pct_invested": round(float(pct_invested), 4),
+        "n_trades": n_trades,
+        "equity": equity,
+        "months_switch": months_switch,
+        "months_bh": months_bh,
+        "yearly_returns": yearly,
+        "trades": all_trades,
+        "start": common_start.strftime("%Y-%m-%d"),
+        "end": common_end.strftime("%Y-%m-%d"),
+    }
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
@@ -626,6 +801,7 @@ def main():
             "swarm": None,
             "value": None,
             "turnaround": None,
+            "alpha_mix": None,
         }
         for ticker, d in all_data.items():
             p = d["perf"]
@@ -785,6 +961,7 @@ def main():
             mobile_data["etfs"].append(etf_mobile)
 
         # ── 7. Swarm data (Aktien-Schwarm WF — Einzelaktien-Signale) ──
+        swarm = None
         try:
             log.info("Berechne Aktien-Schwarm (WF) …")
             from wf_backtest.swarm_wf import run_swarm_wf, MEGA_CAP_UNIVERSE
@@ -801,6 +978,7 @@ def main():
             log.warning(f"  Swarm-Berechnung übersprungen: {e}")
 
         # ── 8. Value-Aktien ──
+        value = None
         try:
             log.info("Berechne Value-Aktien …")
             from wf_backtest.stock_screener import run_category_wf
@@ -814,6 +992,7 @@ def main():
             log.warning(f"  Value-Berechnung übersprungen: {e}")
 
         # ── 9. Turnaround-Aktien ──
+        turnaround = None
         try:
             log.info("Berechne Turnaround-Aktien …")
             from wf_backtest.stock_screener import run_category_wf as run_cat
@@ -825,6 +1004,24 @@ def main():
                          f"(Sharpe {turnaround['sw_sharpe']:.2f})")
         except Exception as e:
             log.warning(f"  Turnaround-Berechnung übersprungen: {e}")
+
+        # ── 10. Alpha-Mix (gewichtete Kombination) ──
+        try:
+            log.info("Berechne Alpha-Mix …")
+            raw_cats = {}
+            if swarm is not None:
+                raw_cats["swarm"] = swarm
+            if value is not None:
+                raw_cats["value"] = value
+            if turnaround is not None:
+                raw_cats["turnaround"] = turnaround
+            alpha_mix = _build_alpha_mix(raw_cats, mobile_data)
+            if alpha_mix is not None:
+                mobile_data["alpha_mix"] = alpha_mix
+                log.info(f"  Alpha-Mix: Weights={alpha_mix['weights']}, "
+                         f"Sharpe={alpha_mix['sharpe_switch']:.2f}")
+        except Exception as e:
+            log.warning(f"  Alpha-Mix-Berechnung übersprungen: {e}")
 
         with open(MOBILE_SIGNALS_FILE, "w", encoding="utf-8") as f:
             json.dump(mobile_data, f, indent=2, ensure_ascii=False)

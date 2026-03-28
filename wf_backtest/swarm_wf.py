@@ -61,9 +61,9 @@ MEGA_CAP_UNIVERSE = {
 
 # ── Konstanten ───────────────────────────────────────────────────────────────
 RF = 0.02
-# Trade Republic: 1€ pro Order ≈ 1bp auf 10k, Spread ca. 3bp bei Einzelaktien
-TX = 0.0001
-SLIP = 0.0003
+# Alpaca: $0 Kommission, Spread konservativ 5bp
+TX = 0.0000
+SLIP = 0.0005
 TOP_N = 10
 REBALANCE_DAYS = 63    # Quartalsweise
 
@@ -441,11 +441,17 @@ def run_swarm_wf(top_n: int = TOP_N,
     close_df = port_data["close_df"]
     returns_df = port_data["returns_df"]
 
-    # Aktuelles Top-10
+    # Aktuelles Top-10 (für Signale)
     last_rebal = port_data["rebalance_history"][-1] if port_data["rebalance_history"] else None
     if last_rebal is None:
         return None
     current_top10 = last_rebal[1]
+    rebalance_history = port_data["rebalance_history"]
+
+    # Alle Aktien, die jemals im Top-N waren (für bias-freien Backtest)
+    all_ever_top = set()
+    for _, tickers in rebalance_history:
+        all_ever_top.update(tickers)
 
     if progress_callback:
         progress_callback(0.65, "WF pro Einzelaktie …")
@@ -456,7 +462,8 @@ def run_swarm_wf(top_n: int = TOP_N,
     min_data = 400 if cloud_mode else 600
 
     stock_results = {}
-    for si, ticker in enumerate(current_top10):
+    all_stocks_to_run = list(all_ever_top)
+    for si, ticker in enumerate(all_stocks_to_run):
         if ticker not in close_df.columns:
             continue
         stock_close = close_df[ticker].dropna()
@@ -466,8 +473,8 @@ def run_swarm_wf(top_n: int = TOP_N,
         stock_close = stock_close.loc[stock_ret.index]  # Align to returns index
 
         if progress_callback:
-            progress_callback(0.65 + 0.25 * (si / len(current_top10)),
-                              f"WF: {ticker} ({si+1}/{len(current_top10)}) …")
+            progress_callback(0.65 + 0.25 * (si / len(all_stocks_to_run)),
+                              f"WF: {ticker} ({si+1}/{len(all_stocks_to_run)}) …")
 
         # Run WF per strategy for this stock
         strat_oos = {}
@@ -525,27 +532,52 @@ def run_swarm_wf(top_n: int = TOP_N,
     if progress_callback:
         progress_callback(0.92, "Aggregation & Metriken …")
 
-    # 4. Aggregiertes Portfolio
-    # Benchmark = rollierende Top-10 B&H (berücksichtigt historische Verschiebungen)
-    # Switch = Durchschnitt der per-stock Switched Returns
-    common_start = max(r["switch_ret"].index[0] for r in stock_results.values())
-    common_end = min(r["switch_ret"].index[-1] for r in stock_results.values())
+    # 4. Aggregiertes Portfolio (mit rollierender Mitgliedschaft — kein Look-Ahead)
+    # An jedem Tag: nur die Aktien mitteln, die zu dem Zeitpunkt im Top-N waren.
 
-    agg_switch = pd.Series(0.0, index=pd.date_range(common_start, common_end, freq="B"))
-    count = 0
-    for ticker, sr in stock_results.items():
-        sw = sr["switch_ret"].reindex(agg_switch.index, fill_value=0.0)
-        agg_switch += sw
-        count += 1
-    if count > 0:
-        agg_switch /= count
+    first_common = max(
+        (r["switch_ret"].index[0] for r in stock_results.values()),
+        default=pd.Timestamp("2015-01-01"),
+    )
+    last_common = min(
+        (r["switch_ret"].index[-1] for r in stock_results.values()),
+        default=pd.Timestamp("2024-12-31"),
+    )
+    all_dates = pd.bdate_range(first_common, last_common)
+
+    # Build per-date membership from rebalance_history (vectorized)
+    # Create a DataFrame: rows=dates, cols=tickers, value=1 if in top-N
+    all_tickers_wf = list(stock_results.keys())
+    member_df = pd.DataFrame(0, index=all_dates, columns=all_tickers_wf)
+
+    current_members = set()
+    rebal_idx = 0
+    for d in all_dates:
+        while (rebal_idx < len(rebalance_history) and
+               rebalance_history[rebal_idx][0] <= d):
+            current_members = set(rebalance_history[rebal_idx][1])
+            rebal_idx += 1
+        for t in current_members:
+            if t in member_df.columns:
+                member_df.at[d, t] = 1
+
+    # Build switch return DataFrame
+    sw_df = pd.DataFrame(index=all_dates)
+    for t in all_tickers_wf:
+        sw_df[t] = stock_results[t]["switch_ret"].reindex(all_dates, fill_value=0.0)
+
+    # Masked returns: only count when stock is member
+    masked = sw_df * member_df
+    counts = member_df.sum(axis=1).replace(0, 1)
+    agg_switch = masked.sum(axis=1) / counts
 
     # Benchmark: nutze das rollierende Top-10 Portfolio (historisch korrekt)
-    agg_bench = portfolio_ret.reindex(agg_switch.index, fill_value=0.0)
+    agg_bench = portfolio_ret.reindex(all_dates, fill_value=0.0)
 
     # Trim to actual data
-    agg_switch = agg_switch.loc[common_start:common_end].dropna()
-    agg_bench = agg_bench.loc[common_start:common_end].dropna()
+    valid = member_df.sum(axis=1) > 0
+    agg_switch = agg_switch.loc[valid].dropna()
+    agg_bench = agg_bench.loc[agg_switch.index].dropna()
     common_idx = agg_switch.index.intersection(agg_bench.index)
     agg_switch = agg_switch.loc[common_idx]
     agg_bench = agg_bench.loc[common_idx]
@@ -553,8 +585,9 @@ def run_swarm_wf(top_n: int = TOP_N,
     sw_eq = _equity(agg_switch)
     bh_eq = _equity(agg_bench)
 
-    # Gesamte investierte Quote (Durchschnitt aller Aktien)
-    all_invested = np.mean([r["pct_invested"] for r in stock_results.values()])
+    # Gesamte investierte Quote (Durchschnitt der aktuellen Top-10 Aktien)
+    current_results = {t: stock_results[t] for t in current_top10 if t in stock_results}
+    all_invested = np.mean([r["pct_invested"] for r in current_results.values()]) if current_results else 0.5
     total_trades = sum(r["n_trades"] for r in stock_results.values())
 
     if progress_callback:
@@ -567,8 +600,8 @@ def run_swarm_wf(top_n: int = TOP_N,
         "sw_eq": sw_eq,
         "bh_eq": bh_eq,
         "active_strat": pd.Series("Mixed", index=common_idx),
-        # Per-stock results (individual signals)
-        "stock_results": stock_results,
+        # Per-stock results (nur aktuelle Top-10 für Signale)
+        "stock_results": current_results,
         # Portfolio details (rolling Top-10 mit Verschiebungen)
         "rebalance_history": port_data["rebalance_history"],
         "close_df": close_df,
@@ -578,8 +611,8 @@ def run_swarm_wf(top_n: int = TOP_N,
         "pct_invested": all_invested,
         "n_trades": total_trades,
         "top_n": top_n,
-        "start": common_start,
-        "end": common_end,
+        "start": common_idx[0] if len(common_idx) > 0 else first_common,
+        "end": common_idx[-1] if len(common_idx) > 0 else last_common,
         "names": list(STRATEGY_DEFS.keys()),
         "universe_names": MEGA_CAP_UNIVERSE,
         # Historische Top-10 Verschiebungen (letzte 10 Rebalances)
