@@ -120,11 +120,15 @@ def map_ticker(yahoo_ticker: str) -> str | None:
 def compute_targets(signals: dict, equity: float) -> dict:
     """
     Compute target dollar allocation per symbol.
+    Uses Alpha-Mix combined portfolio with Sharpe-optimized weights.
+    Falls back to individual category signals if alpha_mix is missing.
+
+    Allocation: 60% ETFs (15% each), 40% Alpha-Mix stocks.
     Returns: {alpaca_symbol: {"dollars": float, "signal": str, "reason": str}}
     """
     targets = {}
 
-    # ETFs: 15% each
+    # ETFs: 15% each = 60% total
     for etf in signals.get("etfs", []):
         symbol = map_ticker(etf["ticker"])
         if not symbol:
@@ -142,34 +146,79 @@ def compute_targets(signals: dict, equity: float) -> dict:
                 "reason": f"ETF {etf['ticker']} CASH",
             }
 
-    # Categories
-    cat_weights = {"swarm": 0.18, "value": 0.12, "turnaround": 0.10}
-    for cat_key, weight in cat_weights.items():
-        cat = signals.get(cat_key)
-        if not cat:
-            continue
-        stocks = cat.get("stocks", [])
-        n_long = sum(1 for s in stocks if s["signal"] == "LONG")
+    # Alpha-Mix: 40% of equity, distributed using Sharpe-optimized category weights
+    alpha = signals.get("alpha_mix")
+    if alpha and alpha.get("stocks"):
+        raw_weights = alpha.get("weights", {})
+        # Parse weights like {"swarm": "40%", "value": "40%", "turnaround": "20%"}
+        cat_weights = {}
+        for k, v in raw_weights.items():
+            cat_weights[k] = float(str(v).replace("%", "")) / 100.0
 
-        for s in stocks:
+        stock_equity = equity * 0.40  # 40% for all stock categories
+
+        # Group LONG stocks by category
+        long_by_cat = {}
+        for s in alpha["stocks"]:
+            cat = s.get("category", "unknown")
+            if s["signal"] == "LONG":
+                long_by_cat.setdefault(cat, []).append(s)
+
+        for s in alpha["stocks"]:
             symbol = map_ticker(s["ticker"])
             if not symbol:
                 continue
+            cat = s.get("category", "unknown")
+            w = cat_weights.get(cat, 0)
+            cat_budget = stock_equity * w
+            n_long = len(long_by_cat.get(cat, []))
+
             if s["signal"] == "LONG" and n_long > 0:
-                alloc = (equity * weight) / n_long
-                targets[symbol] = {
-                    "dollars": alloc,
-                    "signal": "LONG",
-                    "reason": f"{cat_key} {s['ticker']} LONG ({s.get('strategy', '?')})",
-                }
+                alloc = cat_budget / n_long
+                # If same symbol already targeted (overlapping tickers), use higher
+                if symbol in targets and targets[symbol]["signal"] == "LONG":
+                    targets[symbol]["dollars"] += alloc
+                    targets[symbol]["reason"] += f" + alpha/{cat}"
+                else:
+                    targets[symbol] = {
+                        "dollars": alloc,
+                        "signal": "LONG",
+                        "reason": f"alpha/{cat} {s['ticker']} LONG",
+                    }
             else:
-                # Only set to 0 if not already set by another category with LONG
                 if symbol not in targets or targets[symbol]["signal"] != "LONG":
                     targets[symbol] = {
                         "dollars": 0,
                         "signal": "CASH",
-                        "reason": f"{cat_key} {s['ticker']} CASH",
+                        "reason": f"alpha/{cat} {s['ticker']} CASH",
                     }
+    else:
+        # Fallback: individual categories
+        cat_weights = {"swarm": 0.18, "value": 0.12, "turnaround": 0.10}
+        for cat_key, weight in cat_weights.items():
+            cat = signals.get(cat_key)
+            if not cat:
+                continue
+            stocks = cat.get("stocks", [])
+            n_long = sum(1 for s in stocks if s["signal"] == "LONG")
+            for s in stocks:
+                symbol = map_ticker(s["ticker"])
+                if not symbol:
+                    continue
+                if s["signal"] == "LONG" and n_long > 0:
+                    alloc = (equity * weight) / n_long
+                    targets[symbol] = {
+                        "dollars": alloc,
+                        "signal": "LONG",
+                        "reason": f"{cat_key} {s['ticker']} LONG",
+                    }
+                else:
+                    if symbol not in targets or targets[symbol]["signal"] != "LONG":
+                        targets[symbol] = {
+                            "dollars": 0,
+                            "signal": "CASH",
+                            "reason": f"{cat_key} {s['ticker']} CASH",
+                        }
 
     return targets
 

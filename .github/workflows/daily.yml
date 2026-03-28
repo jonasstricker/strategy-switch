@@ -80,11 +80,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Auto-Trade (Alpaca)
-        if: env.ALPACA_KEY_ID != ''
+      - name: Auto-Trade (Alpaca Paper)
+        if: ${{ secrets.ALPACA_KEY_ID != '' }}
         env:
           ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
-          ALPACA_LIVE: ${{ secrets.ALPACA_LIVE }}
-          TRADING_ENABLED: ${{ secrets.TRADING_ENABLED }}
+          ALPACA_LIVE: ""
+          TRADING_ENABLED: "1"
         run: python -m trading.alpaca_trader
