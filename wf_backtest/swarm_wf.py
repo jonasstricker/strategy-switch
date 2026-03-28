@@ -192,9 +192,11 @@ def download_universe(start: str = "2016-01-01",
         try:
             sh = yf.Ticker(ticker).get_shares_full(start=start)
             if sh is not None and len(sh) > 0:
-                # Timezone-naive machen und nach vorne füllen
                 sh.index = sh.index.tz_localize(None)
-                shares_data[ticker] = sh.sort_index()
+                sh = sh.sort_index()
+                # Deduplizieren (yfinance liefert manchmal mehrere Einträge pro Tag)
+                sh = sh[~sh.index.duplicated(keep="last")]
+                shares_data[ticker] = sh
         except Exception:
             continue
 
@@ -210,9 +212,10 @@ def download_universe(start: str = "2016-01-01",
                     s = raw[col].dropna()
                     if len(s) > 500 and ticker in shares_data:
                         # Reindex shares auf die Kursdaten, forward-fill
-                        sh_series = shares_data[ticker].reindex(s.index, method="ffill")
-                        # Rückwärts-Fill für Daten vor erstem Shares-Eintrag
-                        sh_series = sh_series.bfill()
+                        sh_raw = shares_data[ticker]
+                        # Combine indices, then reindex with ffill
+                        combined = sh_raw.reindex(sh_raw.index.union(s.index)).ffill().bfill()
+                        sh_series = combined.reindex(s.index)
                         universe[ticker] = {
                             "close": s,
                             "shares": sh_series,
