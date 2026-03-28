@@ -83,14 +83,18 @@ class AlpacaClient:
             raise
 
     def place_order(self, symbol: str, qty: int, side: str,
-                    order_type: str = "market", time_in_force: str = "day") -> dict:
-        return self._call("POST", "/v2/orders", {
+                    order_type: str = "limit", time_in_force: str = "day",
+                    limit_price: float = None) -> dict:
+        body = {
             "symbol": symbol,
             "qty": str(qty),
             "side": side,
             "type": order_type,
             "time_in_force": time_in_force,
-        })
+        }
+        if order_type == "limit" and limit_price is not None:
+            body["limit_price"] = str(round(limit_price, 2))
+        return self._call("POST", "/v2/orders", body)
 
     def close_position(self, symbol: str) -> dict:
         return self._call("DELETE", f"/v2/positions/{symbol}")
@@ -195,20 +199,26 @@ def compute_orders(targets: dict, current_positions: dict,
             continue
 
         if diff > 0:
+            # Limit price: previous close + 0.1% buffer (buy slightly above)
+            limit_px = round(price * 1.001, 2)
             orders.append({
                 "symbol": symbol,
                 "side": "buy",
                 "qty": diff,
                 "reason": target.get("reason", ""),
                 "value": round(diff * price, 2),
+                "limit_price": limit_px,
             })
         elif diff < 0:
+            # Limit price: previous close - 0.1% buffer (sell slightly below)
+            limit_px = round(price * 0.999, 2)
             orders.append({
                 "symbol": symbol,
                 "side": "sell",
                 "qty": abs(diff),
                 "reason": target.get("reason", ""),
                 "value": round(abs(diff) * price, 2),
+                "limit_price": limit_px,
             })
 
     return orders
@@ -303,18 +313,24 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
         return True
 
     # Execute or dry-run
-    print(f"\n── {'⚠️  Orders' if execute else 'DRY-RUN'} ──")
+    print(f"\n── {'⚠️  Orders (LIMIT)' if execute else 'DRY-RUN'} ──")
     for o in orders:
         icon = "🟢" if o["side"] == "buy" else "🔴"
+        lim = o.get("limit_price", "?")
         print(f"  {icon} {o['side'].upper():4s} {o['qty']:4d}× {o['symbol']:8s}  "
-              f"(~${o['value']:,.0f})  — {o['reason']}")
+              f"Limit ${lim}  (~${o['value']:,.0f})  — {o['reason']}")
 
     if execute:
-        print("\n── Sende Orders ──")
+        print("\n── Sende Limit-Orders ──")
         for o in orders:
             try:
-                result = client.place_order(o["symbol"], o["qty"], o["side"])
-                log.info(f"  ✅ {o['side'].upper()} {o['qty']}× {o['symbol']} → "
+                result = client.place_order(
+                    o["symbol"], o["qty"], o["side"],
+                    order_type="limit",
+                    limit_price=o.get("limit_price"),
+                )
+                log.info(f"  ✅ {o['side'].upper()} {o['qty']}× {o['symbol']} "
+                         f"@ Limit ${o.get('limit_price', '?')} → "
                          f"Order {result.get('id', '?')} ({result.get('status', '?')})")
             except Exception as e:
                 log.error(f"  ❌ {o['symbol']}: {e}")

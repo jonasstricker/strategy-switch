@@ -2,17 +2,32 @@ name: Daily Strategy Calculation
 
 on:
   schedule:
-    # Mo-Fr 22:30 UTC (nach US-Börsenschluss)
-    - cron: '30 22 * * 1-5'
+    # Mo-Fr 21:00 UTC (nach US-Börsenschluss) — Berechnung & Signale
+    - cron: '0 21 * * 1-5'
+    # Di-Sa 14:35 UTC (kurz nach US-Open 14:30) — Orders ausführen
+    - cron: '35 14 * * 2-6'
   workflow_dispatch:  # Manueller Trigger über GitHub UI
+    inputs:
+      job:
+        description: 'Which job to run'
+        required: false
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - compute
+          - trade
 
 permissions:
   contents: write
 
 jobs:
   compute:
+    if: >-
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'both' || github.event.inputs.job == 'compute')
+      || github.event_name == 'schedule' && github.event.schedule == '0 21 * * 1-5'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -44,6 +59,26 @@ jobs:
           git add docs/data/mobile_signals.json
           git diff --staged --quiet && echo "No changes" || git commit -m "📊 Signals $(date -u +%Y-%m-%d)"
           git push
+
+  trade:
+    if: >-
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'both' || github.event.inputs.job == 'trade')
+      || github.event_name == 'schedule' && github.event.schedule == '35 14 * * 2-6'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
       - name: Auto-Trade (Alpaca)
         if: env.ALPACA_KEY_ID != ''
