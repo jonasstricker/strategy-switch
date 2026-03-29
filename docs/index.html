@@ -197,7 +197,7 @@
     function afterETFRender(d) {
       const sub = subTab[activeTab] || 'signal';
       if (sub==='signal') drawChart('eqChart', d.equity_1y, true);
-      else if (sub==='historie') drawChart('fullChart', d.equity_full, false);
+      else if (sub==='historie') drawChart('fullChart', d.equity_full, true);
       enableAllChartZoom();
     }
 
@@ -261,8 +261,13 @@
 
     function renderETFHistory(d) {
       let h = `<div class="section"><div class="section-title">${d.ticker.replace('.DE','')} — Gesamte Historie</div>
-        <div class="chart-container" style="height:260px;"><canvas id="fullChart"></canvas></div>
-        <div class="chart-legend"><span class="sw">Switch</span><span class="bh">B&H</span></div></div>`;
+        <div class="chart-container" style="height:260px;"><canvas id="fullChart"></canvas></div>`;
+      if (d.equity_full && d.equity_full.length) {
+        h += '<div class="cash-indicator">';
+        for (const p of d.equity_full) h += `<div class="day ${p.cash?'cash':'long'}"></div>`;
+        h += '</div>';
+      }
+      h += '<div class="chart-legend"><span class="sw">Switch</span><span class="bh">B&H</span></div></div>';
       if (d.yearly_returns && d.yearly_returns.length) h += renderYearlyBars(d.yearly_returns);
       if (d.trades && d.trades.length) h += renderTrades(d.trades);
       return h;
@@ -891,7 +896,8 @@
         const d = data[idx];
         const dateStr = d.date.split('-').reverse().join('.');
         let valStr = '';
-        if (d.switch != null) valStr = `Sw: ${(d.switch*100-100).toFixed(1)}% | BH: ${(d.bh*100-100).toFixed(1)}%`;
+        if (d.switch != null && d.bh != null) valStr = `Sw: ${(d.switch*100-100).toFixed(1)}% | BH: ${(d.bh*100-100).toFixed(1)}%`;
+        else if (d.switch != null && d.value != null) valStr = `Sw: ${(d.switch*100-100).toFixed(1)}% | BH: ${((d.value-1)*100).toFixed(1)}%`;
         else if (d.value != null) valStr = `${((d.value-1)*100).toFixed(1)}%`;
         const cashStr = d.cash ? ' 🔴 CASH' : '';
         tooltip.textContent = `${dateStr}  ${valStr}${cashStr}`;
@@ -993,7 +999,9 @@
           const W=rect.width,H=rect.height-16,pad={top:10,right:10,bottom:20,left:48};
           const cW=W-pad.left-pad.right,cH=H-pad.top-pad.bottom;
           const vals = chartData.map(d=>d.value);
-          const mn=Math.min(...vals)*.98, mx=Math.max(...vals)*1.02, n=chartData.length;
+          const swValsAll = chartData.filter(d=>d.switch!=null).map(d=>d.switch);
+          const allVals = [...vals, ...swValsAll];
+          const mn=Math.min(...allVals)*.98, mx=Math.max(...allVals)*1.02, n=chartData.length;
           const x=i=>pad.left+(i/Math.max(1,n-1))*cW;
           const y=v=>mx===mn?pad.top+cH/2:pad.top+(1-(v-mn)/(mx-mn))*cH;
           ctx.fillStyle='#161b22';ctx.fillRect(0,0,W,H);
@@ -1013,22 +1021,39 @@
           // Date labels
           ctx.textAlign='center';const ds=Math.max(1,Math.floor(n/5));
           for(let i=0;i<n;i+=ds){const p=chartData[i].date.split('-');ctx.fillStyle='#8b949e';ctx.fillText(p[2]+'.'+p[1]+'.'+p[0].slice(2),x(i),H-4);}
-          // Price line (green when LONG, red when CASH)
+          // Price line (blue when LONG, red when CASH)
           for(let i=1;i<n;i++){
             ctx.beginPath();ctx.lineWidth=2;
             ctx.strokeStyle=chartData[i].cash?'#f85149':'#58a6ff';
             ctx.moveTo(x(i-1),y(vals[i-1]));ctx.lineTo(x(i),y(vals[i]));ctx.stroke();
           }
-          // Cash/Long legend
+          // Switching equity line (green)
+          const hasSw = chartData[0] && chartData[0].switch != null;
+          if (hasSw) {
+            const swVals = chartData.map(d=>d.switch);
+            ctx.beginPath();ctx.strokeStyle='#3fb950';ctx.lineWidth=2;ctx.setLineDash([]);
+            for(let i=0;i<n;i++){i===0?ctx.moveTo(x(i),y(swVals[i])):ctx.lineTo(x(i),y(swVals[i]));}
+            ctx.stroke();
+          }
+          // Cash/Long legend + Switch
           ctx.font='10px -apple-system,sans-serif';ctx.textAlign='left';
-          ctx.fillStyle='#58a6ff'; ctx.fillText('● LONG',pad.left,H-4);
-          ctx.fillStyle='#f85149'; ctx.fillText('● CASH',pad.left+55,H-4);
-          // Return label
-          const ret = ((vals[vals.length-1]-1)*100).toFixed(1);
-          ctx.fillStyle=ret>=0?'#3fb950':'#f85149';ctx.font='bold 12px -apple-system,sans-serif';
-          ctx.textAlign='right';ctx.fillText((ret>=0?'+':'')+ret+'%',W-pad.right,pad.top+14);
+          ctx.fillStyle='#58a6ff'; ctx.fillText('● B&H',pad.left,H-4);
+          ctx.fillStyle='#f85149'; ctx.fillText('● CASH',pad.left+45,H-4);
+          if (hasSw) { ctx.fillStyle='#3fb950'; ctx.fillText('● Switch',pad.left+95,H-4); }
+          // Return labels (top-right)
+          const retBH = ((vals[vals.length-1]-1)*100).toFixed(1);
+          if (hasSw) {
+            const swVals = chartData.map(d=>d.switch);
+            const retSW = ((swVals[swVals.length-1]-1)*100).toFixed(1);
+            ctx.font='bold 11px -apple-system,sans-serif';ctx.textAlign='right';
+            ctx.fillStyle='#3fb950';ctx.fillText('SW:'+(retSW>=0?'+':'')+retSW+'%',W-pad.right,pad.top+12);
+            ctx.fillStyle='#58a6ff';ctx.fillText('B&H:'+(retBH>=0?'+':'')+retBH+'%',W-pad.right,pad.top+24);
+          } else {
+            ctx.fillStyle=retBH>=0?'#3fb950':'#f85149';ctx.font='bold 12px -apple-system,sans-serif';
+            ctx.textAlign='right';ctx.fillText((retBH>=0?'+':'')+retBH+'%',W-pad.right,pad.top+14);
+          }
           // Store data for tooltip
-          canvas._chartData = chartData.map(d=>({date:d.date, value:d.value, cash:d.cash}));
+          canvas._chartData = chartData.map(d=>({date:d.date, value:d.value, cash:d.cash, switch:d.switch}));
           // Enable crosshair on this chart too
           enableChartZoom(canvas.parentElement);
         }, 50);

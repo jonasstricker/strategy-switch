@@ -390,30 +390,42 @@ def _build_category_json(result: dict, category: str,
             n_1y = min(252, len(s))
             s_1y = s.iloc[-n_1y:]
             norm = s_1y / s_1y.iloc[0]
-            # Get active_strat for cash markers
-            active = sr.get("active_strat")
+            # Switching equity from hard returns
+            sw_ret = sr.get("switch_ret")
+            if sw_ret is not None and len(sw_ret) > 0:
+                sw_1y = sw_ret.iloc[-n_1y:]
+                sw_eq_s = (1 + sw_1y).cumprod()
+                sw_eq_s = sw_eq_s.reindex(norm.index, method="ffill")
+            else:
+                sw_eq_s = None
             step_st = max(1, len(norm) // 60)
             pts = []
             for ii in range(0, len(norm), step_st):
                 idx_date = norm.index[ii]
                 is_cash = False
-                if active is not None and idx_date in active.index:
-                    is_cash = (active.loc[idx_date] == "Cash")
-                pts.append({
+                if sw_ret is not None and idx_date in sw_ret.index:
+                    is_cash = bool(sw_ret.loc[idx_date] == 0)
+                pt = {
                     "date": idx_date.strftime("%Y-%m-%d"),
                     "value": round(float(norm.iloc[ii]), 4),
-                    "cash": bool(is_cash),
-                })
+                    "cash": is_cash,
+                }
+                if sw_eq_s is not None and idx_date in sw_eq_s.index:
+                    pt["switch"] = round(float(sw_eq_s.loc[idx_date]), 4)
+                pts.append(pt)
             if pts[-1]["date"] != norm.index[-1].strftime("%Y-%m-%d"):
                 last_idx = norm.index[-1]
                 is_cash_last = False
-                if active is not None and last_idx in active.index:
-                    is_cash_last = (active.loc[last_idx] == "Cash")
-                pts.append({
+                if sw_ret is not None and last_idx in sw_ret.index:
+                    is_cash_last = bool(sw_ret.loc[last_idx] == 0)
+                pt = {
                     "date": last_idx.strftime("%Y-%m-%d"),
                     "value": round(float(norm.iloc[-1]), 4),
-                    "cash": bool(is_cash_last),
-                })
+                    "cash": is_cash_last,
+                }
+                if sw_eq_s is not None and last_idx in sw_eq_s.index:
+                    pt["switch"] = round(float(sw_eq_s.loc[last_idx]), 4)
+                pts.append(pt)
             stocks_1y[t] = pts
 
     # Aggregated equity (downsampled ~200 points)
@@ -832,7 +844,7 @@ def main():
 
             return_1y_switch = float(sw_eq_1y.iloc[-1] / sw_eq_1y.iloc[0] - 1) if len(sw_eq_1y) > 1 else 0.0
             return_1y_bh = float(bh_eq_1y.iloc[-1] / bh_eq_1y.iloc[0] - 1) if len(bh_eq_1y) > 1 else 0.0
-            pct_invested_1y = float((as_1y != "Cash").mean())
+            pct_invested_1y = float((hr_1y != 0).mean())
 
             # Equity array for chart (every Nth point to keep JSON small)
             step = max(1, len(sw_eq_1y) // 120)
@@ -843,14 +855,14 @@ def main():
                     "date": idx.strftime("%Y-%m-%d"),
                     "switch": round(float(sw_eq_1y.iloc[i]), 4),
                     "bh": round(float(bh_eq_1y.iloc[i]), 4),
-                    "cash": bool(as_1y.iloc[i] == "Cash"),
+                    "cash": bool(hr_1y.iloc[i] == 0),
                 })
             if equity_1y and equity_1y[-1]["date"] != sw_eq_1y.index[-1].strftime("%Y-%m-%d"):
                 equity_1y.append({
                     "date": sw_eq_1y.index[-1].strftime("%Y-%m-%d"),
                     "switch": round(float(sw_eq_1y.iloc[-1]), 4),
                     "bh": round(float(bh_eq_1y.iloc[-1]), 4),
-                    "cash": bool(as_1y.iloc[-1] == "Cash"),
+                    "cash": bool(hr_1y.iloc[-1] == 0),
                 })
 
             # ── Full equity history (downsampled ~250 points) ──
@@ -864,12 +876,14 @@ def main():
                     "date": idx.strftime("%Y-%m-%d"),
                     "switch": round(float(sw_eq_full.iloc[i]), 4),
                     "bh": round(float(bh_eq_full.iloc[i]), 4),
+                    "cash": bool(hard_ret.iloc[i] == 0),
                 })
             if equity_full and equity_full[-1]["date"] != sw_eq_full.index[-1].strftime("%Y-%m-%d"):
                 equity_full.append({
                     "date": sw_eq_full.index[-1].strftime("%Y-%m-%d"),
                     "switch": round(float(sw_eq_full.iloc[-1]), 4),
                     "bh": round(float(bh_eq_full.iloc[-1]), 4),
+                    "cash": bool(hard_ret.iloc[-1] == 0),
                 })
 
             # ── Monthly returns heatmap (Switch + B&H) ──
