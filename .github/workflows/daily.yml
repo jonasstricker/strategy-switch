@@ -88,3 +88,12 @@ jobs:
       - name: Auto-Trade (Alpaca Paper)
         if: env.ALPACA_KEY_ID != ''
         run: python -m trading.alpaca_trader
+
+      - name: Commit trade log
+        if: env.ALPACA_KEY_ID != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add trading/trade_log.json
+          git diff --staged --quiet && echo "No changes" || git commit -m "📈 Trade log $(date -u +%Y-%m-%d)"
+          git push

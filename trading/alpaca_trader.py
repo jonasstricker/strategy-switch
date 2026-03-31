@@ -17,9 +17,12 @@ Env-Variablen (GitHub Secrets):
 """
 
 import json, os, logging, argparse
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
+
+TRADE_LOG = Path(__file__).parent / "trade_log.json"
 
 log = logging.getLogger("alpaca_trader")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -120,42 +123,17 @@ def map_ticker(yahoo_ticker: str) -> str | None:
 def compute_targets(signals: dict, equity: float) -> dict:
     """
     Compute target dollar allocation per symbol.
-    Uses Alpha-Mix combined portfolio with Sharpe-optimized weights.
-    Falls back to individual category signals if alpha_mix is missing.
-
-    Allocation: 60% ETFs (15% each), 40% Alpha-Mix stocks.
+    Alpha-Mix only: 100% equity distributed via Sharpe-optimized category weights.
     Returns: {alpaca_symbol: {"dollars": float, "signal": str, "reason": str}}
     """
     targets = {}
 
-    # ETFs: 15% each = 60% total
-    for etf in signals.get("etfs", []):
-        symbol = map_ticker(etf["ticker"])
-        if not symbol:
-            continue
-        if etf["signal"] == "LONG":
-            targets[symbol] = {
-                "dollars": equity * 0.15,
-                "signal": "LONG",
-                "reason": f"ETF {etf['ticker']} LONG ({etf['strategy']})",
-            }
-        else:
-            targets[symbol] = {
-                "dollars": 0,
-                "signal": "CASH",
-                "reason": f"ETF {etf['ticker']} CASH",
-            }
-
-    # Alpha-Mix: 40% of equity, distributed using Sharpe-optimized category weights
     alpha = signals.get("alpha_mix")
     if alpha and alpha.get("stocks"):
         raw_weights = alpha.get("weights", {})
-        # Parse weights like {"swarm": "40%", "value": "40%", "turnaround": "20%"}
         cat_weights = {}
         for k, v in raw_weights.items():
             cat_weights[k] = float(str(v).replace("%", "")) / 100.0
-
-        stock_equity = equity * 0.40  # 40% for all stock categories
 
         # Group LONG stocks by category
         long_by_cat = {}
@@ -170,55 +148,29 @@ def compute_targets(signals: dict, equity: float) -> dict:
                 continue
             cat = s.get("category", "unknown")
             w = cat_weights.get(cat, 0)
-            cat_budget = stock_equity * w
+            cat_budget = equity * w
             n_long = len(long_by_cat.get(cat, []))
 
             if s["signal"] == "LONG" and n_long > 0:
                 alloc = cat_budget / n_long
-                # If same symbol already targeted (overlapping tickers), use higher
                 if symbol in targets and targets[symbol]["signal"] == "LONG":
                     targets[symbol]["dollars"] += alloc
-                    targets[symbol]["reason"] += f" + alpha/{cat}"
+                    targets[symbol]["reason"] += f" + {cat}"
                 else:
                     targets[symbol] = {
                         "dollars": alloc,
                         "signal": "LONG",
-                        "reason": f"alpha/{cat} {s['ticker']} LONG",
+                        "reason": f"{cat} {s['ticker']} LONG",
                     }
             else:
                 if symbol not in targets or targets[symbol]["signal"] != "LONG":
                     targets[symbol] = {
                         "dollars": 0,
                         "signal": "CASH",
-                        "reason": f"alpha/{cat} {s['ticker']} CASH",
+                        "reason": f"{cat} {s['ticker']} CASH",
                     }
     else:
-        # Fallback: individual categories
-        cat_weights = {"swarm": 0.18, "value": 0.12, "turnaround": 0.10}
-        for cat_key, weight in cat_weights.items():
-            cat = signals.get(cat_key)
-            if not cat:
-                continue
-            stocks = cat.get("stocks", [])
-            n_long = sum(1 for s in stocks if s["signal"] == "LONG")
-            for s in stocks:
-                symbol = map_ticker(s["ticker"])
-                if not symbol:
-                    continue
-                if s["signal"] == "LONG" and n_long > 0:
-                    alloc = (equity * weight) / n_long
-                    targets[symbol] = {
-                        "dollars": alloc,
-                        "signal": "LONG",
-                        "reason": f"{cat_key} {s['ticker']} LONG",
-                    }
-                else:
-                    if symbol not in targets or targets[symbol]["signal"] != "LONG":
-                        targets[symbol] = {
-                            "dollars": 0,
-                            "signal": "CASH",
-                            "reason": f"{cat_key} {s['ticker']} CASH",
-                        }
+        log.warning("Kein alpha_mix vorhanden — keine Targets!")
 
     return targets
 
@@ -354,6 +306,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
 
     if not orders:
         print("\n✅ Keine Orders nötig — Portfolio ist aktuell.")
+        _save_trade_log(equity, cash, current, prices, targets, [], execute)
         return True
 
     # Execute or dry-run
@@ -363,6 +316,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
         print(f"  {icon} {o['side'].upper():4s} {o['qty']:4d}× {o['symbol']:8s}  "
               f"MOC  (~${o['value']:,.0f})  — {o['reason']}")
 
+    executed_orders = []
     if execute:
         print("\n── Sende Market-on-Close Orders ──")
         for o in orders:
@@ -372,15 +326,71 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
                     order_type="market",
                     time_in_force="cls",
                 )
+                o["status"] = result.get("status", "?")
+                o["order_id"] = result.get("id", "?")
+                executed_orders.append(o)
                 log.info(f"  ✅ {o['side'].upper()} {o['qty']}× {o['symbol']} "
-                         f"MOC → Order {result.get('id', '?')} ({result.get('status', '?')})")
+                         f"MOC → Order {o['order_id']} ({o['status']})")
             except Exception as e:
+                o["status"] = f"ERROR: {e}"
+                executed_orders.append(o)
                 log.error(f"  ❌ {o['symbol']}: {e}")
     else:
         print(f"\n  ℹ️  DRY-RUN — keine Orders gesendet.")
         print(f"  Für echte Orders: --execute (oder TRADING_ENABLED=1)")
 
+    # ── Save daily trade log ──
+    _save_trade_log(equity, cash, current, prices, targets, executed_orders, execute)
+
     return True
+
+
+def _save_trade_log(equity, cash, positions, prices, targets, orders, executed):
+    """Append daily entry to trade_log.json for performance tracking."""
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+    # Build position snapshot
+    pos_snap = {}
+    for sym, qty in positions.items():
+        price = prices.get(sym, 0)
+        pos_snap[sym] = {"qty": qty, "price": round(price, 2), "value": round(qty * price, 2)}
+
+    # Build target snapshot
+    tgt_snap = {}
+    for sym, t in targets.items():
+        if t["signal"] == "LONG":
+            tgt_snap[sym] = {"dollars": round(t["dollars"], 2), "reason": t["reason"]}
+
+    entry = {
+        "date": now,
+        "equity": round(equity, 2),
+        "cash": round(cash, 2),
+        "invested": round(equity - cash, 2),
+        "pct_invested": round((equity - cash) / equity * 100, 1) if equity else 0,
+        "n_positions": len(positions),
+        "positions": pos_snap,
+        "targets": tgt_snap,
+        "orders": [{"symbol": o["symbol"], "side": o["side"], "qty": o["qty"],
+                     "value": o["value"], "status": o.get("status", "dry-run")}
+                    for o in orders],
+        "executed": executed,
+    }
+
+    # Load existing log
+    log_data = []
+    if TRADE_LOG.exists():
+        try:
+            with open(TRADE_LOG, "r") as f:
+                log_data = json.load(f)
+        except (json.JSONDecodeError, IOError):
+            log_data = []
+
+    log_data.append(entry)
+
+    with open(TRADE_LOG, "w") as f:
+        json.dump(log_data, f, indent=2, ensure_ascii=False)
+
+    log.info(f"Trade-Log gespeichert: {TRADE_LOG} ({len(log_data)} Einträge)")
 
 
 def main():
