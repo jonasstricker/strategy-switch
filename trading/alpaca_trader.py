@@ -27,7 +27,7 @@ TRADE_LOG = Path(__file__).parent / "trade_log.json"
 log = logging.getLogger("alpaca_trader")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-SIGNALS_FILE = Path(__file__).parent.parent / "wf_backtest" / "mobile_signals.json"
+SIGNALS_FILE = Path(__file__).parent.parent / "docs" / "data" / "mobile_signals.json"
 
 # ── Alpaca API endpoints ─────────────────────────────────────────────────────
 PAPER_URL = "https://paper-api.alpaca.markets"
