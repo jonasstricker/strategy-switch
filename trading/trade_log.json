@@ -268,5 +268,140 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-04-03 20:04 UTC",
+    "equity": 100000.0,
+    "cash": 100000.0,
+    "invested": 0.0,
+    "pct_invested": 0.0,
+    "n_positions": 0,
+    "positions": {},
+    "targets": {
+      "NVDA": {
+        "dollars": 13333.33,
+        "reason": "swarm NVDA LONG"
+      },
+      "AVGO": {
+        "dollars": 20000.0,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 20000.0,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "VZ": {
+        "dollars": 5714.29,
+        "reason": "value VZ LONG"
+      },
+      "T": {
+        "dollars": 5714.29,
+        "reason": "value T LONG"
+      },
+      "COP": {
+        "dollars": 5714.29,
+        "reason": "value COP LONG"
+      },
+      "PFE": {
+        "dollars": 5714.29,
+        "reason": "value PFE LONG"
+      },
+      "DUK": {
+        "dollars": 5714.29,
+        "reason": "value DUK LONG"
+      },
+      "UPS": {
+        "dollars": 5714.29,
+        "reason": "value UPS LONG"
+      },
+      "XOM": {
+        "dollars": 5714.29,
+        "reason": "value XOM LONG"
+      },
+      "NOW": {
+        "dollars": 6666.67,
+        "reason": "turnaround NOW LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AVGO",
+        "side": "buy",
+        "qty": 63,
+        "value": 19811.29,
+        "status": "accepted"
+      },
+      {
+        "symbol": "COP",
+        "side": "buy",
+        "qty": 43,
+        "value": 5611.93,
+        "status": "accepted"
+      },
+      {
+        "symbol": "DUK",
+        "side": "buy",
+        "qty": 43,
+        "value": 5686.11,
+        "status": "accepted"
+      },
+      {
+        "symbol": "META",
+        "side": "buy",
+        "qty": 34,
+        "value": 19532.83,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NOW",
+        "side": "buy",
+        "qty": 65,
+        "value": 6628.38,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NVDA",
+        "side": "buy",
+        "qty": 75,
+        "value": 13297.88,
+        "status": "accepted"
+      },
+      {
+        "symbol": "PFE",
+        "side": "buy",
+        "qty": 201,
+        "value": 5696.34,
+        "status": "accepted"
+      },
+      {
+        "symbol": "T",
+        "side": "buy",
+        "qty": 201,
+        "value": 5691.32,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UPS",
+        "side": "buy",
+        "qty": 58,
+        "value": 5694.44,
+        "status": "accepted"
+      },
+      {
+        "symbol": "VZ",
+        "side": "buy",
+        "qty": 115,
+        "value": 5678.7,
+        "status": "accepted"
+      },
+      {
+        "symbol": "XOM",
+        "side": "buy",
+        "qty": 35,
+        "value": 5625.55,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
   }
 ]
