@@ -1,5 +1,5 @@
 {
-  "updated": "02.04.2026 21:25",
+  "updated": "03.04.2026 21:22",
   "etfs": [
     {
       "ticker": "SXR8.DE",
@@ -4583,7 +4583,7 @@
         },
         {
           "date": "2021-06-21",
-          "switch": 2.5952,
+          "switch": 2.5951,
           "bh": 2.0611,
           "cash": false
         },
@@ -4937,7 +4937,7 @@
         },
         {
           "date": "2024-01-19",
-          "switch": 3.7009,
+          "switch": 3.7008,
           "bh": 2.2916,
           "cash": false
         },
@@ -5063,7 +5063,7 @@
         },
         {
           "date": "2024-12-18",
-          "switch": 4.3531,
+          "switch": 4.353,
           "bh": 2.7047,
           "cash": false
         },
@@ -5693,7 +5693,7 @@
         {
           "Datum": "12.08.2024",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie RSI aktiv",
+          "Grund": "Strategie Momentum aktiv",
           "Kurs": "$141.67",
           "Rendite": null
         },
@@ -5735,7 +5735,7 @@
         {
           "Datum": "24.03.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Dual_Momentum aktiv",
+          "Grund": "Strategie Momentum aktiv",
           "Kurs": "$154.96",
           "Rendite": null
         },
@@ -5781,7 +5781,7 @@
       "ticker": "EEM",
       "name": "Emerging Markets",
       "signal": "LONG",
-      "strategy": "Dual_Momentum",
+      "strategy": "Double_MA",
       "price": 56.59,
       "last_date": "18.03.2026",
       "sharpe_switch": 0.79,
@@ -6201,7 +6201,7 @@
         },
         {
           "date": "2025-09-23",
-          "switch": 1.135,
+          "switch": 1.1351,
           "bh": 1.187,
           "cash": false
         },
@@ -6791,7 +6791,7 @@
         },
         {
           "date": "2009-09-23",
-          "switch": 1.8566,
+          "switch": 1.8565,
           "bh": 1.0706,
           "cash": false
         },
@@ -6977,7 +6977,7 @@
         },
         {
           "date": "2012-01-25",
-          "switch": 2.373,
+          "switch": 2.3729,
           "bh": 1.2219,
           "cash": false
         },
@@ -7025,7 +7025,7 @@
         },
         {
           "date": "2012-08-30",
-          "switch": 2.1826,
+          "switch": 2.1825,
           "bh": 1.1371,
           "cash": false
         },
@@ -7038,12 +7038,12 @@
         {
           "date": "2012-10-24",
           "switch": 2.3043,
-          "bh": 1.2005,
+          "bh": 1.2006,
           "cash": false
         },
         {
           "date": "2012-11-23",
-          "switch": 2.3453,
+          "switch": 2.3452,
           "bh": 1.2166,
           "cash": false
         },
@@ -7283,13 +7283,13 @@
         },
         {
           "date": "2015-12-01",
-          "switch": 2.9063,
+          "switch": 2.9062,
           "bh": 1.0607,
           "cash": true
         },
         {
           "date": "2015-12-29",
-          "switch": 2.9063,
+          "switch": 2.9062,
           "bh": 1.0316,
           "cash": true
         },
@@ -7517,19 +7517,19 @@
         },
         {
           "date": "2018-11-08",
-          "switch": 4.3236,
+          "switch": 4.3235,
           "bh": 1.3346,
           "cash": true
         },
         {
           "date": "2018-12-07",
-          "switch": 4.3236,
+          "switch": 4.3235,
           "bh": 1.3125,
           "cash": true
         },
         {
           "date": "2019-01-07",
-          "switch": 4.3236,
+          "switch": 4.3235,
           "bh": 1.3289,
           "cash": true
         },
@@ -7619,7 +7619,7 @@
         },
         {
           "date": "2020-02-25",
-          "switch": 5.1087,
+          "switch": 5.1086,
           "bh": 1.4213,
           "cash": true
         },
@@ -7691,7 +7691,7 @@
         },
         {
           "date": "2021-01-20",
-          "switch": 7.7198,
+          "switch": 7.7197,
           "bh": 1.9642,
           "cash": false
         },
@@ -7721,7 +7721,7 @@
         },
         {
           "date": "2021-06-07",
-          "switch": 7.5174,
+          "switch": 7.5173,
           "bh": 1.9463,
           "cash": false
         },
@@ -7763,7 +7763,7 @@
         },
         {
           "date": "2021-12-14",
-          "switch": 7.4643,
+          "switch": 7.4642,
           "bh": 1.7255,
           "cash": true
         },
@@ -7907,7 +7907,7 @@
         },
         {
           "date": "2023-10-09",
-          "switch": 7.4801,
+          "switch": 7.48,
           "bh": 1.3835,
           "cash": true
         },
@@ -7973,19 +7973,19 @@
         },
         {
           "date": "2024-08-08",
-          "switch": 8.613,
+          "switch": 8.6129,
           "bh": 1.577,
           "cash": true
         },
         {
           "date": "2024-09-05",
-          "switch": 8.6839,
+          "switch": 8.6838,
           "bh": 1.6045,
           "cash": false
         },
         {
           "date": "2024-10-02",
-          "switch": 9.5887,
+          "switch": 9.5886,
           "bh": 1.7757,
           "cash": false
         },
@@ -8003,13 +8003,13 @@
         },
         {
           "date": "2024-12-23",
-          "switch": 9.019,
+          "switch": 9.0189,
           "bh": 1.6297,
           "cash": true
         },
         {
           "date": "2025-01-23",
-          "switch": 9.019,
+          "switch": 9.0189,
           "bh": 1.6359,
           "cash": true
         },
@@ -8021,13 +8021,13 @@
         },
         {
           "date": "2025-03-19",
-          "switch": 9.0486,
+          "switch": 9.0485,
           "bh": 1.7336,
           "cash": true
         },
         {
           "date": "2025-04-15",
-          "switch": 8.5932,
+          "switch": 8.5931,
           "bh": 1.6136,
           "cash": true
         },
@@ -8051,7 +8051,7 @@
         },
         {
           "date": "2025-08-05",
-          "switch": 9.4112,
+          "switch": 9.4111,
           "bh": 1.8905,
           "cash": false
         },
@@ -8075,7 +8075,7 @@
         },
         {
           "date": "2025-11-20",
-          "switch": 10.234,
+          "switch": 10.2339,
           "bh": 2.0558,
           "cash": false
         },
@@ -8087,7 +8087,7 @@
         },
         {
           "date": "2026-01-16",
-          "switch": 11.3108,
+          "switch": 11.3107,
           "bh": 2.2721,
           "cash": false
         },
@@ -8839,7 +8839,7 @@
         {
           "Datum": "13.09.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$41.13",
           "Rendite": null
         },
@@ -8853,7 +8853,7 @@
         {
           "Datum": "02.12.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$41.70",
           "Rendite": null
         },
@@ -10109,7 +10109,7 @@
         },
         {
           "date": "2012-12-26",
-          "switch": 1.8543,
+          "switch": 1.8544,
           "bh": 0.9024,
           "cash": false
         },
@@ -10211,7 +10211,7 @@
         },
         {
           "date": "2014-03-17",
-          "switch": 2.3654,
+          "switch": 2.3655,
           "bh": 1.1328,
           "cash": false
         },
@@ -10973,7 +10973,7 @@
         },
         {
           "date": "2023-04-14",
-          "switch": 7.6084,
+          "switch": 7.6085,
           "bh": 1.65,
           "cash": false
         },
@@ -11135,13 +11135,13 @@
         },
         {
           "date": "2025-03-24",
-          "switch": 8.9164,
+          "switch": 8.9165,
           "bh": 2.0085,
           "cash": false
         },
         {
           "date": "2025-04-17",
-          "switch": 8.1286,
+          "switch": 8.1287,
           "bh": 1.9581,
           "cash": false
         },
@@ -11177,7 +11177,7 @@
         },
         {
           "date": "2025-09-23",
-          "switch": 9.3796,
+          "switch": 9.3797,
           "bh": 2.2622,
           "cash": false
         },
@@ -11189,7 +11189,7 @@
         },
         {
           "date": "2025-11-12",
-          "switch": 9.7174,
+          "switch": 9.7175,
           "bh": 2.3437,
           "cash": false
         },
@@ -12040,7 +12040,7 @@
         "name": "Microsoft",
         "signal": "CASH",
         "strategy": "—",
-        "signal_margin": -1760576.056,
+        "signal_margin": -1547610.136,
         "sharpe": 1.51,
         "bh_sharpe": 0.76,
         "pct_invested": 0.669,
@@ -12627,7 +12627,7 @@
       },
       {
         "date": "2021-07-29",
-        "switch": 2.4255,
+        "switch": 2.4254,
         "bh": 1.5986
       },
       {
@@ -17825,7 +17825,7 @@
         "n_trades": 112,
         "pe": 11.46104,
         "pb": 1.4106083,
-        "div_yield": 3.91,
+        "div_yield": 3.89,
         "pct_from_high": -13.5
       },
       {
@@ -17838,9 +17838,9 @@
         "bh_sharpe": 0.47,
         "pct_invested": 0.551,
         "n_trades": 105,
-        "pe": 20.55433,
+        "pe": 20.522013,
         "pb": 2.479719,
-        "div_yield": 2.62,
+        "div_yield": 2.57,
         "pct_from_high": -3.9
       },
       {
@@ -17855,7 +17855,7 @@
         "n_trades": 101,
         "pe": 20.823528,
         "pb": 1.8620554,
-        "div_yield": 6.02,
+        "div_yield": 6.07,
         "pct_from_high": -1.5
       },
       {
@@ -17874,21 +17874,6 @@
         "pct_from_high": -14.2
       },
       {
-        "ticker": "CI",
-        "name": "The Cigna Group",
-        "signal": "CASH",
-        "strategy": "—",
-        "signal_margin": -0.35,
-        "sharpe": 1.19,
-        "bh_sharpe": 0.24,
-        "pct_invested": 0.552,
-        "n_trades": 102,
-        "pe": 12.168544,
-        "pb": 1.7054791,
-        "div_yield": 2.33,
-        "pct_from_high": -22.9
-      },
-      {
         "ticker": "DUK",
         "name": "Duke Energy Corporation (Holdin",
         "signal": "LONG",
@@ -17900,8 +17885,23 @@
         "n_trades": 113,
         "pe": 20.954042,
         "pb": 2.0222073,
-        "div_yield": 3.25,
+        "div_yield": 3.22,
         "pct_from_high": -1.7
+      },
+      {
+        "ticker": "CI",
+        "name": "The Cigna Group",
+        "signal": "CASH",
+        "strategy": "—",
+        "signal_margin": -0.35,
+        "sharpe": 1.19,
+        "bh_sharpe": 0.24,
+        "pct_invested": 0.552,
+        "n_trades": 102,
+        "pe": 12.179522,
+        "pb": 1.7054791,
+        "div_yield": 2.31,
+        "pct_from_high": -22.9
       },
       {
         "ticker": "UPS",
@@ -17915,14 +17915,14 @@
         "n_trades": 91,
         "pe": 14.966464,
         "pb": 5.1368175,
-        "div_yield": 6.7,
+        "div_yield": 6.68,
         "pct_from_high": -19.8
       },
       {
         "ticker": "XOM",
         "name": "Exxon Mobil Corporation",
         "signal": "LONG",
-        "strategy": "RSI",
+        "strategy": "Double_MA",
         "signal_margin": 5.425,
         "sharpe": 1.02,
         "bh_sharpe": 0.48,
@@ -18705,7 +18705,7 @@
       },
       {
         "date": "2023-12-20",
-        "switch": 3.3667,
+        "switch": 3.3666,
         "bh": 1.8506
       },
       {
@@ -21306,392 +21306,6 @@
           "switch": 1.3246
         }
       ],
-      "CI": [
-        {
-          "date": "2025-04-02",
-          "value": 1.0,
-          "cash": false,
-          "switch": 1.0666
-        },
-        {
-          "date": "2025-04-08",
-          "value": 0.9455,
-          "cash": false,
-          "switch": 1.0085
-        },
-        {
-          "date": "2025-04-14",
-          "value": 0.9918,
-          "cash": false,
-          "switch": 1.0578
-        },
-        {
-          "date": "2025-04-21",
-          "value": 0.9785,
-          "cash": false,
-          "switch": 1.0436
-        },
-        {
-          "date": "2025-04-25",
-          "value": 1.0104,
-          "cash": false,
-          "switch": 1.0776
-        },
-        {
-          "date": "2025-05-01",
-          "value": 1.0098,
-          "cash": false,
-          "switch": 1.077
-        },
-        {
-          "date": "2025-05-07",
-          "value": 1.0076,
-          "cash": false,
-          "switch": 1.0747
-        },
-        {
-          "date": "2025-05-13",
-          "value": 0.9095,
-          "cash": true,
-          "switch": 1.0146
-        },
-        {
-          "date": "2025-05-19",
-          "value": 0.97,
-          "cash": true,
-          "switch": 1.0141
-        },
-        {
-          "date": "2025-05-23",
-          "value": 0.952,
-          "cash": true,
-          "switch": 1.0141
-        },
-        {
-          "date": "2025-05-30",
-          "value": 0.954,
-          "cash": true,
-          "switch": 1.0141
-        },
-        {
-          "date": "2025-06-05",
-          "value": 0.9415,
-          "cash": true,
-          "switch": 1.0141
-        },
-        {
-          "date": "2025-06-11",
-          "value": 0.9391,
-          "cash": true,
-          "switch": 1.0141
-        },
-        {
-          "date": "2025-06-17",
-          "value": 0.9461,
-          "cash": true,
-          "switch": 1.0141
-        },
-        {
-          "date": "2025-06-24",
-          "value": 0.9591,
-          "cash": true,
-          "switch": 1.0141
-        },
-        {
-          "date": "2025-06-30",
-          "value": 1.0008,
-          "cash": false,
-          "switch": 1.0603
-        },
-        {
-          "date": "2025-07-07",
-          "value": 0.9494,
-          "cash": true,
-          "switch": 1.0272
-        },
-        {
-          "date": "2025-07-11",
-          "value": 0.9181,
-          "cash": true,
-          "switch": 1.0272
-        },
-        {
-          "date": "2025-07-17",
-          "value": 0.903,
-          "cash": true,
-          "switch": 1.0266
-        },
-        {
-          "date": "2025-07-23",
-          "value": 0.9213,
-          "cash": true,
-          "switch": 1.0261
-        },
-        {
-          "date": "2025-07-29",
-          "value": 0.8845,
-          "cash": true,
-          "switch": 1.0261
-        },
-        {
-          "date": "2025-08-04",
-          "value": 0.807,
-          "cash": true,
-          "switch": 1.0261
-        },
-        {
-          "date": "2025-08-08",
-          "value": 0.8322,
-          "cash": true,
-          "switch": 1.0261
-        },
-        {
-          "date": "2025-08-14",
-          "value": 0.879,
-          "cash": true,
-          "switch": 1.0261
-        },
-        {
-          "date": "2025-08-20",
-          "value": 0.922,
-          "cash": true,
-          "switch": 1.0261
-        },
-        {
-          "date": "2025-08-26",
-          "value": 0.9092,
-          "cash": true,
-          "switch": 1.0261
-        },
-        {
-          "date": "2025-09-02",
-          "value": 0.9104,
-          "cash": true,
-          "switch": 1.0261
-        },
-        {
-          "date": "2025-09-08",
-          "value": 0.9155,
-          "cash": false,
-          "switch": 1.0322
-        },
-        {
-          "date": "2025-09-12",
-          "value": 0.9212,
-          "cash": false,
-          "switch": 1.0386
-        },
-        {
-          "date": "2025-09-18",
-          "value": 0.8938,
-          "cash": true,
-          "switch": 1.0381
-        },
-        {
-          "date": "2025-09-24",
-          "value": 0.8867,
-          "cash": true,
-          "switch": 1.0381
-        },
-        {
-          "date": "2025-09-30",
-          "value": 0.877,
-          "cash": false,
-          "switch": 1.0376
-        },
-        {
-          "date": "2025-10-06",
-          "value": 0.9219,
-          "cash": false,
-          "switch": 1.0901
-        },
-        {
-          "date": "2025-10-10",
-          "value": 0.915,
-          "cash": false,
-          "switch": 1.082
-        },
-        {
-          "date": "2025-10-16",
-          "value": 0.8856,
-          "cash": true,
-          "switch": 1.0865
-        },
-        {
-          "date": "2025-10-22",
-          "value": 0.9367,
-          "cash": true,
-          "switch": 1.0865
-        },
-        {
-          "date": "2025-10-28",
-          "value": 0.9384,
-          "cash": false,
-          "switch": 1.0878
-        },
-        {
-          "date": "2025-11-03",
-          "value": 0.7869,
-          "cash": true,
-          "switch": 1.0545
-        },
-        {
-          "date": "2025-11-07",
-          "value": 0.805,
-          "cash": true,
-          "switch": 1.0545
-        },
-        {
-          "date": "2025-11-13",
-          "value": 0.8242,
-          "cash": true,
-          "switch": 1.0545
-        },
-        {
-          "date": "2025-11-19",
-          "value": 0.8276,
-          "cash": true,
-          "switch": 1.054
-        },
-        {
-          "date": "2025-11-25",
-          "value": 0.8464,
-          "cash": true,
-          "switch": 1.054
-        },
-        {
-          "date": "2025-12-02",
-          "value": 0.834,
-          "cash": false,
-          "switch": 1.0535
-        },
-        {
-          "date": "2025-12-08",
-          "value": 0.8063,
-          "cash": true,
-          "switch": 1.0535
-        },
-        {
-          "date": "2025-12-12",
-          "value": 0.8405,
-          "cash": true,
-          "switch": 1.0535
-        },
-        {
-          "date": "2025-12-18",
-          "value": 0.8383,
-          "cash": true,
-          "switch": 1.0535
-        },
-        {
-          "date": "2025-12-24",
-          "value": 0.841,
-          "cash": true,
-          "switch": 1.0535
-        },
-        {
-          "date": "2025-12-31",
-          "value": 0.8421,
-          "cash": true,
-          "switch": 1.0535
-        },
-        {
-          "date": "2026-01-07",
-          "value": 0.854,
-          "cash": false,
-          "switch": 1.0678
-        },
-        {
-          "date": "2026-01-13",
-          "value": 0.8316,
-          "cash": true,
-          "switch": 1.0667
-        },
-        {
-          "date": "2026-01-20",
-          "value": 0.8299,
-          "cash": true,
-          "switch": 1.0667
-        },
-        {
-          "date": "2026-01-26",
-          "value": 0.858,
-          "cash": true,
-          "switch": 1.0667
-        },
-        {
-          "date": "2026-01-30",
-          "value": 0.8387,
-          "cash": true,
-          "switch": 1.0667
-        },
-        {
-          "date": "2026-02-05",
-          "value": 0.8706,
-          "cash": false,
-          "switch": 1.1171
-        },
-        {
-          "date": "2026-02-11",
-          "value": 0.9018,
-          "cash": false,
-          "switch": 1.1572
-        },
-        {
-          "date": "2026-02-18",
-          "value": 0.8877,
-          "cash": false,
-          "switch": 1.1391
-        },
-        {
-          "date": "2026-02-24",
-          "value": 0.8598,
-          "cash": false,
-          "switch": 1.1033
-        },
-        {
-          "date": "2026-03-02",
-          "value": 0.8899,
-          "cash": false,
-          "switch": 1.1419
-        },
-        {
-          "date": "2026-03-06",
-          "value": 0.8357,
-          "cash": false,
-          "switch": 1.1099
-        },
-        {
-          "date": "2026-03-12",
-          "value": 0.818,
-          "cash": true,
-          "switch": 1.1099
-        },
-        {
-          "date": "2026-03-18",
-          "value": 0.8141,
-          "cash": false,
-          "switch": 1.1099
-        },
-        {
-          "date": "2026-03-24",
-          "value": 0.818,
-          "cash": false,
-          "switch": 1.1099
-        },
-        {
-          "date": "2026-03-30",
-          "value": 0.794,
-          "cash": false,
-          "switch": 1.1099
-        },
-        {
-          "date": "2026-04-02",
-          "value": 0.8307,
-          "cash": false,
-          "switch": 1.1099
-        }
-      ],
       "DUK": [
         {
           "date": "2025-04-02",
@@ -22076,6 +21690,392 @@
           "value": 1.1372,
           "cash": false,
           "switch": 1.2178
+        }
+      ],
+      "CI": [
+        {
+          "date": "2025-04-02",
+          "value": 1.0,
+          "cash": false,
+          "switch": 1.0666
+        },
+        {
+          "date": "2025-04-08",
+          "value": 0.9455,
+          "cash": false,
+          "switch": 1.0085
+        },
+        {
+          "date": "2025-04-14",
+          "value": 0.9918,
+          "cash": false,
+          "switch": 1.0578
+        },
+        {
+          "date": "2025-04-21",
+          "value": 0.9785,
+          "cash": false,
+          "switch": 1.0436
+        },
+        {
+          "date": "2025-04-25",
+          "value": 1.0104,
+          "cash": false,
+          "switch": 1.0776
+        },
+        {
+          "date": "2025-05-01",
+          "value": 1.0098,
+          "cash": false,
+          "switch": 1.077
+        },
+        {
+          "date": "2025-05-07",
+          "value": 1.0076,
+          "cash": false,
+          "switch": 1.0747
+        },
+        {
+          "date": "2025-05-13",
+          "value": 0.9095,
+          "cash": true,
+          "switch": 1.0146
+        },
+        {
+          "date": "2025-05-19",
+          "value": 0.97,
+          "cash": true,
+          "switch": 1.0141
+        },
+        {
+          "date": "2025-05-23",
+          "value": 0.952,
+          "cash": true,
+          "switch": 1.0141
+        },
+        {
+          "date": "2025-05-30",
+          "value": 0.954,
+          "cash": true,
+          "switch": 1.0141
+        },
+        {
+          "date": "2025-06-05",
+          "value": 0.9415,
+          "cash": true,
+          "switch": 1.0141
+        },
+        {
+          "date": "2025-06-11",
+          "value": 0.9391,
+          "cash": true,
+          "switch": 1.0141
+        },
+        {
+          "date": "2025-06-17",
+          "value": 0.9461,
+          "cash": true,
+          "switch": 1.0141
+        },
+        {
+          "date": "2025-06-24",
+          "value": 0.9591,
+          "cash": true,
+          "switch": 1.0141
+        },
+        {
+          "date": "2025-06-30",
+          "value": 1.0008,
+          "cash": false,
+          "switch": 1.0603
+        },
+        {
+          "date": "2025-07-07",
+          "value": 0.9494,
+          "cash": true,
+          "switch": 1.0272
+        },
+        {
+          "date": "2025-07-11",
+          "value": 0.9181,
+          "cash": true,
+          "switch": 1.0272
+        },
+        {
+          "date": "2025-07-17",
+          "value": 0.903,
+          "cash": true,
+          "switch": 1.0266
+        },
+        {
+          "date": "2025-07-23",
+          "value": 0.9213,
+          "cash": true,
+          "switch": 1.0261
+        },
+        {
+          "date": "2025-07-29",
+          "value": 0.8845,
+          "cash": true,
+          "switch": 1.0261
+        },
+        {
+          "date": "2025-08-04",
+          "value": 0.807,
+          "cash": true,
+          "switch": 1.0261
+        },
+        {
+          "date": "2025-08-08",
+          "value": 0.8322,
+          "cash": true,
+          "switch": 1.0261
+        },
+        {
+          "date": "2025-08-14",
+          "value": 0.879,
+          "cash": true,
+          "switch": 1.0261
+        },
+        {
+          "date": "2025-08-20",
+          "value": 0.922,
+          "cash": true,
+          "switch": 1.0261
+        },
+        {
+          "date": "2025-08-26",
+          "value": 0.9092,
+          "cash": true,
+          "switch": 1.0261
+        },
+        {
+          "date": "2025-09-02",
+          "value": 0.9104,
+          "cash": true,
+          "switch": 1.0261
+        },
+        {
+          "date": "2025-09-08",
+          "value": 0.9155,
+          "cash": false,
+          "switch": 1.0322
+        },
+        {
+          "date": "2025-09-12",
+          "value": 0.9212,
+          "cash": false,
+          "switch": 1.0386
+        },
+        {
+          "date": "2025-09-18",
+          "value": 0.8938,
+          "cash": true,
+          "switch": 1.0381
+        },
+        {
+          "date": "2025-09-24",
+          "value": 0.8867,
+          "cash": true,
+          "switch": 1.0381
+        },
+        {
+          "date": "2025-09-30",
+          "value": 0.877,
+          "cash": false,
+          "switch": 1.0376
+        },
+        {
+          "date": "2025-10-06",
+          "value": 0.9219,
+          "cash": false,
+          "switch": 1.0901
+        },
+        {
+          "date": "2025-10-10",
+          "value": 0.915,
+          "cash": false,
+          "switch": 1.082
+        },
+        {
+          "date": "2025-10-16",
+          "value": 0.8856,
+          "cash": true,
+          "switch": 1.0865
+        },
+        {
+          "date": "2025-10-22",
+          "value": 0.9367,
+          "cash": true,
+          "switch": 1.0865
+        },
+        {
+          "date": "2025-10-28",
+          "value": 0.9384,
+          "cash": false,
+          "switch": 1.0878
+        },
+        {
+          "date": "2025-11-03",
+          "value": 0.7869,
+          "cash": true,
+          "switch": 1.0545
+        },
+        {
+          "date": "2025-11-07",
+          "value": 0.805,
+          "cash": true,
+          "switch": 1.0545
+        },
+        {
+          "date": "2025-11-13",
+          "value": 0.8242,
+          "cash": true,
+          "switch": 1.0545
+        },
+        {
+          "date": "2025-11-19",
+          "value": 0.8276,
+          "cash": true,
+          "switch": 1.054
+        },
+        {
+          "date": "2025-11-25",
+          "value": 0.8464,
+          "cash": true,
+          "switch": 1.054
+        },
+        {
+          "date": "2025-12-02",
+          "value": 0.834,
+          "cash": false,
+          "switch": 1.0535
+        },
+        {
+          "date": "2025-12-08",
+          "value": 0.8063,
+          "cash": true,
+          "switch": 1.0535
+        },
+        {
+          "date": "2025-12-12",
+          "value": 0.8405,
+          "cash": true,
+          "switch": 1.0535
+        },
+        {
+          "date": "2025-12-18",
+          "value": 0.8383,
+          "cash": true,
+          "switch": 1.0535
+        },
+        {
+          "date": "2025-12-24",
+          "value": 0.841,
+          "cash": true,
+          "switch": 1.0535
+        },
+        {
+          "date": "2025-12-31",
+          "value": 0.8421,
+          "cash": true,
+          "switch": 1.0535
+        },
+        {
+          "date": "2026-01-07",
+          "value": 0.854,
+          "cash": false,
+          "switch": 1.0678
+        },
+        {
+          "date": "2026-01-13",
+          "value": 0.8316,
+          "cash": true,
+          "switch": 1.0667
+        },
+        {
+          "date": "2026-01-20",
+          "value": 0.8299,
+          "cash": true,
+          "switch": 1.0667
+        },
+        {
+          "date": "2026-01-26",
+          "value": 0.858,
+          "cash": true,
+          "switch": 1.0667
+        },
+        {
+          "date": "2026-01-30",
+          "value": 0.8387,
+          "cash": true,
+          "switch": 1.0667
+        },
+        {
+          "date": "2026-02-05",
+          "value": 0.8706,
+          "cash": false,
+          "switch": 1.1171
+        },
+        {
+          "date": "2026-02-11",
+          "value": 0.9018,
+          "cash": false,
+          "switch": 1.1572
+        },
+        {
+          "date": "2026-02-18",
+          "value": 0.8877,
+          "cash": false,
+          "switch": 1.1391
+        },
+        {
+          "date": "2026-02-24",
+          "value": 0.8598,
+          "cash": false,
+          "switch": 1.1033
+        },
+        {
+          "date": "2026-03-02",
+          "value": 0.8899,
+          "cash": false,
+          "switch": 1.1419
+        },
+        {
+          "date": "2026-03-06",
+          "value": 0.8357,
+          "cash": false,
+          "switch": 1.1099
+        },
+        {
+          "date": "2026-03-12",
+          "value": 0.818,
+          "cash": true,
+          "switch": 1.1099
+        },
+        {
+          "date": "2026-03-18",
+          "value": 0.8141,
+          "cash": false,
+          "switch": 1.1099
+        },
+        {
+          "date": "2026-03-24",
+          "value": 0.818,
+          "cash": false,
+          "switch": 1.1099
+        },
+        {
+          "date": "2026-03-30",
+          "value": 0.794,
+          "cash": false,
+          "switch": 1.1099
+        },
+        {
+          "date": "2026-04-02",
+          "value": 0.8307,
+          "cash": false,
+          "switch": 1.1099
         }
       ],
       "UPS": [
@@ -23395,9 +23395,9 @@
         "bh_sharpe": 0.52,
         "pct_invested": 0.634,
         "n_trades": 83,
-        "pe": 24.42432,
+        "pe": 24.445107,
         "pb": 6.6901145,
-        "div_yield": 36.0,
+        "div_yield": 37.0,
         "pct_from_high": -27.9
       },
       {
@@ -23410,7 +23410,7 @@
         "bh_sharpe": 0.59,
         "pct_invested": 0.642,
         "n_trades": 89,
-        "pe": 60.714287,
+        "pe": 61.077847,
         "pb": 8.239761,
         "div_yield": null,
         "pct_from_high": -51.8
@@ -23425,7 +23425,7 @@
         "bh_sharpe": 0.96,
         "pct_invested": 0.737,
         "n_trades": 81,
-        "pe": 61.1965,
+        "pe": 61.315784,
         "pb": 18.651052,
         "div_yield": 83.0,
         "pct_from_high": -24.1
@@ -23455,7 +23455,7 @@
         "bh_sharpe": 0.24,
         "pct_invested": 0.568,
         "n_trades": 100,
-        "pe": 14.1561775,
+        "pe": 14.164432,
         "pb": 8.62642,
         "div_yield": null,
         "pct_from_high": -42.6
@@ -23472,7 +23472,7 @@
         "n_trades": 100,
         "pe": 26.232977,
         "pb": 12.547574,
-        "div_yield": 1.38,
+        "div_yield": 1.37,
         "pct_from_high": -57.7
       },
       {
@@ -23480,14 +23480,14 @@
         "name": "Microsoft Corporation",
         "signal": "CASH",
         "strategy": "—",
-        "signal_margin": -1387587.735,
+        "signal_margin": -2216622.391,
         "sharpe": 1.51,
         "bh_sharpe": 0.76,
         "pct_invested": 0.669,
         "n_trades": 90,
-        "pe": 23.355846,
+        "pe": 23.370462,
         "pb": 7.0979753,
-        "div_yield": 99.0,
+        "div_yield": 97.0,
         "pct_from_high": -32.8
       },
       {
@@ -23500,9 +23500,9 @@
         "bh_sharpe": 0.34,
         "pct_invested": 0.58,
         "n_trades": 80,
-        "pe": 23.997435,
+        "pe": 23.96671,
         "pb": 2.9402153,
-        "div_yield": 95.0,
+        "div_yield": 94.0,
         "pct_from_high": -36.8
       },
       {
@@ -23532,7 +23532,7 @@
         "n_trades": 120,
         "pe": 20.956917,
         "pb": 2.6691954,
-        "div_yield": 3.23,
+        "div_yield": 3.19,
         "pct_from_high": -54.3
       }
     ],
@@ -24457,7 +24457,7 @@
       },
       {
         "date": "2025-03-05",
-        "switch": 5.7628,
+        "switch": 5.7629,
         "bh": 3.2527
       },
       {
@@ -27573,7 +27573,7 @@
         },
         {
           "date": "2025-12-24",
-          "value": 0.9833,
+          "value": 0.9832,
           "cash": false,
           "switch": 1.046
         },
@@ -29040,7 +29040,7 @@
         "name": "Microsoft",
         "signal": "CASH",
         "strategy": "—",
-        "signal_margin": -1760576.056,
+        "signal_margin": -1547610.136,
         "sharpe": 1.51,
         "bh_sharpe": 0.76,
         "pct_invested": 0.669,
@@ -29191,7 +29191,7 @@
         "n_trades": 112,
         "pe": 11.46104,
         "pb": 1.4106083,
-        "div_yield": 3.91,
+        "div_yield": 3.89,
         "pct_from_high": -13.5,
         "category": "value"
       },
@@ -29205,9 +29205,9 @@
         "bh_sharpe": 0.47,
         "pct_invested": 0.551,
         "n_trades": 105,
-        "pe": 20.55433,
+        "pe": 20.522013,
         "pb": 2.479719,
-        "div_yield": 2.62,
+        "div_yield": 2.57,
         "pct_from_high": -3.9,
         "category": "value"
       },
@@ -29223,7 +29223,7 @@
         "n_trades": 101,
         "pe": 20.823528,
         "pb": 1.8620554,
-        "div_yield": 6.02,
+        "div_yield": 6.07,
         "pct_from_high": -1.5,
         "category": "value"
       },
@@ -29244,22 +29244,6 @@
         "category": "value"
       },
       {
-        "ticker": "CI",
-        "name": "The Cigna Group",
-        "signal": "CASH",
-        "strategy": "—",
-        "signal_margin": -0.35,
-        "sharpe": 1.19,
-        "bh_sharpe": 0.24,
-        "pct_invested": 0.552,
-        "n_trades": 102,
-        "pe": 12.168544,
-        "pb": 1.7054791,
-        "div_yield": 2.33,
-        "pct_from_high": -22.9,
-        "category": "value"
-      },
-      {
         "ticker": "DUK",
         "name": "Duke Energy Corporation (Holdin",
         "signal": "LONG",
@@ -29271,8 +29255,24 @@
         "n_trades": 113,
         "pe": 20.954042,
         "pb": 2.0222073,
-        "div_yield": 3.25,
+        "div_yield": 3.22,
         "pct_from_high": -1.7,
+        "category": "value"
+      },
+      {
+        "ticker": "CI",
+        "name": "The Cigna Group",
+        "signal": "CASH",
+        "strategy": "—",
+        "signal_margin": -0.35,
+        "sharpe": 1.19,
+        "bh_sharpe": 0.24,
+        "pct_invested": 0.552,
+        "n_trades": 102,
+        "pe": 12.179522,
+        "pb": 1.7054791,
+        "div_yield": 2.31,
+        "pct_from_high": -22.9,
         "category": "value"
       },
       {
@@ -29287,7 +29287,7 @@
         "n_trades": 91,
         "pe": 14.966464,
         "pb": 5.1368175,
-        "div_yield": 6.7,
+        "div_yield": 6.68,
         "pct_from_high": -19.8,
         "category": "value"
       },
@@ -29295,7 +29295,7 @@
         "ticker": "XOM",
         "name": "Exxon Mobil Corporation",
         "signal": "LONG",
-        "strategy": "RSI",
+        "strategy": "Double_MA",
         "signal_margin": 5.425,
         "sharpe": 1.02,
         "bh_sharpe": 0.48,
@@ -29317,9 +29317,9 @@
         "bh_sharpe": 0.52,
         "pct_invested": 0.634,
         "n_trades": 83,
-        "pe": 24.42432,
+        "pe": 24.445107,
         "pb": 6.6901145,
-        "div_yield": 36.0,
+        "div_yield": 37.0,
         "pct_from_high": -27.9,
         "category": "turnaround"
       },
@@ -29333,7 +29333,7 @@
         "bh_sharpe": 0.59,
         "pct_invested": 0.642,
         "n_trades": 89,
-        "pe": 60.714287,
+        "pe": 61.077847,
         "pb": 8.239761,
         "div_yield": null,
         "pct_from_high": -51.8,
@@ -29349,7 +29349,7 @@
         "bh_sharpe": 0.96,
         "pct_invested": 0.737,
         "n_trades": 81,
-        "pe": 61.1965,
+        "pe": 61.315784,
         "pb": 18.651052,
         "div_yield": 83.0,
         "pct_from_high": -24.1,
@@ -29381,7 +29381,7 @@
         "bh_sharpe": 0.24,
         "pct_invested": 0.568,
         "n_trades": 100,
-        "pe": 14.1561775,
+        "pe": 14.164432,
         "pb": 8.62642,
         "div_yield": null,
         "pct_from_high": -42.6,
@@ -29399,7 +29399,7 @@
         "n_trades": 100,
         "pe": 26.232977,
         "pb": 12.547574,
-        "div_yield": 1.38,
+        "div_yield": 1.37,
         "pct_from_high": -57.7,
         "category": "turnaround"
       },
@@ -29408,14 +29408,14 @@
         "name": "Microsoft Corporation",
         "signal": "CASH",
         "strategy": "—",
-        "signal_margin": -1387587.735,
+        "signal_margin": -2216622.391,
         "sharpe": 1.51,
         "bh_sharpe": 0.76,
         "pct_invested": 0.669,
         "n_trades": 90,
-        "pe": 23.355846,
+        "pe": 23.370462,
         "pb": 7.0979753,
-        "div_yield": 99.0,
+        "div_yield": 97.0,
         "pct_from_high": -32.8,
         "category": "turnaround"
       },
@@ -29429,9 +29429,9 @@
         "bh_sharpe": 0.34,
         "pct_invested": 0.58,
         "n_trades": 80,
-        "pe": 23.997435,
+        "pe": 23.96671,
         "pb": 2.9402153,
-        "div_yield": 95.0,
+        "div_yield": 94.0,
         "pct_from_high": -36.8,
         "category": "turnaround"
       },
@@ -29463,7 +29463,7 @@
         "n_trades": 120,
         "pe": 20.956917,
         "pb": 2.6691954,
-        "div_yield": 3.23,
+        "div_yield": 3.19,
         "pct_from_high": -54.3,
         "category": "turnaround"
       }
