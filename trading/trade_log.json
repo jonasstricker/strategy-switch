@@ -1315,5 +1315,191 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-04-13 20:37 UTC",
+    "equity": 101603.41,
+    "cash": 50332.57,
+    "invested": 51270.84,
+    "pct_invested": 50.5,
+    "n_positions": 10,
+    "positions": {
+      "AVGO": {
+        "qty": 11,
+        "price": 379.88,
+        "value": 4178.68
+      },
+      "COP": {
+        "qty": 22,
+        "price": 123.31,
+        "value": 2712.82
+      },
+      "DUK": {
+        "qty": 43,
+        "price": 130.4,
+        "value": 5607.2
+      },
+      "META": {
+        "qty": 21,
+        "price": 635.3,
+        "value": 13341.27
+      },
+      "NOW": {
+        "qty": 19,
+        "price": 89.1,
+        "value": 1692.9
+      },
+      "NVDA": {
+        "qty": 63,
+        "price": 189.32,
+        "value": 11927.16
+      },
+      "PFE": {
+        "qty": 201,
+        "price": 27.2,
+        "value": 5467.2
+      },
+      "T": {
+        "qty": 91,
+        "price": 25.61,
+        "value": 2330.51
+      },
+      "VZ": {
+        "qty": 38,
+        "price": 45.39,
+        "value": 1724.76
+      },
+      "XOM": {
+        "qty": 15,
+        "price": 152.64,
+        "value": 2289.6
+      }
+    },
+    "targets": {
+      "NVDA": {
+        "dollars": 13547.12,
+        "reason": "swarm NVDA LONG"
+      },
+      "AVGO": {
+        "dollars": 20320.68,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 20320.68,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "VZ": {
+        "dollars": 5805.91,
+        "reason": "value VZ LONG"
+      },
+      "T": {
+        "dollars": 5805.91,
+        "reason": "value T LONG"
+      },
+      "COP": {
+        "dollars": 5805.91,
+        "reason": "value COP LONG"
+      },
+      "PFE": {
+        "dollars": 5805.91,
+        "reason": "value PFE LONG"
+      },
+      "DUK": {
+        "dollars": 5805.91,
+        "reason": "value DUK LONG"
+      },
+      "UPS": {
+        "dollars": 5805.91,
+        "reason": "value UPS LONG"
+      },
+      "XOM": {
+        "dollars": 5805.91,
+        "reason": "value XOM LONG"
+      },
+      "NOW": {
+        "dollars": 6773.56,
+        "reason": "turnaround NOW LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AVGO",
+        "side": "buy",
+        "qty": 42,
+        "value": 15954.96,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "COP",
+        "side": "buy",
+        "qty": 25,
+        "value": 3082.75,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "DUK",
+        "side": "buy",
+        "qty": 1,
+        "value": 130.4,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "META",
+        "side": "buy",
+        "qty": 10,
+        "value": 6352.98,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "NOW",
+        "side": "buy",
+        "qty": 57,
+        "value": 5078.7,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "NVDA",
+        "side": "buy",
+        "qty": 8,
+        "value": 1514.56,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "PFE",
+        "side": "buy",
+        "qty": 12,
+        "value": 326.4,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "T",
+        "side": "buy",
+        "qty": 135,
+        "value": 3457.35,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "UPS",
+        "side": "buy",
+        "qty": 56,
+        "value": 5712.0,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "VZ",
+        "side": "buy",
+        "qty": 89,
+        "value": 4039.58,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "XOM",
+        "side": "buy",
+        "qty": 23,
+        "value": 3510.72,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      }
+    ],
+    "executed": true
   }
 ]
