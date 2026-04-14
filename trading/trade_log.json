@@ -1501,5 +1501,139 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-04-14 20:35 UTC",
+    "equity": 102422.21,
+    "cash": 50332.57,
+    "invested": 52089.64,
+    "pct_invested": 50.9,
+    "n_positions": 10,
+    "positions": {
+      "AVGO": {
+        "qty": 11,
+        "price": 380.74,
+        "value": 4188.14
+      },
+      "COP": {
+        "qty": 22,
+        "price": 119.16,
+        "value": 2621.48
+      },
+      "DUK": {
+        "qty": 43,
+        "price": 129.78,
+        "value": 5580.54
+      },
+      "META": {
+        "qty": 21,
+        "price": 662.59,
+        "value": 13914.39
+      },
+      "NOW": {
+        "qty": 19,
+        "price": 88.0,
+        "value": 1672.0
+      },
+      "NVDA": {
+        "qty": 63,
+        "price": 196.35,
+        "value": 12370.05
+      },
+      "PFE": {
+        "qty": 201,
+        "price": 27.13,
+        "value": 5453.13
+      },
+      "T": {
+        "qty": 91,
+        "price": 25.6,
+        "value": 2329.6
+      },
+      "VZ": {
+        "qty": 38,
+        "price": 45.4,
+        "value": 1725.2
+      },
+      "XOM": {
+        "qty": 15,
+        "price": 149.0,
+        "value": 2235.0
+      }
+    },
+    "targets": {},
+    "orders": [
+      {
+        "symbol": "AVGO",
+        "side": "sell",
+        "qty": 11,
+        "value": 4188.14,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "COP",
+        "side": "sell",
+        "qty": 22,
+        "value": 2621.48,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "DUK",
+        "side": "sell",
+        "qty": 43,
+        "value": 5580.54,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "META",
+        "side": "sell",
+        "qty": 21,
+        "value": 13914.39,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "NOW",
+        "side": "sell",
+        "qty": 19,
+        "value": 1672.0,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "NVDA",
+        "side": "sell",
+        "qty": 63,
+        "value": 12370.05,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "PFE",
+        "side": "sell",
+        "qty": 201,
+        "value": 5453.13,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "T",
+        "side": "sell",
+        "qty": 91,
+        "value": 2329.6,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "VZ",
+        "side": "sell",
+        "qty": 38,
+        "value": 1725.2,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "XOM",
+        "side": "sell",
+        "qty": 15,
+        "value": 2235.0,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      }
+    ],
+    "executed": true
   }
 ]
