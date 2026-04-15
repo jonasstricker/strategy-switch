@@ -1015,7 +1015,9 @@ def main():
                 log.info(f"  Value: {n_long}/{len(value['stock_results'])} LONG "
                          f"(Sharpe {value['sw_sharpe']:.2f})")
         except Exception as e:
+            import traceback
             log.warning(f"  Value-Berechnung übersprungen: {e}")
+            log.warning(traceback.format_exc())
 
         # ── 9. Turnaround-Aktien ──
         turnaround = None
@@ -1029,7 +1031,9 @@ def main():
                 log.info(f"  Turnaround: {n_long}/{len(turnaround['stock_results'])} LONG "
                          f"(Sharpe {turnaround['sw_sharpe']:.2f})")
         except Exception as e:
+            import traceback
             log.warning(f"  Turnaround-Berechnung übersprungen: {e}")
+            log.warning(traceback.format_exc())
 
         # ── 10. Alpha-Mix (gewichtete Kombination) ──
         try:
@@ -1047,7 +1051,9 @@ def main():
                 log.info(f"  Alpha-Mix: Weights={alpha_mix['weights']}, "
                          f"Sharpe={alpha_mix['sharpe_switch']:.2f}")
         except Exception as e:
+            import traceback
             log.warning(f"  Alpha-Mix-Berechnung übersprungen: {e}")
+            log.warning(traceback.format_exc())
 
         with open(MOBILE_SIGNALS_FILE, "w", encoding="utf-8") as f:
             json.dump(mobile_data, f, indent=2, ensure_ascii=False)
