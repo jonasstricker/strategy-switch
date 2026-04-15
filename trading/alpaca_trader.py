@@ -290,6 +290,14 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
 
     # Fetch prices for symbols not in portfolio
     targets = compute_targets(signals, equity)
+
+    # Safety: if alpha_mix is missing and we have positions, do NOT liquidate
+    if not targets and current:
+        log.warning("⚠️  Keine Targets berechnet aber Positionen vorhanden — "
+                     "überspringe Trading um versehentliche Liquidation zu vermeiden!")
+        _save_trade_log(equity, cash, current, prices, targets, [], execute)
+        return True
+
     for sym in targets:
         if sym not in prices:
             # Use Alpaca snapshot for price
