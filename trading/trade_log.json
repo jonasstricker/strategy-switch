@@ -2382,5 +2382,233 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-04-21 20:33 UTC",
+    "equity": 103289.64,
+    "cash": 50332.57,
+    "invested": 52957.07,
+    "pct_invested": 51.3,
+    "n_positions": 10,
+    "positions": {
+      "AVGO": {
+        "qty": 11,
+        "price": 403.39,
+        "value": 4437.29
+      },
+      "COP": {
+        "qty": 22,
+        "price": 118.88,
+        "value": 2615.3
+      },
+      "DUK": {
+        "qty": 43,
+        "price": 125.67,
+        "value": 5403.81
+      },
+      "META": {
+        "qty": 21,
+        "price": 671.45,
+        "value": 14100.45
+      },
+      "NOW": {
+        "qty": 19,
+        "price": 100.95,
+        "value": 1918.05
+      },
+      "NVDA": {
+        "qty": 63,
+        "price": 200.62,
+        "value": 12639.06
+      },
+      "PFE": {
+        "qty": 201,
+        "price": 27.35,
+        "value": 5497.35
+      },
+      "T": {
+        "qty": 91,
+        "price": 26.0,
+        "value": 2366.0
+      },
+      "VZ": {
+        "qty": 38,
+        "price": 46.27,
+        "value": 1758.26
+      },
+      "XOM": {
+        "qty": 15,
+        "price": 148.1,
+        "value": 2221.5
+      }
+    },
+    "targets": {
+      "GOOGL": {
+        "dollars": 10328.96,
+        "reason": "swarm GOOGL LONG"
+      },
+      "AMZN": {
+        "dollars": 10328.96,
+        "reason": "swarm AMZN LONG"
+      },
+      "AVGO": {
+        "dollars": 13771.95,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 13771.95,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "COP": {
+        "dollars": 13771.95,
+        "reason": "value COP LONG"
+      },
+      "BAC": {
+        "dollars": 13771.95,
+        "reason": "value BAC LONG"
+      },
+      "DUK": {
+        "dollars": 13771.95,
+        "reason": "value DUK LONG"
+      },
+      "NFLX": {
+        "dollars": 3442.99,
+        "reason": "turnaround NFLX LONG"
+      },
+      "ORCL": {
+        "dollars": 3442.99,
+        "reason": "turnaround ORCL LONG"
+      },
+      "CRM": {
+        "dollars": 3442.99,
+        "reason": "turnaround CRM LONG"
+      },
+      "UNH": {
+        "dollars": 3442.99,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AMZN",
+        "side": "buy",
+        "qty": 41,
+        "value": 10244.06,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "AVGO",
+        "side": "buy",
+        "qty": 23,
+        "value": 9277.97,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "BAC",
+        "side": "buy",
+        "qty": 257,
+        "value": 13740.51,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "COP",
+        "side": "buy",
+        "qty": 93,
+        "value": 11055.59,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "CRM",
+        "side": "buy",
+        "qty": 18,
+        "value": 3369.15,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "DUK",
+        "side": "buy",
+        "qty": 66,
+        "value": 8294.22,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "GOOGL",
+        "side": "buy",
+        "qty": 31,
+        "value": 10301.3,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "META",
+        "side": "sell",
+        "qty": 1,
+        "value": 671.45,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "NFLX",
+        "side": "buy",
+        "qty": 37,
+        "value": 3438.78,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "NOW",
+        "side": "sell",
+        "qty": 19,
+        "value": 1918.05,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "NVDA",
+        "side": "sell",
+        "qty": 63,
+        "value": 12639.06,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "ORCL",
+        "side": "buy",
+        "qty": 19,
+        "value": 3442.04,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "PFE",
+        "side": "sell",
+        "qty": 201,
+        "value": 5497.35,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "T",
+        "side": "sell",
+        "qty": 91,
+        "value": 2366.0,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "UNH",
+        "side": "buy",
+        "qty": 9,
+        "value": 3114.13,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "VZ",
+        "side": "sell",
+        "qty": 38,
+        "value": 1758.26,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      },
+      {
+        "symbol": "XOM",
+        "side": "sell",
+        "qty": 15,
+        "value": 2221.5,
+        "status": "ERROR: HTTP Error 403: Forbidden"
+      }
+    ],
+    "executed": true
   }
 ]
