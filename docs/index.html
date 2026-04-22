@@ -33,16 +33,21 @@
     // ── State ───────────────────────────────────────────────────────────
     let D = {};          // full data
     let allSignals = []; // etfs
+    let tradeLog = [];   // alpaca trade log
     let activeTab = 'overview';
     let subTab = {};     // per-tab sub-tab
 
     // ── Fetch ───────────────────────────────────────────────────────────
     async function fetchSignals() {
       try {
-        const resp = await fetch('data/mobile_signals.json?t=' + Date.now());
+        const [resp, tlResp] = await Promise.all([
+          fetch('data/mobile_signals.json?t=' + Date.now()),
+          fetch('data/trade_log.json?t=' + Date.now()).catch(() => null)
+        ]);
         if (!resp.ok) throw new Error('Noch keine Daten');
         D = await resp.json();
         allSignals = D.etfs || [];
+        if (tlResp && tlResp.ok) tradeLog = await tlResp.json();
         document.getElementById('lastUpdate').textContent = 'Stand: ' + (D.updated || '?');
         if (allSignals.length || D.swarm || D.value || D.turnaround) { buildTabs(); render(); }
         else {
@@ -332,6 +337,9 @@
         drawChart('catChart', cat.equity, false);
         drawStockChart('stocksChart', cat.stocks_1y);
       }
+      if (sub === 'validation') {
+        drawValidationChart('validationChart', cat, tradeLog);
+      }
       enableAllChartZoom();
     }
 
@@ -456,7 +464,9 @@
       if (!cat) return '<div class="loading"><div>⚠️ Keine Daten</div></div>';
       const sub = subTab[activeTab] || 'stocks';
       let h = '<div class="sub-tabs">';
-      for (const [k,l] of [['stocks','Aktien'],['equity','Historie'],['matrix','Matrix'],['details','Details']]) {
+      const tabs = [['stocks','Aktien'],['equity','Historie'],['matrix','Matrix'],['details','Details']];
+      if (tradeLog.length) tabs.push(['validation','Validierung']);
+      for (const [k,l] of tabs) {
         h += `<div class="sub-tab ${sub===k?'active':''}" data-sub="${k}">${l}</div>`;
       }
       h += '</div>';
@@ -464,6 +474,7 @@
       else if (sub === 'equity') h += renderCategoryEquity(cat, '🧬 Alpha-Mix');
       else if (sub === 'matrix') h += renderCategoryMatrix(cat);
       else if (sub === 'details') h += renderAlphaMixDetails(cat);
+      else if (sub === 'validation') h += renderAlpacaValidation(cat);
       return h;
     }
 
@@ -549,6 +560,228 @@
     }
 
     // ══════════════════════════════════════════════════════════════════════
+    // ── ALPACA VALIDATION ───────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    function renderAlpacaValidation(cat) {
+      if (!tradeLog.length) return '<div class="loading"><div>⚠️ Kein Alpaca Trade-Log</div></div>';
+
+      const startEq = tradeLog[0].equity;
+      const lastEntry = tradeLog[tradeLog.length - 1];
+      const currentEq = lastEntry.equity;
+      const alpacaReturn = ((currentEq / startEq) - 1) * 100;
+
+      // Compute switching return over same period
+      const startDate = tradeLog[0].date.split(' ')[0];
+      const endDate = lastEntry.date.split(' ')[0];
+      let switchReturn = null;
+      if (cat.equity && cat.equity.length > 1) {
+        let startIdx = -1, endIdx = -1;
+        for (let i = 0; i < cat.equity.length; i++) {
+          if (startIdx < 0 && cat.equity[i].date >= startDate) startIdx = i;
+          if (cat.equity[i].date <= endDate) endIdx = i;
+        }
+        if (startIdx >= 0 && endIdx > startIdx) {
+          switchReturn = ((cat.equity[endIdx].switch / cat.equity[startIdx].switch) - 1) * 100;
+        }
+      }
+
+      const delta = switchReturn != null ? (alpacaReturn - switchReturn).toFixed(2) : '—';
+      const deltaColor = switchReturn != null ? (alpacaReturn >= switchReturn ? 'var(--green)' : 'var(--red)') : '#8b949e';
+
+      let h = '<div class="section"><div class="section-title">🏦 Alpaca Paper-Trading Validierung</div>';
+
+      // Capital summary
+      h += '<div class="card" style="padding:16px;margin-bottom:12px;">';
+      h += '<div class="metrics-grid">';
+      h += mc('Startkapital', '$' + startEq.toLocaleString('de-DE'), tradeLog[0].date.split(' ')[0], 'neutral');
+      h += mc('Aktuell', '$' + currentEq.toLocaleString('de-DE', {minimumFractionDigits:2}), lastEntry.date.split(' ')[0], alpacaReturn >= 0 ? 'positive' : 'negative');
+      h += mc('Alpaca Return', (alpacaReturn >= 0 ? '+' : '') + alpacaReturn.toFixed(2) + '%', 'reale Trades', alpacaReturn >= 0 ? 'positive' : 'negative');
+      h += mc('Switch Return', switchReturn != null ? (switchReturn >= 0 ? '+' : '') + switchReturn.toFixed(2) + '%' : '—', 'Backtest', 'neutral');
+      h += '</div>';
+      h += `<div style="margin-top:12px;padding:10px;background:#161b22;border-radius:8px;border:1px solid var(--border);text-align:center;">
+        <span style="color:#8b949e;font-size:12px;">Delta (Alpaca − Switch):</span>
+        <span style="font-size:18px;font-weight:700;color:${deltaColor};margin-left:8px;">${delta}%</span>
+      </div>`;
+      h += '</div></div>';
+
+      // Position breakdown
+      if (lastEntry.positions && Object.keys(lastEntry.positions).length) {
+        h += '<div class="section"><div class="section-title">📊 Aktuelle Positionen</div>';
+        h += `<div style="font-size:12px;color:#8b949e;margin-bottom:8px;">
+          ${lastEntry.n_positions} Positionen | ${(lastEntry.pct_invested > 1 ? lastEntry.pct_invested : lastEntry.pct_invested * 100).toFixed(0)}% investiert | Cash: $${Number(lastEntry.cash).toLocaleString('de-DE', {minimumFractionDigits:0})}</div>`;
+        h += '<table class="detail-table"><thead><tr><th>Aktie</th><th>Stk</th><th>Kurs</th><th>Wert</th></tr></thead><tbody>';
+        const sortedPos = Object.entries(lastEntry.positions).sort((a,b) => b[1].value - a[1].value);
+        for (const [sym, pos] of sortedPos) {
+          h += `<tr><td style="font-weight:700;">${sym}</td><td>${pos.qty}</td>`;
+          h += `<td>$${pos.price.toFixed(2)}</td><td>$${pos.value.toLocaleString('de-DE', {minimumFractionDigits:0})}</td></tr>`;
+        }
+        h += '</tbody></table></div>';
+      }
+
+      // Equity chart: Switching vs Alpaca
+      h += `<div class="section"><div class="section-title">Equity: Switching vs Alpaca</div>
+        <div class="chart-container" style="height:240px;"><canvas id="validationChart"></canvas></div>
+        <div class="chart-legend"><span class="sw">Switch (Backtest)</span><span style="color:#d29922;">● Alpaca (Real)</span></div></div>`;
+
+      // Alpaca monthly returns
+      const alpacaMonths = computeAlpacaMonthlyReturns();
+      if (Object.keys(alpacaMonths).length) {
+        const M = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+        h += buildHeatmap(alpacaMonths, 'Monatsrenditen (Alpaca Real)', M);
+        if (cat.months_switch) h += buildHeatmap(cat.months_switch, 'Monatsrenditen (Switch Backtest)', M);
+      }
+
+      // Trade history
+      h += '<div class="section"><div class="section-title">📋 Alpaca Trade-History</div>';
+      h += '<div class="trade-log">';
+      for (const entry of [...tradeLog].reverse()) {
+        const d = entry.date;
+        const eq = entry.equity;
+        const ret = ((eq / startEq - 1) * 100).toFixed(2);
+        const orders = entry.orders || [];
+        const errors = orders.filter(o => String(o.status || '').includes('ERROR')).length;
+        let orderSummary = '';
+        if (orders.length) {
+          const buys = orders.filter(o => o.side === 'buy');
+          const sells = orders.filter(o => o.side === 'sell');
+          if (buys.length) orderSummary += '🟢 ' + buys.length + ' Käufe';
+          if (sells.length) orderSummary += (buys.length ? ' | ' : '') + '🔴 ' + sells.length + ' Verkäufe';
+          if (errors) orderSummary += ' | ⚠️ ' + errors + ' Fehler';
+        }
+        h += `<div class="trade-row ${ret >= 0 ? 'buy' : 'sell'}">
+          <div class="trade-date">${d}</div>
+          <div class="trade-action" style="font-size:12px;">${orderSummary || 'Keine Orders'}</div>
+          <div style="text-align:right;">
+            <div class="trade-price">$${eq.toLocaleString('de-DE', {minimumFractionDigits:0})}</div>
+            <div class="trade-pnl ${ret >= 0 ? 'pos' : 'neg'}">${ret >= 0 ? '+' : ''}${ret}%</div>
+          </div></div>`;
+      }
+      h += '</div></div>';
+
+      return h;
+    }
+
+    function computeAlpacaMonthlyReturns() {
+      if (tradeLog.length < 2) return {};
+      const months = {};
+      // Group entries by month, compute return within each month
+      const byMonth = {};
+      for (const entry of tradeLog) {
+        const d = entry.date.split(' ')[0];
+        const [yr, mo] = d.split('-').map(Number);
+        const key = yr + '-' + mo;
+        if (!byMonth[key]) byMonth[key] = [];
+        byMonth[key].push(entry);
+      }
+      // For each month: return = (last equity / first equity - 1) * 100
+      // First month uses startEq as reference
+      let prevEq = tradeLog[0].equity;
+      const sortedKeys = Object.keys(byMonth).sort();
+      for (const key of sortedKeys) {
+        const entries = byMonth[key];
+        const [yr, mo] = key.split('-').map(Number);
+        const lastEq = entries[entries.length - 1].equity;
+        const ret = ((lastEq / prevEq) - 1) * 100;
+        if (!months[yr]) months[yr] = {};
+        months[yr][String(mo)] = Math.round(ret * 10) / 10;
+        prevEq = lastEq;
+      }
+      return months;
+    }
+
+    function drawValidationChart(id, cat, log) {
+      const canvas = document.getElementById(id);
+      if (!canvas || !log || !log.length) return;
+      if (!cat.equity || !cat.equity.length) return;
+
+      const startEq = log[0].equity;
+      const alpacaPoints = log.map(e => ({
+        date: e.date.split(' ')[0],
+        value: e.equity / startEq
+      }));
+
+      const firstDate = alpacaPoints[0].date;
+      const lastDate = alpacaPoints[alpacaPoints.length - 1].date;
+      let startIdx = -1;
+      for (let i = 0; i < cat.equity.length; i++) {
+        if (cat.equity[i].date >= firstDate) { startIdx = i; break; }
+      }
+      if (startIdx < 0) startIdx = cat.equity.length - 1;
+      const baseSwitch = cat.equity[startIdx].switch;
+      const switchPoints = cat.equity.filter(d => d.date >= firstDate && d.date <= lastDate)
+        .map(d => ({ date: d.date, value: d.switch / baseSwitch }));
+
+      const allDates = new Set();
+      alpacaPoints.forEach(p => allDates.add(p.date));
+      switchPoints.forEach(p => allDates.add(p.date));
+      const sortedDates = [...allDates].sort();
+
+      const alpacaMap = {}; alpacaPoints.forEach(p => alpacaMap[p.date] = p.value);
+      const switchMap = {}; switchPoints.forEach(p => switchMap[p.date] = p.value);
+
+      let lastAlpaca = 1, lastSwitch = 1;
+      const combined = sortedDates.map(d => {
+        if (alpacaMap[d] != null) lastAlpaca = alpacaMap[d];
+        if (switchMap[d] != null) lastSwitch = switchMap[d];
+        return { date: d, alpaca: lastAlpaca, switch: lastSwitch };
+      });
+
+      const ctx = canvas.getContext('2d'), dpr = window.devicePixelRatio || 1;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width * dpr; canvas.height = (rect.height - 16) * dpr;
+      canvas.style.width = rect.width + 'px'; canvas.style.height = (rect.height - 16) + 'px';
+      ctx.scale(dpr, dpr);
+      const W = rect.width, H = rect.height - 16;
+      const pad = {top: 10, right: 10, bottom: 20, left: 48};
+      const cW = W - pad.left - pad.right, cH = H - pad.top - pad.bottom;
+      const allV = combined.flatMap(d => [d.alpaca, d.switch]);
+      const mn = Math.min(...allV) * 0.998, mx = Math.max(...allV) * 1.002;
+      const n = combined.length;
+      const x = i => pad.left + (i / Math.max(1, n - 1)) * cW;
+      const y = v => mx === mn ? pad.top + cH / 2 : pad.top + (1 - (v - mn) / (mx - mn)) * cH;
+
+      ctx.fillStyle = '#161b22'; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = '#21262d'; ctx.lineWidth = 0.5;
+      for (let i = 0; i <= 4; i++) {
+        const yy = pad.top + (i / 4) * cH;
+        ctx.beginPath(); ctx.moveTo(pad.left, yy); ctx.lineTo(W - pad.right, yy); ctx.stroke();
+        const v = mx - (i / 4) * (mx - mn);
+        ctx.fillStyle = '#8b949e'; ctx.font = '10px -apple-system,sans-serif'; ctx.textAlign = 'right';
+        ctx.fillText(((v - 1) * 100).toFixed(1) + '%', pad.left - 4, yy + 3);
+      }
+      ctx.textAlign = 'center';
+      const ds = Math.max(1, Math.floor(n / 5));
+      for (let i = 0; i < n; i += ds) {
+        const p = combined[i].date.split('-');
+        ctx.fillStyle = '#8b949e'; ctx.fillText(p[2] + '/' + p[1], x(i), H - 4);
+      }
+      // Switching line (green)
+      ctx.beginPath(); ctx.strokeStyle = '#3fb950'; ctx.lineWidth = 2;
+      for (let i = 0; i < n; i++) { i === 0 ? ctx.moveTo(x(i), y(combined[i].switch)) : ctx.lineTo(x(i), y(combined[i].switch)); }
+      ctx.stroke();
+      // Alpaca line (gold)
+      ctx.beginPath(); ctx.strokeStyle = '#d29922'; ctx.lineWidth = 2;
+      for (let i = 0; i < n; i++) { i === 0 ? ctx.moveTo(x(i), y(combined[i].alpaca)) : ctx.lineTo(x(i), y(combined[i].alpaca)); }
+      ctx.stroke();
+      // Alpaca dots
+      ctx.fillStyle = '#d29922';
+      for (let i = 0; i < n; i++) {
+        if (alpacaMap[combined[i].date] != null) {
+          ctx.beginPath(); ctx.arc(x(i), y(combined[i].alpaca), 3, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      // End labels
+      const lastC = combined[n - 1];
+      const swRet = ((lastC.switch - 1) * 100).toFixed(1);
+      const alRet = ((lastC.alpaca - 1) * 100).toFixed(1);
+      ctx.font = '11px -apple-system,sans-serif'; ctx.textAlign = 'right';
+      ctx.fillStyle = '#3fb950'; ctx.fillText('SW: ' + (swRet >= 0 ? '+' : '') + swRet + '%', W - pad.right, pad.top + 14);
+      ctx.fillStyle = '#d29922'; ctx.fillText('ALP: ' + (alRet >= 0 ? '+' : '') + alRet + '%', W - pad.right, pad.top + 28);
+
+      canvas._chartData = combined.map(d => ({ date: d.date, switch: d.switch, alpaca: d.alpaca }));
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
     // ── COMPARISON PAGE ─────────────────────────────────────────────────
     // ══════════════════════════════════════════════════════════════════════
     function renderComparison() {
@@ -579,6 +812,24 @@
           sortino_sw: cat.sortino_switch, sortino_bh: cat.sortino_bh,
           vol_sw: cat.vol_switch, vol_bh: cat.vol_bh,
           inv: cat.pct_invested
+        });
+      }
+
+      // Alpaca validation row
+      if (tradeLog.length >= 2) {
+        const startEq = tradeLog[0].equity;
+        const lastEq = tradeLog[tradeLog.length-1].equity;
+        const alpRet = (lastEq / startEq) - 1;
+        items.push({
+          name: '🏦 Alpaca (Paper)',
+          type: 'Validierung',
+          signal: tradeLog.length + ' Tage',
+          cagr_sw: alpRet, cagr_bh: D.alpha_mix ? D.alpha_mix.cagr_switch : null,
+          sharpe_sw: null, sharpe_bh: D.alpha_mix ? D.alpha_mix.sharpe_switch : null,
+          maxdd_sw: null, maxdd_bh: null,
+          sortino_sw: null, sortino_bh: null,
+          vol_sw: null, vol_bh: null,
+          inv: tradeLog[tradeLog.length-1].pct_invested > 1 ? tradeLog[tradeLog.length-1].pct_invested / 100 : tradeLog[tradeLog.length-1].pct_invested
         });
       }
 
