@@ -3294,5 +3294,199 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-04-24 20:30 UTC",
+    "equity": 103852.07,
+    "cash": 11437.51,
+    "invested": 92414.56,
+    "pct_invested": 89.0,
+    "n_positions": 13,
+    "positions": {
+      "AMZN": {
+        "qty": 10,
+        "price": 263.75,
+        "value": 2637.5
+      },
+      "AVGO": {
+        "qty": 28,
+        "price": 421.63,
+        "value": 11805.53
+      },
+      "BAC": {
+        "qty": 262,
+        "price": 52.05,
+        "value": 13637.1
+      },
+      "COP": {
+        "qty": 98,
+        "price": 121.55,
+        "value": 11911.9
+      },
+      "CRM": {
+        "qty": 2,
+        "price": 177.89,
+        "value": 355.78
+      },
+      "DUK": {
+        "qty": 89,
+        "price": 127.27,
+        "value": 11327.03
+      },
+      "GOOGL": {
+        "qty": 30,
+        "price": 343.75,
+        "value": 10312.5
+      },
+      "META": {
+        "qty": 20,
+        "price": 675.09,
+        "value": 13501.8
+      },
+      "NFLX": {
+        "qty": 9,
+        "price": 92.34,
+        "value": 831.06
+      },
+      "NVDA": {
+        "qty": 53,
+        "price": 208.0,
+        "value": 11024.0
+      },
+      "ORCL": {
+        "qty": 5,
+        "price": 172.73,
+        "value": 863.65
+      },
+      "UNH": {
+        "qty": 9,
+        "price": 354.21,
+        "value": 3187.89
+      },
+      "VZ": {
+        "qty": 22,
+        "price": 46.31,
+        "value": 1018.82
+      }
+    },
+    "targets": {
+      "GOOGL": {
+        "dollars": 10385.21,
+        "reason": "swarm GOOGL LONG"
+      },
+      "AMZN": {
+        "dollars": 10385.21,
+        "reason": "swarm AMZN LONG"
+      },
+      "AVGO": {
+        "dollars": 13846.94,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 13846.94,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "COP": {
+        "dollars": 13846.94,
+        "reason": "value COP LONG"
+      },
+      "BAC": {
+        "dollars": 13846.94,
+        "reason": "value BAC LONG"
+      },
+      "DUK": {
+        "dollars": 13846.94,
+        "reason": "value DUK LONG"
+      },
+      "NFLX": {
+        "dollars": 3461.74,
+        "reason": "turnaround NFLX LONG"
+      },
+      "ORCL": {
+        "dollars": 3461.74,
+        "reason": "turnaround ORCL LONG"
+      },
+      "CRM": {
+        "dollars": 3461.74,
+        "reason": "turnaround CRM LONG"
+      },
+      "UNH": {
+        "dollars": 3461.74,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AMZN",
+        "side": "buy",
+        "qty": 29,
+        "value": 7648.75,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "AVGO",
+        "side": "buy",
+        "qty": 4,
+        "value": 1686.5,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "BAC",
+        "side": "buy",
+        "qty": 4,
+        "value": 208.2,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "COP",
+        "side": "buy",
+        "qty": 15,
+        "value": 1823.25,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "CRM",
+        "side": "buy",
+        "qty": 17,
+        "value": 3024.13,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "DUK",
+        "side": "buy",
+        "qty": 19,
+        "value": 2418.13,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "NFLX",
+        "side": "buy",
+        "qty": 28,
+        "value": 2585.52,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "NVDA",
+        "side": "sell",
+        "qty": 53,
+        "value": 11024.0,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "ORCL",
+        "side": "buy",
+        "qty": 15,
+        "value": 2590.95,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "VZ",
+        "side": "sell",
+        "qty": 22,
+        "value": 1018.82,
+        "status": "ERROR: HTTP 403: "
+      }
+    ],
+    "executed": true
   }
 ]
