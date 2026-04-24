@@ -233,6 +233,11 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
 
     client = AlpacaClient(key, secret, live=live)
 
+    # Diagnostics
+    log.info(f"Key-ID: {key[:8]}...{key[-4:]} (len={len(key)})")
+    log.info(f"Secret: {secret[:4]}...{secret[-4:]} (len={len(secret)})")
+    log.info(f"Base URL: {client.base}")
+
     print(f"\n{'='*60}")
     print(f"  Alpaca Strategy-Switch Trader")
     print(f"  Modus: {'🔴 LIVE' if live else '🟢 PAPER'}  |  "
@@ -261,11 +266,14 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
         account = client.get_account()
     except Exception as e:
         log.error(f"❌ API-Verbindung fehlgeschlagen: {e}")
+        if isinstance(e, HTTPError):
+            log.error(f"   Response: {e.read().decode() if e.fp else 'n/a'}")
         return False
 
     equity = float(account["equity"])
     cash = float(account["cash"])
     log.info(f"Konto: ${equity:,.2f} Equity  |  ${cash:,.2f} Cash")
+    log.info(f"Account Status: {account.get('status')} | Trading blocked: {account.get('trading_blocked')} | Transfers blocked: {account.get('transfers_blocked')}")
 
     # Current positions
     positions = client.get_positions()
@@ -340,9 +348,17 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
                 log.info(f"  ✅ {o['side'].upper()} {o['qty']}× {o['symbol']} "
                          f"MOC → Order {o['order_id']} ({o['status']})")
             except Exception as e:
-                o["status"] = f"ERROR: {e}"
+                err_detail = str(e)
+                if isinstance(e, HTTPError):
+                    err_body = e.read().decode() if e.fp else ""
+                    err_detail = f"HTTP {e.code}: {err_body}"
+                    log.error(f"  ❌ {o['symbol']}: {err_detail}")
+                    log.error(f"     URL: {e.url}")
+                    log.error(f"     Key-ID (first 8): {key[:8]}...")
+                else:
+                    log.error(f"  ❌ {o['symbol']}: {err_detail}")
+                o["status"] = f"ERROR: {err_detail}"
                 executed_orders.append(o)
-                log.error(f"  ❌ {o['symbol']}: {e}")
     else:
         print(f"\n  ℹ️  DRY-RUN — keine Orders gesendet.")
         print(f"  Für echte Orders: --execute (oder TRADING_ENABLED=1)")
