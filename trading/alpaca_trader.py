@@ -86,9 +86,9 @@ class AlpacaClient:
             raise
 
     def place_order(self, symbol: str, qty: int, side: str,
-                    order_type: str = "market", time_in_force: str = "cls",
+                    order_type: str = "market", time_in_force: str = "day",
                     limit_price: float = None) -> dict:
-        """Place order. Default: Market-on-Close (type=market, tif=cls)."""
+        """Place order. Default: Market day order."""
         body = {
             "symbol": symbol,
             "qty": str(qty),
@@ -123,7 +123,8 @@ def map_ticker(yahoo_ticker: str) -> str | None:
 def compute_targets(signals: dict, equity: float) -> dict:
     """
     Compute target dollar allocation per symbol.
-    Alpha-Mix only: 100% equity distributed via Sharpe-optimized category weights.
+    Alpha-Mix: Category-weighted (e.g. 40/40/20), then equal-weight within category.
+    Stocks appearing in multiple categories get combined allocations.
     Returns: {alpaca_symbol: {"dollars": float, "signal": str, "reason": str}}
     """
     targets = {}
@@ -141,6 +142,9 @@ def compute_targets(signals: dict, equity: float) -> dict:
             cat = s.get("category", "unknown")
             if s["signal"] == "LONG":
                 long_by_cat.setdefault(cat, []).append(s)
+
+        log.info(f"Allocation: weights={raw_weights}, "
+                 f"LONG per cat: {{{', '.join(k+':'+str(len(v)) for k,v in long_by_cat.items())}}}")
 
         for s in alpha["stocks"]:
             symbol = map_ticker(s["ticker"])
@@ -169,6 +173,11 @@ def compute_targets(signals: dict, equity: float) -> dict:
                         "signal": "CASH",
                         "reason": f"{cat} {s['ticker']} CASH",
                     }
+
+        # Log consolidated targets
+        for sym, t in sorted(targets.items()):
+            if t["signal"] == "LONG":
+                log.info(f"  Target: {sym} ${t['dollars']:,.0f} ({t['reason']})")
     else:
         log.warning("Kein alpha_mix vorhanden — keine Targets!")
 
@@ -334,13 +343,13 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
 
     executed_orders = []
     if execute:
-        print("\n── Sende Market-on-Close Orders ──")
+        print("\n── Sende Market Orders ──")
         for o in orders:
             try:
                 result = client.place_order(
                     o["symbol"], o["qty"], o["side"],
                     order_type="market",
-                    time_in_force="cls",
+                    time_in_force="day",
                 )
                 o["status"] = result.get("status", "?")
                 o["order_id"] = result.get("id", "?")

@@ -732,6 +732,137 @@ def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
     }
 
 
+def _build_alpha_boost(categories: dict, mobile_data: dict,
+                       alpha_mix: dict, leverage: float = 2.0) -> dict | None:
+    """
+    Alpha-Boost: Leveraged version of Alpha-Mix.
+    Multiplies daily returns by leverage factor, simulating margin trading.
+    Same stocks/signals as Alpha-Mix but amplified returns (and risk).
+    """
+    available = {}
+    for key in ("swarm", "value", "turnaround"):
+        cat = categories.get(key)
+        if cat is not None and "switch_ret" in cat and "bench_ret" in cat:
+            available[key] = cat
+
+    if len(available) < 2:
+        return None
+
+    # Use the same weights as alpha_mix
+    best_weights = {}
+    for k, v in alpha_mix.get("weights", {}).items():
+        best_weights[k] = float(str(v).replace("%", "")) / 100.0
+
+    if not best_weights:
+        return None
+
+    # Align series (same logic as alpha_mix)
+    starts = [cat["switch_ret"].index[0] for cat in available.values()]
+    ends = [cat["switch_ret"].index[-1] for cat in available.values()]
+    common_start = max(starts)
+    common_end = min(ends)
+
+    aligned_sw = {}
+    aligned_bh = {}
+    for key, cat in available.items():
+        sw = cat["switch_ret"].loc[common_start:common_end]
+        bh = cat["bench_ret"].loc[common_start:common_end]
+        common_idx = sw.index.intersection(bh.index)
+        aligned_sw[key] = sw.loc[common_idx]
+        aligned_bh[key] = bh.loc[common_idx]
+
+    ref_idx = list(aligned_sw.values())[0].index
+    for key in aligned_sw:
+        aligned_sw[key] = aligned_sw[key].reindex(ref_idx, fill_value=0.0)
+        aligned_bh[key] = aligned_bh[key].reindex(ref_idx, fill_value=0.0)
+
+    # Build leveraged mix returns (deduct margin cost on borrowed capital)
+    margin_rate = 0.055  # 5.5% annual margin cost
+    daily_margin_cost = (leverage - 1) * margin_rate / 252
+    mix_sw = sum(aligned_sw[k] * best_weights[k] for k in best_weights) * leverage - daily_margin_cost
+    mix_bh = sum(aligned_bh[k] * best_weights[k] for k in best_weights) * leverage - daily_margin_cost
+
+    mix_sw_eq = _equity(mix_sw)
+    mix_bh_eq = _equity(mix_bh)
+
+    # Monthly heatmaps
+    monthly_sw = (mix_sw.groupby([mix_sw.index.year, mix_sw.index.month]).sum() * 100)
+    monthly_bh = (mix_bh.groupby([mix_bh.index.year, mix_bh.index.month]).sum() * 100)
+    months_switch = {}
+    for (yr, mo), val in monthly_sw.items():
+        if yr not in months_switch:
+            months_switch[yr] = {}
+        months_switch[yr][mo] = round(float(val), 1)
+    months_bh = {}
+    for (yr, mo), val in monthly_bh.items():
+        if yr not in months_bh:
+            months_bh[yr] = {}
+        months_bh[yr][mo] = round(float(val), 1)
+
+    # Yearly returns
+    yr_sw = mix_sw.groupby(mix_sw.index.year).sum() * 100
+    yr_bh = mix_bh.groupby(mix_bh.index.year).sum() * 100
+    yearly = []
+    for yr in sorted(set(yr_sw.index) | set(yr_bh.index)):
+        yearly.append({"year": int(yr), "switch": round(float(yr_sw.get(yr, 0)), 1),
+                        "bh": round(float(yr_bh.get(yr, 0)), 1)})
+
+    # Equity curve (downsampled)
+    eq_len = len(mix_sw_eq)
+    step_s = max(1, eq_len // 200)
+    equity = []
+    for i in range(0, eq_len, step_s):
+        equity.append({
+            "date": mix_sw_eq.index[i].strftime("%Y-%m-%d"),
+            "switch": round(float(mix_sw_eq.iloc[i]), 4),
+            "bh": round(float(mix_bh_eq.iloc[i]), 4),
+        })
+    if eq_len > 0:
+        equity.append({
+            "date": mix_sw_eq.index[-1].strftime("%Y-%m-%d"),
+            "switch": round(float(mix_sw_eq.iloc[-1]), 4),
+            "bh": round(float(mix_bh_eq.iloc[-1]), 4),
+        })
+
+    tuw_sw = time_under_water(mix_sw_eq)
+    tuw_bh = time_under_water(mix_bh_eq)
+
+    n_long = alpha_mix.get("n_long", 0)
+    lev_int = int(leverage)
+
+    return {
+        "category": "alpha_boost",
+        "leverage": leverage,
+        "stocks": alpha_mix.get("stocks", []),
+        "n_long": n_long,
+        "n_total": alpha_mix.get("n_total", 30),
+        "weights": alpha_mix.get("weights", {}),
+        "sharpe_switch": round(float(sharpe_ratio(mix_sw, RF)), 2),
+        "sharpe_bh": round(float(sharpe_ratio(mix_bh, RF)), 2),
+        "cagr_switch": round(float(cagr(mix_sw_eq)), 4),
+        "cagr_bh": round(float(cagr(mix_bh_eq)), 4),
+        "max_dd_switch": round(float(max_drawdown(mix_sw_eq)), 4),
+        "max_dd_bh": round(float(max_drawdown(mix_bh_eq)), 4),
+        "sortino_switch": round(float(sortino_ratio(mix_sw, RF)), 2),
+        "sortino_bh": round(float(sortino_ratio(mix_bh, RF)), 2),
+        "calmar_switch": round(float(calmar_ratio(mix_sw_eq)), 2),
+        "calmar_bh": round(float(calmar_ratio(mix_bh_eq)), 2),
+        "vol_switch": round(float(mix_sw.std() * np.sqrt(252)), 4),
+        "vol_bh": round(float(mix_bh.std() * np.sqrt(252)), 4),
+        "max_uw_switch": tuw_sw.get("max_days", 0),
+        "max_uw_bh": tuw_bh.get("max_days", 0),
+        "pct_invested": alpha_mix.get("pct_invested", 0.5),
+        "n_trades": alpha_mix.get("n_trades", 0),
+        "equity": equity,
+        "months_switch": months_switch,
+        "months_bh": months_bh,
+        "yearly_returns": yearly,
+        "trades": alpha_mix.get("trades", []),
+        "start": common_start.strftime("%Y-%m-%d"),
+        "end": common_end.strftime("%Y-%m-%d"),
+    }
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
@@ -826,6 +957,7 @@ def main():
             "value": None,
             "turnaround": None,
             "alpha_mix": None,
+            "alpha_boost": None,
         }
         for ticker, d in all_data.items():
             p = d["perf"]
@@ -1050,6 +1182,14 @@ def main():
                 mobile_data["alpha_mix"] = alpha_mix
                 log.info(f"  Alpha-Mix: Weights={alpha_mix['weights']}, "
                          f"Sharpe={alpha_mix['sharpe_switch']:.2f}")
+
+                # Alpha-Boost: 2x leveraged version
+                alpha_boost = _build_alpha_boost(raw_cats, mobile_data, alpha_mix, leverage=2.0)
+                if alpha_boost is not None:
+                    mobile_data["alpha_boost"] = alpha_boost
+                    log.info(f"  Alpha-Boost 2x: Sharpe={alpha_boost['sharpe_switch']:.2f}, "
+                             f"CAGR={alpha_boost['cagr_switch']*100:.1f}%, "
+                             f"MaxDD={alpha_boost['max_dd_switch']*100:.1f}%")
         except Exception as e:
             import traceback
             log.warning(f"  Alpha-Mix-Berechnung übersprungen: {e}")

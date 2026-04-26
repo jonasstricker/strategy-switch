@@ -14,10 +14,19 @@
 </head>
 <body>
 
-  <div class="header">
+  <div id="authScreen" style="display:none;position:fixed;inset:0;background:#0d1117;z-index:9999;display:flex;align-items:center;justify-content:center;">
+    <div style="text-align:center;padding:32px;">
+      <h2 style="color:#e6edf3;margin-bottom:16px;">🔒 Strategy Switch</h2>
+      <input id="authPw" type="password" placeholder="Passwort" style="padding:12px 16px;font-size:16px;border-radius:8px;border:1px solid #30363d;background:#161b22;color:#e6edf3;width:200px;text-align:center;">
+      <br><button id="authBtn" style="margin-top:12px;padding:10px 32px;font-size:14px;border-radius:8px;background:#238636;color:#fff;border:none;cursor:pointer;">Anmelden</button>
+      <div id="authErr" style="color:#f85149;margin-top:8px;font-size:13px;display:none;">Falsches Passwort</div>
+    </div>
+  </div>
+
+  <div class="header" id="mainApp" style="display:none;">
     <h1>📊 Strategy Switch</h1>
     <div class="subtitle" id="lastUpdate">Laden …</div>
-    <div class="auto-info">Berechnung Mo–Fr 21:00 UTC | Trading Mo–Fr 19:50 UTC (MOC)</div>
+    <div class="auto-info">Berechnung Mo–Fr 21:00 UTC | Trading Mo–Fr 19:50 UTC</div>
   </div>
 
   <div class="tabs" id="tabs"></div>
@@ -30,6 +39,42 @@
   </div>
 
   <script>
+    // ── Auth ────────────────────────────────────────────────────────────
+    const AUTH_HASH = 'c57a5df4f97ed6914116e5fd1348406064834f22503d890eb571af442ac4b4c3'; // sha256 of password
+    async function sha256(msg) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+    function checkAuth() {
+      if (sessionStorage.getItem('auth') === '1') { showApp(); return; }
+      document.getElementById('authScreen').style.display = 'flex';
+    }
+    function showApp() {
+      document.getElementById('authScreen').style.display = 'none';
+      document.getElementById('mainApp').style.display = '';
+      document.getElementById('tabs').style.display = '';
+      document.getElementById('content').style.display = '';
+      fetchSignals();
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('tabs').style.display = 'none';
+      document.getElementById('content').style.display = 'none';
+      checkAuth();
+      document.getElementById('authBtn').addEventListener('click', tryAuth);
+      document.getElementById('authPw').addEventListener('keydown', e => { if (e.key === 'Enter') tryAuth(); });
+    });
+    async function tryAuth() {
+      const pw = document.getElementById('authPw').value;
+      const hash = await sha256(pw);
+      if (hash === AUTH_HASH) {
+        sessionStorage.setItem('auth', '1');
+        showApp();
+      } else {
+        document.getElementById('authErr').style.display = 'block';
+        document.getElementById('authPw').value = '';
+      }
+    }
+
     // ── State ───────────────────────────────────────────────────────────
     let D = {};          // full data
     let allSignals = []; // etfs
@@ -64,11 +109,15 @@
     function buildTabs() {
       const tabBar = document.getElementById('tabs');
       let tabs = [{key:'overview', label:'Übersicht'}];
-      for (const e of allSignals) tabs.push({key: e.ticker, label: e.ticker.replace('.DE','')});
+      // Only show URTH ETF
+      for (const e of allSignals) {
+        if (e.ticker === 'URTH') tabs.push({key: e.ticker, label: 'URTH'});
+      }
       if (D.swarm) tabs.push({key:'swarm', label:'🐝 Schwarm'});
       if (D.value) tabs.push({key:'value', label:'💎 Value'});
       if (D.turnaround) tabs.push({key:'turnaround', label:'🔄 Turnar.'});
       if (D.alpha_mix) tabs.push({key:'alpha_mix', label:'🧬 Alpha-Mix'});
+      if (D.alpha_boost) tabs.push({key:'alpha_boost', label:'🚀 Boost 2x'});
       tabs.push({key:'compare', label:'📊 Vergleich'});
       tabs.push({key:'methodik', label:'📖 Info'});
       tabBar.innerHTML = tabs.map(t =>
@@ -94,6 +143,7 @@
       else if (activeTab === 'value') { c.innerHTML = renderCategory(D.value, '💎 Value-Aktien (Top-10 Bewertung)'); afterCategoryRender(D.value); }
       else if (activeTab === 'turnaround') { c.innerHTML = renderCategory(D.turnaround, '🔄 Turnaround-Aktien'); afterCategoryRender(D.turnaround); }
       else if (activeTab === 'alpha_mix') { c.innerHTML = renderAlphaMix(D.alpha_mix); afterCategoryRender(D.alpha_mix); }
+      else if (activeTab === 'alpha_boost') { c.innerHTML = renderAlphaBoost(D.alpha_boost); afterCategoryRender(D.alpha_boost); }
       else if (activeTab === 'compare') c.innerHTML = renderComparison();
       else if (activeTab === 'methodik') c.innerHTML = renderMethodik();
       else {
@@ -129,8 +179,9 @@
     // ── OVERVIEW ────────────────────────────────────────────────────────
     // ══════════════════════════════════════════════════════════════════════
     function renderOverview() {
-      let h = '<div class="section"><div class="section-title">ETF Signale</div><div class="etf-overview">';
+      let h = '<div class="section"><div class="section-title">ETF Signal</div><div class="etf-overview">';
       for (const s of allSignals) {
+        if (s.ticker !== 'URTH') continue;
         const isL = s.signal==='LONG';
         h += `<div class="etf-mini-card" data-ticker="${s.ticker}">
           <div class="etf-ticker">${s.ticker.replace('.DE','')}</div>
@@ -143,7 +194,7 @@
       h += '</div></div>';
 
       // Category cards
-      for (const [key, label, icon] of [['swarm','Schwarm','🐝'],['value','Value','💎'],['turnaround','Turnaround','🔄'],['alpha_mix','Alpha-Mix','🧬']]) {
+      for (const [key, label, icon] of [['swarm','Schwarm','🐝'],['value','Value','💎'],['turnaround','Turnaround','🔄'],['alpha_mix','Alpha-Mix','🧬'],['alpha_boost','Boost 2x','🚀']]) {
         const cat = D[key];
         if (!cat) continue;
         h += `<div class="section"><div class="section-title">${icon} ${label}</div>
@@ -161,6 +212,7 @@
       // 12M returns
       h += '<div class="section"><div class="section-title">12 Monate Return</div>';
       for (const s of allSignals) {
+        if (s.ticker !== 'URTH') continue;
         const sw=pct(s.return_1y_switch), bh=pct(s.return_1y_bh);
         const cls = s.return_1y_switch>=s.return_1y_bh ? 'positive':'negative';
         h += `<div class="metric-card" style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
@@ -560,6 +612,45 @@
     }
 
     // ══════════════════════════════════════════════════════════════════════
+    // ── ALPHA-BOOST (Leveraged) ─────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    function renderAlphaBoost(cat) {
+      if (!cat) return '<div class="loading"><div>⚠️ Keine Daten</div></div>';
+      const sub = subTab[activeTab] || 'stocks';
+      let h = '<div class="sub-tabs">';
+      for (const [k,l] of [['stocks','Aktien'],['equity','Historie'],['matrix','Matrix'],['details','Details']]) {
+        h += `<div class="sub-tab ${sub===k?'active':''}" data-sub="${k}">${l}</div>`;
+      }
+      h += '</div>';
+
+      if (sub === 'stocks') {
+        const lev = cat.leverage || 2;
+        h += `<div class="section"><div class="section-title">🚀 Alpha-Boost ${lev}x — Gehebelt</div>`;
+        h += `<div class="card" style="margin-bottom:12px;padding:16px;">
+          <div style="font-size:14px;margin-bottom:8px;padding:8px;background:#161b22;border-radius:6px;border:1px solid #30363d;">
+            ⚠️ <strong>Hebel ${lev}x</strong>: Tägliche Renditen werden mit ${lev} multipliziert.
+            Höhere Rendite, aber auch <strong>${lev}x höheres Risiko und Drawdown</strong>.
+            <br><span style="color:#f85149;font-size:12px;">Nur als Backtest — kein echtes Margin-Trading.</span>
+          </div>`;
+
+        const sw = pct(cat.cagr_switch), bh = pct(cat.cagr_bh);
+        h += `<div class="metrics-grid" style="margin-top:12px;">
+          ${mc('CAGR Switch', sw+'%','vs 1x: '+pct(D.alpha_mix&&D.alpha_mix.cagr_switch)+'%','positive')}
+          ${mc('Sharpe', cat.sharpe_switch,'vs 1x: '+(D.alpha_mix&&D.alpha_mix.sharpe_switch),'neutral')}
+          ${mc('Max DD', pct(cat.max_dd_switch)+'%','vs 1x: '+pct(D.alpha_mix&&D.alpha_mix.max_dd_switch)+'%','negative')}
+          ${mc('Volatilität', pct(cat.vol_switch)+'%','','neutral')}
+        </div></div></div>`;
+
+        // Show same stocks as alpha_mix
+        h += renderAlphaMixStocks(cat);
+      }
+      else if (sub === 'equity') h += renderCategoryEquity(cat, '🚀 Alpha-Boost ' + (cat.leverage||2) + 'x');
+      else if (sub === 'matrix') h += renderCategoryMatrix(cat);
+      else if (sub === 'details') h += renderAlphaMixDetails(cat);
+      return h;
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
     // ── ALPACA VALIDATION ───────────────────────────────────────────────
     // ══════════════════════════════════════════════════════════════════════
     function renderAlpacaValidation(cat) {
@@ -787,6 +878,7 @@
     function renderComparison() {
       let items = [];
       for (const s of allSignals) {
+        if (s.ticker !== 'URTH') continue;
         items.push({
           name: s.ticker.replace('.DE',''),
           type: 'ETF',
@@ -799,7 +891,7 @@
           inv: s.pct_invested
         });
       }
-      for (const [key, label, icon] of [['swarm','Schwarm','🐝'],['value','Value','💎'],['turnaround','Turnaround','🔄'],['alpha_mix','Alpha-Mix','🧬']]) {
+      for (const [key, label, icon] of [['swarm','Schwarm','🐝'],['value','Value','💎'],['turnaround','Turnaround','🔄'],['alpha_mix','Alpha-Mix','🧬'],['alpha_boost','Boost 2x','🚀']]) {
         const cat = D[key];
         if (!cat) continue;
         items.push({
@@ -1312,7 +1404,7 @@
     }
 
     // ── Init ────────────────────────────────────────────────────────────
-    fetchSignals();
+    // fetchSignals() is called by showApp() after auth
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
   </script>
 </body>
