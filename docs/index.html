@@ -549,30 +549,61 @@
         ${mc('Max DD', pct(cat.max_dd_switch)+'%','','negative')}
       </div></div></div>`;
 
-      // Group stocks by origin category
-      const groups = {'swarm':[],'value':[],'turnaround':[]};
+      // Consolidate stocks: merge duplicates across categories
+      const catIcons = {'swarm':'🐝','value':'💎','turnaround':'🔄'};
+      const merged = {};
       for (const st of (cat.stocks||[])) {
-        const g = st.category || 'other';
-        if (!groups[g]) groups[g] = [];
-        groups[g].push(st);
-      }
-      const gLabels = {'swarm':'🐝 Schwarm','value':'💎 Value','turnaround':'🔄 Turnaround'};
-      for (const [gkey, gstocks] of Object.entries(groups)) {
-        if (!gstocks.length) continue;
-        h += `<div class="section"><div class="section-title">${gLabels[gkey]||gkey} Aktien</div><div class="card-grid">`;
-        for (const st of gstocks) {
-          const isL = st.signal==='LONG';
-          h += `<div class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-weight:700;">${st.ticker}</span>
-              <span class="badge ${isL?'long':'cash'}">${st.signal}</span>
-            </div>
-            <div style="color:var(--text-secondary);font-size:13px;">${st.name||''}</div>
-            <div style="font-size:13px;margin-top:4px;">Sharpe: ${st.sharpe} | Inv: ${Math.round(st.pct_invested*100)}%</div>
-          </div>`;
+        const t = st.ticker;
+        if (merged[t]) {
+          merged[t].cats.push(st.category||'other');
+          if (st.signal==='LONG') merged[t].signal='LONG';
+        } else {
+          merged[t] = {...st, cats:[st.category||'other']};
         }
-        h += '</div></div>';
       }
+      const mList = Object.values(merged);
+      const longList = mList.filter(s=>s.signal==='LONG');
+      const cashList = mList.filter(s=>s.signal!=='LONG');
+
+      // Allocation preview (40/40/20 per category, equal within category)
+      const catWeights = cat.weights||{};
+      const catParsed = {};
+      for (const [k,v] of Object.entries(catWeights)) catParsed[k] = parseFloat(String(v).replace('%',''))/100;
+      const longPerCat = {};
+      for (const st of (cat.stocks||[])) {
+        if (st.signal==='LONG') { const c=st.category||'other'; longPerCat[c]=(longPerCat[c]||0)+1; }
+      }
+      // Compute allocation % per consolidated stock
+      for (const m of mList) {
+        let allocPct = 0;
+        if (m.signal==='LONG') {
+          for (const c of m.cats) {
+            const w = catParsed[c]||0;
+            const n = longPerCat[c]||1;
+            allocPct += w/n;
+          }
+        }
+        m.allocPct = allocPct;
+      }
+
+      h += `<div class="section"><div class="section-title">📊 Portfolio (${longList.length} LONG / ${cashList.length} CASH)</div><div class="card-grid">`;
+      for (const st of [...longList.sort((a,b)=>b.allocPct-a.allocPct), ...cashList]) {
+        const isL = st.signal==='LONG';
+        const catTags = st.cats.map(c=>catIcons[c]||c).join(' ');
+        h += `<div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-weight:700;">${st.ticker}</span>
+            <span class="badge ${isL?'long':'cash'}">${st.signal}</span>
+          </div>
+          <div style="color:var(--text-secondary);font-size:13px;">${st.name||''}</div>
+          <div style="font-size:13px;margin-top:4px;">
+            ${catTags}${st.cats.length>1?' <span style="color:var(--accent);font-weight:600;">(kombiniert)</span>':''}
+            ${isL?' · <b>'+Math.round(st.allocPct*100)+'%</b> Allokation':''}
+          </div>
+          <div style="font-size:12px;color:var(--text-secondary);">Sharpe: ${st.sharpe} | Inv: ${Math.round(st.pct_invested*100)}%</div>
+        </div>`;
+      }
+      h += '</div></div>';
       return h;
     }
 
