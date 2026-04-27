@@ -3488,5 +3488,206 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-04-27 20:43 UTC",
+    "equity": 104581.97,
+    "cash": 11437.45,
+    "invested": 93144.52,
+    "pct_invested": 89.1,
+    "n_positions": 13,
+    "positions": {
+      "AMZN": {
+        "qty": 10,
+        "price": 261.45,
+        "value": 2614.5
+      },
+      "AVGO": {
+        "qty": 28,
+        "price": 417.21,
+        "value": 11681.88
+      },
+      "BAC": {
+        "qty": 262,
+        "price": 52.52,
+        "value": 13761.37
+      },
+      "COP": {
+        "qty": 98,
+        "price": 121.69,
+        "value": 11925.62
+      },
+      "CRM": {
+        "qty": 2,
+        "price": 180.6,
+        "value": 361.2
+      },
+      "DUK": {
+        "qty": 89,
+        "price": 127.09,
+        "value": 11311.01
+      },
+      "GOOGL": {
+        "qty": 30,
+        "price": 351.02,
+        "value": 10530.72
+      },
+      "META": {
+        "qty": 20,
+        "price": 676.82,
+        "value": 13536.4
+      },
+      "NFLX": {
+        "qty": 9,
+        "price": 91.42,
+        "value": 822.78
+      },
+      "NVDA": {
+        "qty": 53,
+        "price": 217.26,
+        "value": 11514.53
+      },
+      "ORCL": {
+        "qty": 5,
+        "price": 172.69,
+        "value": 863.44
+      },
+      "UNH": {
+        "qty": 9,
+        "price": 353.9,
+        "value": 3185.1
+      },
+      "VZ": {
+        "qty": 22,
+        "price": 47.09,
+        "value": 1035.98
+      }
+    },
+    "targets": {
+      "GOOGL": {
+        "dollars": 10458.2,
+        "reason": "swarm GOOGL LONG"
+      },
+      "AMZN": {
+        "dollars": 10458.2,
+        "reason": "swarm AMZN LONG"
+      },
+      "AVGO": {
+        "dollars": 13944.26,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 13944.26,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "COP": {
+        "dollars": 13944.26,
+        "reason": "value COP LONG"
+      },
+      "BAC": {
+        "dollars": 13944.26,
+        "reason": "value BAC LONG"
+      },
+      "DUK": {
+        "dollars": 13944.26,
+        "reason": "value DUK LONG"
+      },
+      "NFLX": {
+        "dollars": 3486.07,
+        "reason": "turnaround NFLX LONG"
+      },
+      "ORCL": {
+        "dollars": 3486.07,
+        "reason": "turnaround ORCL LONG"
+      },
+      "CRM": {
+        "dollars": 3486.07,
+        "reason": "turnaround CRM LONG"
+      },
+      "UNH": {
+        "dollars": 3486.07,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AMZN",
+        "side": "buy",
+        "qty": 30,
+        "value": 7843.5,
+        "status": "accepted"
+      },
+      {
+        "symbol": "AVGO",
+        "side": "buy",
+        "qty": 5,
+        "value": 2086.05,
+        "status": "accepted"
+      },
+      {
+        "symbol": "BAC",
+        "side": "buy",
+        "qty": 3,
+        "value": 157.57,
+        "status": "accepted"
+      },
+      {
+        "symbol": "COP",
+        "side": "buy",
+        "qty": 16,
+        "value": 1947.04,
+        "status": "accepted"
+      },
+      {
+        "symbol": "CRM",
+        "side": "buy",
+        "qty": 17,
+        "value": 3070.2,
+        "status": "accepted"
+      },
+      {
+        "symbol": "DUK",
+        "side": "buy",
+        "qty": 20,
+        "value": 2541.8,
+        "status": "accepted"
+      },
+      {
+        "symbol": "GOOGL",
+        "side": "sell",
+        "qty": 1,
+        "value": 351.02,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NFLX",
+        "side": "buy",
+        "qty": 29,
+        "value": 2651.18,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NVDA",
+        "side": "sell",
+        "qty": 53,
+        "value": 11514.53,
+        "status": "accepted"
+      },
+      {
+        "symbol": "ORCL",
+        "side": "buy",
+        "qty": 15,
+        "value": 2590.31,
+        "status": "accepted"
+      },
+      {
+        "symbol": "VZ",
+        "side": "sell",
+        "qty": 22,
+        "value": 1035.98,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
   }
 ]
