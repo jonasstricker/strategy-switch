@@ -3987,5 +3987,161 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-04-30 20:43 UTC",
+    "equity": 105189.04,
+    "cash": 820.53,
+    "invested": 104368.51,
+    "pct_invested": 99.2,
+    "n_positions": 11,
+    "positions": {
+      "AMZN": {
+        "qty": 40,
+        "price": 264.71,
+        "value": 10588.4
+      },
+      "AVGO": {
+        "qty": 34,
+        "price": 415.99,
+        "value": 14143.66
+      },
+      "BAC": {
+        "qty": 263,
+        "price": 53.46,
+        "value": 14059.98
+      },
+      "COP": {
+        "qty": 108,
+        "price": 126.0,
+        "value": 13608.0
+      },
+      "CRM": {
+        "qty": 19,
+        "price": 180.44,
+        "value": 3428.39
+      },
+      "DUK": {
+        "qty": 109,
+        "price": 129.0,
+        "value": 14061.0
+      },
+      "GOOGL": {
+        "qty": 28,
+        "price": 385.08,
+        "value": 10782.24
+      },
+      "META": {
+        "qty": 22,
+        "price": 612.9,
+        "value": 13483.8
+      },
+      "NFLX": {
+        "qty": 37,
+        "price": 93.78,
+        "value": 3469.97
+      },
+      "ORCL": {
+        "qty": 21,
+        "price": 162.8,
+        "value": 3418.8
+      },
+      "UNH": {
+        "qty": 9,
+        "price": 369.36,
+        "value": 3324.26
+      }
+    },
+    "targets": {
+      "GOOGL": {
+        "dollars": 10518.9,
+        "reason": "swarm GOOGL LONG"
+      },
+      "AMZN": {
+        "dollars": 10518.9,
+        "reason": "swarm AMZN LONG"
+      },
+      "AVGO": {
+        "dollars": 14025.21,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 14025.21,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "COP": {
+        "dollars": 14025.21,
+        "reason": "value COP LONG"
+      },
+      "BAC": {
+        "dollars": 14025.21,
+        "reason": "value BAC LONG"
+      },
+      "DUK": {
+        "dollars": 14025.21,
+        "reason": "value DUK LONG"
+      },
+      "NFLX": {
+        "dollars": 3506.3,
+        "reason": "turnaround NFLX LONG"
+      },
+      "ORCL": {
+        "dollars": 3506.3,
+        "reason": "turnaround ORCL LONG"
+      },
+      "CRM": {
+        "dollars": 3506.3,
+        "reason": "turnaround CRM LONG"
+      },
+      "UNH": {
+        "dollars": 3506.3,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AMZN",
+        "side": "sell",
+        "qty": 1,
+        "value": 264.71,
+        "status": "accepted"
+      },
+      {
+        "symbol": "AVGO",
+        "side": "sell",
+        "qty": 1,
+        "value": 415.99,
+        "status": "accepted"
+      },
+      {
+        "symbol": "BAC",
+        "side": "sell",
+        "qty": 1,
+        "value": 53.46,
+        "status": "accepted"
+      },
+      {
+        "symbol": "COP",
+        "side": "buy",
+        "qty": 3,
+        "value": 378.0,
+        "status": "accepted"
+      },
+      {
+        "symbol": "DUK",
+        "side": "sell",
+        "qty": 1,
+        "value": 129.0,
+        "status": "accepted"
+      },
+      {
+        "symbol": "GOOGL",
+        "side": "sell",
+        "qty": 1,
+        "value": 385.08,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
   }
 ]
