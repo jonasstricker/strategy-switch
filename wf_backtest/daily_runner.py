@@ -66,6 +66,9 @@ SLIP = 0.0003  # Spread ETFs (konservativ)
 # Oracle Cloud (24GB RAM, 4 Kerne) braucht das NICHT
 IS_CLOUD = bool(os.environ.get("LITE_MODE"))
 
+# Polygon.io für historische Daten (2003+) — nur lokal, nicht Cloud
+USE_POLYGON = bool(os.environ.get("USE_POLYGON")) or not IS_CLOUD
+
 ETF_DEFS = {
     "SXR8.DE":  {"name": "S&P100_EU", "start": "2010-06-01"},
     "URTH": {"name": "MSCI World",        "start": "2012-01-01"},
@@ -1124,7 +1127,8 @@ def main():
             log.info("Berechne Aktien-Schwarm (WF) …")
             from wf_backtest.swarm_wf import run_swarm_wf, MEGA_CAP_UNIVERSE
             swarm = run_swarm_wf(top_n=5 if IS_CLOUD else 10,
-                                 cloud_mode=IS_CLOUD)
+                                 cloud_mode=IS_CLOUD,
+                                 use_polygon=USE_POLYGON)
             if swarm is not None:
                 mobile_data["swarm"] = _build_category_json(
                     swarm, "swarm", MEGA_CAP_UNIVERSE,
@@ -1140,7 +1144,8 @@ def main():
         try:
             log.info("Berechne Value-Aktien …")
             from wf_backtest.stock_screener import run_category_wf
-            value = run_category_wf("value", cloud_mode=IS_CLOUD)
+            value = run_category_wf("value", cloud_mode=IS_CLOUD,
+                                    use_polygon=USE_POLYGON)
             if value is not None:
                 mobile_data["value"] = _build_category_json(value, "value")
                 n_long = sum(1 for sr in value["stock_results"].values() if sr["signal"] == "LONG")
@@ -1156,7 +1161,8 @@ def main():
         try:
             log.info("Berechne Turnaround-Aktien …")
             from wf_backtest.stock_screener import run_category_wf as run_cat
-            turnaround = run_cat("turnaround", cloud_mode=IS_CLOUD)
+            turnaround = run_cat("turnaround", cloud_mode=IS_CLOUD,
+                                 use_polygon=USE_POLYGON)
             if turnaround is not None:
                 mobile_data["turnaround"] = _build_category_json(turnaround, "turnaround")
                 n_long = sum(1 for sr in turnaround["stock_results"].values() if sr["signal"] == "LONG")

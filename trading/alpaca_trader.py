@@ -16,13 +16,16 @@ Env-Variablen (GitHub Secrets):
   TRADING_ENABLED      "1" um Orders zu senden (Default: nur Dry-Run)
 """
 
-import json, os, logging, argparse
+import json, os, logging, argparse, time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 
 TRADE_LOG = Path(__file__).parent / "trade_log.json"
+FAILED_ORDERS_FILE = Path(__file__).parent / "failed_orders.json"
+MAX_RETRIES = 3
+RETRY_DELAY_SEC = 10
 
 log = logging.getLogger("alpaca_trader")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -43,22 +46,45 @@ TICKER_MAP = {
 
 
 def _api(base_url: str, key: str, secret: str, method: str, path: str,
-         body: dict = None) -> dict:
-    """Make an Alpaca API call."""
+         body: dict = None, retries: int = MAX_RETRIES) -> dict:
+    """Make an Alpaca API call with retry logic."""
     url = f"{base_url}{path}"
     data = json.dumps(body).encode() if body else None
-    req = Request(url, data=data, method=method)
-    req.add_header("APCA-API-KEY-ID", key)
-    req.add_header("APCA-API-SECRET-KEY", secret)
-    req.add_header("Content-Type", "application/json")
-    req.add_header("Accept", "application/json")
-    try:
-        with urlopen(req) as resp:
-            return json.loads(resp.read().decode()) if resp.status != 204 else {}
-    except HTTPError as e:
-        error_body = e.read().decode() if e.fp else ""
-        log.error(f"API Error {e.code}: {error_body}")
-        raise
+    last_error = None
+    for attempt in range(1, retries + 1):
+        req = Request(url, data=data, method=method)
+        req.add_header("APCA-API-KEY-ID", key)
+        req.add_header("APCA-API-SECRET-KEY", secret)
+        req.add_header("Content-Type", "application/json")
+        req.add_header("Accept", "application/json")
+        try:
+            with urlopen(req) as resp:
+                return json.loads(resp.read().decode()) if resp.status != 204 else {}
+        except HTTPError as e:
+            error_body = e.read().decode() if e.fp else ""
+            last_error = e
+            # Don't retry on auth errors (403) or client errors (4xx except 429)
+            if e.code == 429:  # Rate limit — retry
+                log.warning(f"Rate limited (attempt {attempt}/{retries}), retrying...")
+                time.sleep(RETRY_DELAY_SEC * attempt)
+                continue
+            elif 400 <= e.code < 500:
+                log.error(f"API Error {e.code}: {error_body}")
+                raise
+            else:  # 5xx — retry
+                log.warning(f"Server error {e.code} (attempt {attempt}/{retries}): {error_body}")
+                if attempt < retries:
+                    time.sleep(RETRY_DELAY_SEC * attempt)
+                    continue
+                raise
+        except Exception as e:
+            last_error = e
+            log.warning(f"Connection error (attempt {attempt}/{retries}): {e}")
+            if attempt < retries:
+                time.sleep(RETRY_DELAY_SEC * attempt)
+                continue
+            raise
+    raise last_error
 
 
 class AlpacaClient:
@@ -123,7 +149,13 @@ def map_ticker(yahoo_ticker: str) -> str | None:
 def compute_targets(signals: dict, equity: float) -> dict:
     """
     Compute target dollar allocation per symbol.
-    Alpha-Mix: Category-weighted (e.g. 40/40/20), then equal-weight within category.
+    Alpha-Mix: Category-weighted (e.g. 45/40/15), then equal-weight within category.
+
+    IMPORTANT: Only the LONG-proportion of each category budget is invested.
+    If a category has 4/10 stocks LONG, only 4/10 of that category's budget
+    is invested — the rest stays as cash. This ensures the portfolio's
+    investment level reflects the actual signal strength.
+
     Stocks appearing in multiple categories get combined allocations.
     Returns: {alpaca_symbol: {"dollars": float, "signal": str, "reason": str}}
     """
@@ -136,15 +168,27 @@ def compute_targets(signals: dict, equity: float) -> dict:
         for k, v in raw_weights.items():
             cat_weights[k] = float(str(v).replace("%", "")) / 100.0
 
-        # Group LONG stocks by category
+        # Count LONG and total stocks per category
         long_by_cat = {}
+        total_by_cat = {}
         for s in alpha["stocks"]:
             cat = s.get("category", "unknown")
+            total_by_cat[cat] = total_by_cat.get(cat, 0) + 1
             if s["signal"] == "LONG":
                 long_by_cat.setdefault(cat, []).append(s)
 
-        log.info(f"Allocation: weights={raw_weights}, "
-                 f"LONG per cat: {{{', '.join(k+':'+str(len(v)) for k,v in long_by_cat.items())}}}")
+        # Log allocation ratios
+        total_invested_pct = 0
+        for cat, w in cat_weights.items():
+            n_long = len(long_by_cat.get(cat, []))
+            n_total = total_by_cat.get(cat, 1)
+            invest_ratio = n_long / n_total if n_total > 0 else 0
+            invested_pct = w * invest_ratio * 100
+            total_invested_pct += invested_pct
+            log.info(f"  {cat}: {n_long}/{n_total} LONG "
+                     f"→ {invest_ratio:.0%} × {w:.0%} = {invested_pct:.1f}% investiert")
+        log.info(f"  Gesamt: {total_invested_pct:.1f}% investiert, "
+                 f"{100-total_invested_pct:.1f}% Cash")
 
         for s in alpha["stocks"]:
             symbol = map_ticker(s["ticker"])
@@ -152,11 +196,14 @@ def compute_targets(signals: dict, equity: float) -> dict:
                 continue
             cat = s.get("category", "unknown")
             w = cat_weights.get(cat, 0)
-            cat_budget = equity * w
             n_long = len(long_by_cat.get(cat, []))
+            n_total = total_by_cat.get(cat, 1)
 
             if s["signal"] == "LONG" and n_long > 0:
-                alloc = cat_budget / n_long
+                # Each LONG stock gets: equity × cat_weight / total_stocks_in_cat
+                # This means the category budget is proportionally reduced
+                # when fewer stocks are LONG
+                alloc = equity * w / n_total
                 if symbol in targets and targets[symbol]["signal"] == "LONG":
                     targets[symbol]["dollars"] += alloc
                     targets[symbol]["reason"] += f" + {cat}"
@@ -175,6 +222,9 @@ def compute_targets(signals: dict, equity: float) -> dict:
                     }
 
         # Log consolidated targets
+        total_alloc = sum(t["dollars"] for t in targets.values() if t["signal"] == "LONG")
+        log.info(f"  Investiert: ${total_alloc:,.0f} / ${equity:,.0f} "
+                 f"= {total_alloc/equity*100:.1f}%")
         for sym, t in sorted(targets.items()):
             if t["signal"] == "LONG":
                 log.info(f"  Target: {sym} ${t['dollars']:,.0f} ({t['reason']})")
@@ -274,9 +324,12 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
     try:
         account = client.get_account()
     except Exception as e:
-        log.error(f"❌ API-Verbindung fehlgeschlagen: {e}")
+        err_msg = str(e)
         if isinstance(e, HTTPError):
-            log.error(f"   Response: {e.read().decode() if e.fp else 'n/a'}")
+            err_body = e.read().decode() if e.fp else "n/a"
+            err_msg = f"HTTP {e.code}: {err_body}"
+        log.error(f"❌ API-Verbindung fehlgeschlagen: {err_msg}")
+        _send_api_down_alert(err_msg, key)
         return False
 
     equity = float(account["equity"])
@@ -342,6 +395,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
               f"MOC  (~${o['value']:,.0f})  — {o['reason']}")
 
     executed_orders = []
+    failed_orders = []
     if execute:
         print("\n── Sende Market Orders ──")
         for o in orders:
@@ -368,6 +422,12 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
                     log.error(f"  ❌ {o['symbol']}: {err_detail}")
                 o["status"] = f"ERROR: {err_detail}"
                 executed_orders.append(o)
+                failed_orders.append(o)
+
+        # ── Send alert email if any orders failed ──
+        if failed_orders:
+            _send_failure_alert(failed_orders, equity, targets)
+            _save_failed_orders(failed_orders, targets)
     else:
         print(f"\n  ℹ️  DRY-RUN — keine Orders gesendet.")
         print(f"  Für echte Orders: --execute (oder TRADING_ENABLED=1)")
@@ -376,6 +436,139 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
     _save_trade_log(equity, cash, current, prices, targets, executed_orders, execute)
 
     return True
+
+
+def _send_email_alert(subject: str, html_body: str):
+    """Send alert email using the shared email config."""
+    try:
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+        from wf_backtest.notifier import send_email
+        success = send_email(subject, html_body)
+        if success:
+            log.info(f"✅ Alert-Email gesendet: {subject}")
+        else:
+            log.error(f"❌ Alert-Email fehlgeschlagen: {subject}")
+    except Exception as e:
+        log.error(f"❌ Email-System nicht verfügbar: {e}")
+
+
+def _send_api_down_alert(error_msg: str, key_prefix: str):
+    """Send email alert when Alpaca API is unreachable."""
+    now = datetime.now(timezone.utc).strftime("%d.%m.%Y %H:%M UTC")
+    html = f"""
+    <html><body style="font-family: Arial, sans-serif;">
+    <h2 style="color: #C62828;">🚨 Alpaca API DOWN — Keine Orders möglich!</h2>
+    <p><strong>Zeitpunkt:</strong> {now}</p>
+    <p><strong>Fehler:</strong></p>
+    <pre style="background: #FFEBEE; padding: 12px; border-radius: 8px;">{error_msg}</pre>
+    <p><strong>API Key (Prefix):</strong> {key_prefix[:8]}...</p>
+    <h3>Mögliche Ursachen:</h3>
+    <ul>
+        <li>API-Keys abgelaufen oder deaktiviert</li>
+        <li>Paper Trading Account inaktiv</li>
+        <li>Alpaca-Server Wartung</li>
+        <li>Account gesperrt (trading_blocked)</li>
+    </ul>
+    <h3>Sofort-Maßnahmen:</h3>
+    <ol>
+        <li>Prüfe <a href="https://app.alpaca.markets">Alpaca Dashboard</a></li>
+        <li>Generiere ggf. neue API-Keys</li>
+        <li>Prüfe Account-Status (aktiv / gesperrt)</li>
+    </ol>
+    <p style="color: #999; font-size: 12px;">
+        Pending Orders wurden in <code>failed_orders.json</code> gespeichert.
+        Beim nächsten erfolgreichen Lauf werden diese automatisch nachgeholt.
+    </p>
+    </body></html>
+    """
+    _send_email_alert(f"🚨 ALPACA API FEHLER — {now}", html)
+
+
+def _send_failure_alert(failed_orders: list, equity: float, targets: dict):
+    """Send email alert when orders fail to execute."""
+    now = datetime.now(timezone.utc).strftime("%d.%m.%Y %H:%M UTC")
+
+    order_rows = ""
+    for o in failed_orders:
+        order_rows += f"""
+        <tr>
+            <td>{o['symbol']}</td>
+            <td>{o['side'].upper()}</td>
+            <td>{o['qty']}</td>
+            <td>${o['value']:,.2f}</td>
+            <td style="color: #C62828;">{o.get('status', 'ERROR')}</td>
+        </tr>"""
+
+    target_rows = ""
+    for sym, t in sorted(targets.items()):
+        if t["signal"] == "LONG":
+            target_rows += f"""
+            <tr>
+                <td>{sym}</td>
+                <td>${t['dollars']:,.2f}</td>
+                <td>{t['reason']}</td>
+            </tr>"""
+
+    html = f"""
+    <html><body style="font-family: Arial, sans-serif;">
+    <h2 style="color: #E65100;">⚠️ Trading-Fehler — {len(failed_orders)} Orders gescheitert!</h2>
+    <p><strong>Zeitpunkt:</strong> {now}</p>
+    <p><strong>Equity:</strong> ${equity:,.2f}</p>
+
+    <h3>Gescheiterte Orders:</h3>
+    <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse;">
+        <tr style="background: #FFEBEE;">
+            <th>Symbol</th><th>Seite</th><th>Stück</th><th>Wert</th><th>Fehler</th>
+        </tr>
+        {order_rows}
+    </table>
+
+    <h3>Geplante Ziel-Allokation:</h3>
+    <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse;">
+        <tr style="background: #E3F2FD;">
+            <th>Symbol</th><th>Ziel $</th><th>Grund</th>
+        </tr>
+        {target_rows}
+    </table>
+
+    <p style="color: #999; font-size: 12px;">
+        Orders werden beim nächsten Lauf automatisch wiederholt.
+        Prüfe <a href="https://app.alpaca.markets">Alpaca Dashboard</a>.
+    </p>
+    </body></html>
+    """
+    _send_email_alert(f"⚠️ {len(failed_orders)} ORDERS GESCHEITERT — {now}", html)
+
+
+def _save_failed_orders(failed_orders: list, targets: dict):
+    """Save failed orders to file for retry on next run."""
+    now = datetime.now(timezone.utc).isoformat()
+    entry = {
+        "date": now,
+        "orders": [{"symbol": o["symbol"], "side": o["side"], "qty": o["qty"],
+                     "value": o["value"], "status": o.get("status", "ERROR")}
+                    for o in failed_orders],
+        "targets": {sym: {"dollars": round(t["dollars"], 2), "reason": t["reason"]}
+                    for sym, t in targets.items() if t["signal"] == "LONG"},
+    }
+
+    data = []
+    if FAILED_ORDERS_FILE.exists():
+        try:
+            with open(FAILED_ORDERS_FILE, "r") as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, IOError):
+            data = []
+
+    data.append(entry)
+    # Keep only last 30 entries
+    data = data[-30:]
+
+    with open(FAILED_ORDERS_FILE, "w") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+    log.info(f"Failed orders gespeichert: {FAILED_ORDERS_FILE}")
 
 
 def _save_trade_log(equity, cash, positions, prices, targets, orders, executed):

@@ -17,8 +17,10 @@ Parametrisch angepasst für Aktien-Portfolios:
 """
 
 from __future__ import annotations
-import sys, os, warnings
+import sys, os, warnings, logging
 warnings.filterwarnings("ignore")
+
+log = logging.getLogger("swarm_wf")
 
 if __package__ is None:
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -142,10 +144,17 @@ def _select_median(results, keys, top_pct=0.20):
 
 def download_universe(start: str = "2016-01-01",
                       progress_callback=None,
-                      cloud_mode: bool = False) -> dict:
+                      cloud_mode: bool = False,
+                      use_polygon: bool = False) -> dict:
     """
     Lade historische Kurse + historische Shares Outstanding
     für alle Aktien im Mega-Cap-Universum.
+
+    Parameters
+    ----------
+    use_polygon : bool
+        If True, use Polygon.io for historical data (2003+) merged with Yahoo.
+        Data is cached locally after first download.
 
     Returns: {ticker: {"close": Series, "shares": Series, "name": str}}
     shares ist jetzt eine zeitindizierte Series statt eines Skalars,
@@ -153,6 +162,52 @@ def download_universe(start: str = "2016-01-01",
     """
     tickers = list(MEGA_CAP_UNIVERSE.keys())
 
+    # ── Polygon.io + Yahoo merged data ───────────────────────────────────
+    if use_polygon and not cloud_mode:
+        try:
+            from .hist_loader import load_prices_cached
+            if progress_callback:
+                progress_callback(0.05, "Lade historische Daten (10J) …")
+            poly_start = "2016-01-01"
+            poly_prices = load_prices_cached(
+                tickers, start=poly_start,
+                skip_warmup=False, warmup_years=0,
+                progress_callback=progress_callback,
+            )
+            if poly_prices and len(poly_prices) >= 10:
+                log.info(f"Hist-Loader: {len(poly_prices)} Ticker geladen")
+                universe = {}
+                # Still need shares for market cap ranking
+                if progress_callback:
+                    progress_callback(0.60, "Lade Shares Outstanding …")
+                for ticker in tickers:
+                    if ticker not in poly_prices:
+                        continue
+                    s = poly_prices[ticker]
+                    try:
+                        sh = yf.Ticker(ticker).get_shares_full(start=start)
+                        if sh is not None and len(sh) > 0:
+                            sh.index = sh.index.tz_localize(None)
+                            sh = sh.sort_index()
+                            sh = sh[~sh.index.duplicated(keep="last")]
+                            combined = sh.reindex(sh.index.union(s.index)).ffill().bfill()
+                            sh_series = combined.reindex(s.index)
+                        else:
+                            sh_series = pd.Series(1.0, index=s.index)
+                    except Exception:
+                        sh_series = pd.Series(1.0, index=s.index)
+                    universe[ticker] = {
+                        "close": s,
+                        "shares": sh_series,
+                        "name": MEGA_CAP_UNIVERSE.get(ticker, ticker),
+                    }
+                if progress_callback:
+                    progress_callback(0.70, f"Hist: {len(universe)} Aktien bereit")
+                return universe
+        except Exception as e:
+            log.warning(f"Hist-Loader-Fallback auf Yahoo: {e}")
+
+    # ── Original Yahoo-only path ─────────────────────────────────────────
     if progress_callback:
         progress_callback(0.05, "Lade Kursdaten …")
 
@@ -427,7 +482,8 @@ def wf_single_portfolio(prices, returns, sdef, wf_cfg=None):
 def run_swarm_wf(top_n: int = TOP_N,
                  start: str = "2016-01-01",
                  progress_callback=None,
-                 cloud_mode: bool = False) -> dict | None:
+                 cloud_mode: bool = False,
+                 use_polygon: bool = False) -> dict | None:
     """
     Vollständige Pipeline mit EINZELAKTIEN-Signalen:
     1. Download Universe
@@ -439,7 +495,8 @@ def run_swarm_wf(top_n: int = TOP_N,
     """
     # 1. Download
     universe = download_universe(start=start, progress_callback=progress_callback,
-                                 cloud_mode=cloud_mode)
+                                 cloud_mode=cloud_mode,
+                                 use_polygon=use_polygon)
     if len(universe) < 20:
         return None
 

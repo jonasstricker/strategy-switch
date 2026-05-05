@@ -511,7 +511,8 @@ def _wf_single_stock(prices, returns, sdef, wf_cfg=None):
 
 def run_category_wf(category: str,
                     progress_callback=None,
-                    cloud_mode: bool = False) -> dict | None:
+                    cloud_mode: bool = False,
+                    use_polygon: bool = False) -> dict | None:
     """
     Pipeline für Value- oder Turnaround-Kategorie.
 
@@ -525,6 +526,8 @@ def run_category_wf(category: str,
         "value" oder "turnaround"
     cloud_mode : bool
         Reduziertes Universum und kleinere Grids für Cloud
+    use_polygon : bool
+        If True, use Polygon.io for historical data (2003+) merged with Yahoo.
     """
     use_universe = CLOUD_SCREENING_UNIVERSE if cloud_mode else SCREENING_UNIVERSE
     use_top_n = CLOUD_TOP_N if cloud_mode else TOP_N
@@ -535,24 +538,42 @@ def run_category_wf(category: str,
     tickers = list(use_universe.keys())
 
     # ── 1. Download ALL prices for entire universe ───────────────────────
-    if progress_callback:
-        progress_callback(0.03, f"{category.title()}: Lade Kursdaten …")
-
-    raw = yf.download(tickers, start="2016-01-01", auto_adjust=True, progress=False)
-    if raw.empty:
-        return None
-
     price_dict = {}
-    if isinstance(raw.columns, pd.MultiIndex):
-        for ticker in tickers:
-            try:
-                col = ("Close", ticker)
-                if col in raw.columns:
-                    s = raw[col].dropna()
-                    if len(s) > 200:
-                        price_dict[ticker] = s
-            except Exception:
-                continue
+
+    if use_polygon and not cloud_mode:
+        try:
+            from .hist_loader import load_prices_cached
+            if progress_callback:
+                progress_callback(0.03, f"{category.title()}: Lade hist. Daten (10J) …")
+            poly_prices = load_prices_cached(
+                tickers, start="2016-01-01",
+                skip_warmup=False, warmup_years=0,
+                progress_callback=progress_callback,
+            )
+            if poly_prices and len(poly_prices) >= 10:
+                price_dict = poly_prices
+                log.info(f"  {category}: Hist-Loader liefert {len(price_dict)} Ticker")
+        except Exception as e:
+            log.warning(f"  {category}: Hist-Loader-Fallback auf Yahoo: {e}")
+
+    if not price_dict:
+        if progress_callback:
+            progress_callback(0.03, f"{category.title()}: Lade Kursdaten …")
+
+        raw = yf.download(tickers, start="2016-01-01", auto_adjust=True, progress=False)
+        if raw.empty:
+            return None
+
+        if isinstance(raw.columns, pd.MultiIndex):
+            for ticker in tickers:
+                try:
+                    col = ("Close", ticker)
+                    if col in raw.columns:
+                        s = raw[col].dropna()
+                        if len(s) > 200:
+                            price_dict[ticker] = s
+                except Exception:
+                    continue
     if len(price_dict) < 10:
         return None
 
@@ -574,8 +595,17 @@ def run_category_wf(category: str,
     ref_dates = sorted(list(price_dict.values())[0].index)
     current_year = pd.Timestamp.now().year
 
+    # Start rebalancing from earliest available fundamental data year
+    # yfinance gives ~4-5 years → typ. 2021+, but use earliest available
+    earliest_fy_year = current_year - 5  # Conservative default
+    for hf in hist_fund.values():
+        for fy_date in hf.get("fiscal_years", {}):
+            if hasattr(fy_date, "year"):
+                earliest_fy_year = min(earliest_fy_year, fy_date.year)
+    rebal_start_year = max(earliest_fy_year, ref_dates[0].year + 1)
+
     rebalance_history = []
-    for year in range(2017, current_year + 1):
+    for year in range(rebal_start_year, current_year + 1):
         target = pd.Timestamp(f"{year}-01-15")
         # Find nearest trading day on or after target
         actual = [d for d in ref_dates if d >= target]

@@ -10,6 +10,7 @@ __pycache__/
 
 # Secrets
 email_config.json
+polygon_config.json
 readme.txt
 
 # Local-only files
@@ -25,6 +26,7 @@ wf_backtest/reports/
 wf_backtest/output/
 wf_backtest/daily_runner.log
 wf_backtest/reports/*.png
+wf_backtest/cache/
 
 # Local-only scripts
 firewall_oeffnen.bat
