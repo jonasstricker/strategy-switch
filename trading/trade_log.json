@@ -4455,5 +4455,196 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-05-05 20:44 UTC",
+    "equity": 105951.58,
+    "cash": 1846.78,
+    "invested": 104104.8,
+    "pct_invested": 98.3,
+    "n_positions": 11,
+    "positions": {
+      "AMZN": {
+        "qty": 38,
+        "price": 272.54,
+        "value": 10356.55
+      },
+      "AVGO": {
+        "qty": 33,
+        "price": 435.1,
+        "value": 14358.3
+      },
+      "BAC": {
+        "qty": 268,
+        "price": 53.1,
+        "value": 14230.8
+      },
+      "COP": {
+        "qty": 112,
+        "price": 123.75,
+        "value": 13860.0
+      },
+      "CRM": {
+        "qty": 18,
+        "price": 186.2,
+        "value": 3351.6
+      },
+      "DUK": {
+        "qty": 109,
+        "price": 127.58,
+        "value": 13906.22
+      },
+      "GOOGL": {
+        "qty": 27,
+        "price": 393.75,
+        "value": 10631.25
+      },
+      "META": {
+        "qty": 22,
+        "price": 603.87,
+        "value": 13285.14
+      },
+      "NFLX": {
+        "qty": 38,
+        "price": 87.88,
+        "value": 3339.44
+      },
+      "ORCL": {
+        "qty": 19,
+        "price": 185.23,
+        "value": 3519.39
+      },
+      "UNH": {
+        "qty": 9,
+        "price": 363.08,
+        "value": 3267.72
+      }
+    },
+    "targets": {
+      "GOOGL": {
+        "dollars": 4767.82,
+        "reason": "swarm GOOGL LONG"
+      },
+      "AMZN": {
+        "dollars": 4767.82,
+        "reason": "swarm AMZN LONG"
+      },
+      "AVGO": {
+        "dollars": 6357.09,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 6357.09,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "COP": {
+        "dollars": 4238.06,
+        "reason": "value COP LONG"
+      },
+      "BAC": {
+        "dollars": 4238.06,
+        "reason": "value BAC LONG"
+      },
+      "DUK": {
+        "dollars": 4238.06,
+        "reason": "value DUK LONG"
+      },
+      "NFLX": {
+        "dollars": 1589.27,
+        "reason": "turnaround NFLX LONG"
+      },
+      "ORCL": {
+        "dollars": 1589.27,
+        "reason": "turnaround ORCL LONG"
+      },
+      "CRM": {
+        "dollars": 1589.27,
+        "reason": "turnaround CRM LONG"
+      },
+      "UNH": {
+        "dollars": 1589.27,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AMZN",
+        "side": "sell",
+        "qty": 21,
+        "value": 5723.36,
+        "status": "accepted"
+      },
+      {
+        "symbol": "AVGO",
+        "side": "sell",
+        "qty": 19,
+        "value": 8266.9,
+        "status": "accepted"
+      },
+      {
+        "symbol": "BAC",
+        "side": "sell",
+        "qty": 189,
+        "value": 10035.9,
+        "status": "accepted"
+      },
+      {
+        "symbol": "COP",
+        "side": "sell",
+        "qty": 78,
+        "value": 9652.5,
+        "status": "accepted"
+      },
+      {
+        "symbol": "CRM",
+        "side": "sell",
+        "qty": 10,
+        "value": 1862.0,
+        "status": "accepted"
+      },
+      {
+        "symbol": "DUK",
+        "side": "sell",
+        "qty": 76,
+        "value": 9696.08,
+        "status": "accepted"
+      },
+      {
+        "symbol": "GOOGL",
+        "side": "sell",
+        "qty": 15,
+        "value": 5906.25,
+        "status": "accepted"
+      },
+      {
+        "symbol": "META",
+        "side": "sell",
+        "qty": 12,
+        "value": 7246.44,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NFLX",
+        "side": "sell",
+        "qty": 20,
+        "value": 1757.6,
+        "status": "accepted"
+      },
+      {
+        "symbol": "ORCL",
+        "side": "sell",
+        "qty": 11,
+        "value": 2037.54,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UNH",
+        "side": "sell",
+        "qty": 5,
+        "value": 1815.4,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
   }
 ]
