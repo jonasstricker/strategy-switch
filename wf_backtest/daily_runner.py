@@ -101,7 +101,7 @@ if IS_CLOUD:
             "keys": ["fast", "slow"],
         },
     }
-    WF_CFG = {"train": 504, "test": 21, "step": 42}
+    WF_CFG = {"train": 504, "test": 21, "step": 21}
 else:
     STRATEGY_DEFS = {
         "RSI": {

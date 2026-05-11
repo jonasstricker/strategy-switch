@@ -109,15 +109,15 @@
     function buildTabs() {
       const tabBar = document.getElementById('tabs');
       let tabs = [{key:'overview', label:'Übersicht'}];
-      // Only show URTH ETF
-      for (const e of allSignals) {
-        if (e.ticker === 'URTH') tabs.push({key: e.ticker, label: 'URTH'});
-      }
+      if (D.alpha_mix) tabs.push({key:'alpha_mix', label:'🧬 Alpha-Mix'});
+      if (D.alpha_boost) tabs.push({key:'alpha_boost', label:'🚀 Boost 2x'});
       if (D.swarm) tabs.push({key:'swarm', label:'🐝 Schwarm'});
       if (D.value) tabs.push({key:'value', label:'💎 Value'});
       if (D.turnaround) tabs.push({key:'turnaround', label:'🔄 Turnar.'});
-      if (D.alpha_mix) tabs.push({key:'alpha_mix', label:'🧬 Alpha-Mix'});
-      if (D.alpha_boost) tabs.push({key:'alpha_boost', label:'🚀 Boost 2x'});
+      // ETFs last
+      for (const e of allSignals) {
+        if (e.ticker === 'URTH') tabs.push({key: e.ticker, label: 'URTH'});
+      }
       tabs.push({key:'compare', label:'📊 Vergleich'});
       tabs.push({key:'methodik', label:'📖 Info'});
       tabBar.innerHTML = tabs.map(t =>
@@ -193,20 +193,36 @@
       }
       h += '</div></div>';
 
-      // Category cards
-      for (const [key, label, icon] of [['swarm','Schwarm','🐝'],['value','Value','💎'],['turnaround','Turnaround','🔄'],['alpha_mix','Alpha-Mix','🧬'],['alpha_boost','Boost 2x','🚀']]) {
+      // Category cards — Alpha first, then rest
+      for (const [key, label, icon] of [['alpha_mix','Alpha-Mix','🧬'],['alpha_boost','Boost 2x','🚀'],['swarm','Schwarm','🐝'],['value','Value','💎'],['turnaround','Turnaround','🔄']]) {
         const cat = D[key];
         if (!cat) continue;
+        // Compute Alpaca return for alpha_mix
+        let alpacaInfo = '';
+        if (key === 'alpha_mix' && tradeLog.length >= 2) {
+          const startEq = tradeLog[0].equity;
+          const lastEq = tradeLog[tradeLog.length-1].equity;
+          const alpRet = ((lastEq / startEq - 1) * 100).toFixed(1);
+          const days = tradeLog.length;
+          alpacaInfo = `<div style="margin-top:6px;padding:6px 8px;background:#161b22;border-radius:6px;border:1px solid #30363d;font-size:12px;">
+            <div style="display:flex;justify-content:space-between;">
+              <span>📈 Backtest CAGR:</span><span style="color:var(--green);font-weight:700;">${pct(cat.cagr_switch)}%</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:2px;">
+              <span>🏦 Alpaca (${days} Tage):</span><span style="color:#d29922;font-weight:700;">${alpRet>0?'+':''}${alpRet}%</span>
+            </div>
+          </div>`;
+        }
         h += `<div class="section"><div class="section-title">${icon} ${label}</div>
           <div class="etf-mini-card" data-ticker="${key}" style="margin-bottom:10px;">
-            <div class="etf-ticker">${icon} ${label}${key==='alpha_mix'?'':'-Top-10'}</div>
+            <div class="etf-ticker">${icon} ${label}${key==='alpha_mix'||key==='alpha_boost'?'':' Top-10'}</div>
             <div class="etf-name">${cat.n_long}/${cat.n_total} Aktien LONG</div>
             <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">`;
         for (const st of cat.stocks) {
           const isL = st.signal==='LONG';
           h += `<span class="stock-chip-small ${isL?'long':'cash'}">${st.ticker} ${isL?'🟢':'🔴'}</span>`;
         }
-        h += '</div></div></div>';
+        h += `</div>${alpacaInfo}</div></div>`;
       }
 
       // 12M returns
@@ -753,7 +769,7 @@
         if (cat.months_switch) h += buildHeatmap(cat.months_switch, 'Monatsrenditen (Switch Backtest)', M);
       }
 
-      // Trade history
+      // Trade history (expandable)
       h += '<div class="section"><div class="section-title">📋 Alpaca Trade-History</div>';
       h += '<div class="trade-log">';
       for (const entry of [...tradeLog].reverse()) {
@@ -770,13 +786,27 @@
           if (sells.length) orderSummary += (buys.length ? ' | ' : '') + '🔴 ' + sells.length + ' Verkäufe';
           if (errors) orderSummary += ' | ⚠️ ' + errors + ' Fehler';
         }
-        h += `<div class="trade-row ${ret >= 0 ? 'buy' : 'sell'}">
-          <div class="trade-date">${d}</div>
+        const uid = 'tl_' + d.replace(/[^a-z0-9]/gi,'_');
+        h += `<div class="trade-row ${ret >= 0 ? 'buy' : 'sell'}" style="cursor:pointer;" onclick="document.getElementById('${uid}').style.display=document.getElementById('${uid}').style.display==='none'?'block':'none'">
+          <div class="trade-date">${d} ${orders.length?'▸':''}</div>
           <div class="trade-action" style="font-size:12px;">${orderSummary || 'Keine Orders'}</div>
           <div style="text-align:right;">
             <div class="trade-price">$${eq.toLocaleString('de-DE', {minimumFractionDigits:0})}</div>
             <div class="trade-pnl ${ret >= 0 ? 'pos' : 'neg'}">${ret >= 0 ? '+' : ''}${ret}%</div>
           </div></div>`;
+        if (orders.length) {
+          h += `<div id="${uid}" style="display:none;background:#161b22;border:1px solid #30363d;border-radius:6px;margin:0 4px 8px;padding:8px;">`;
+          for (const o of orders) {
+            const isBuy = o.side === 'buy';
+            const icon = isBuy ? '🟢' : '🔴';
+            const statusClr = String(o.status||'').includes('ERROR') ? 'color:#f85149' : 'color:#8b949e';
+            h += `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #21262d;font-size:12px;">`;
+            h += `<div>${icon} <b>${o.symbol}</b> <span style="color:#8b949e;">${o.side.toUpperCase()}</span></div>`;
+            h += `<div style="text-align:right;"><span>${o.qty ? o.qty+' Stk' : '$'+(o.notional||'?')}</span>`;
+            h += ` <span style="${statusClr};margin-left:6px;">${o.status||''}</span></div></div>`;
+          }
+          h += '</div>';
+        }
       }
       h += '</div></div>';
 
