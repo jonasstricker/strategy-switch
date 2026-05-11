@@ -347,6 +347,64 @@ def save_state(state: dict):
         json.dump(state, f, indent=2, ensure_ascii=False)
 
 
+def _extend_returns_live(result: dict) -> tuple:
+    """
+    Extend switch_ret and bench_ret beyond the last OOS window to today,
+    using current signals applied to actual daily market returns.
+    Returns extended (switch_ret, bench_ret, sw_eq, bh_eq).
+    """
+    sw_ret = result["switch_ret"].copy()
+    bh_ret = result["bench_ret"].copy()
+    stock_results = result["stock_results"]
+    last_date = sw_ret.index[-1]
+
+    # Collect close data for each stock and determine extension dates
+    ext_dates = None
+    stock_close_data = {}
+    for t, sr in stock_results.items():
+        close = sr.get("close")
+        if close is None:
+            continue
+        # Get dates from last OOS date onward (need it for pct_change base)
+        future_with_base = close.loc[close.index >= last_date]
+        if len(future_with_base) > 2:
+            stock_close_data[t] = future_with_base
+            future_dates = future_with_base.index[1:]  # exclude base date
+            if ext_dates is None:
+                ext_dates = future_dates
+            else:
+                ext_dates = ext_dates.intersection(future_dates)
+
+    if ext_dates is None or len(ext_dates) < 1:
+        sw_eq = _equity(sw_ret)
+        bh_eq = _equity(bh_ret)
+        return sw_ret, bh_ret, sw_eq, bh_eq
+
+    # Build daily extension returns
+    ext_switch = pd.Series(0.0, index=ext_dates)
+    ext_bench = pd.Series(0.0, index=ext_dates)
+    n_stocks = len(stock_close_data)
+
+    for t, close_with_base in stock_close_data.items():
+        daily_ret = close_with_base.pct_change().iloc[1:]  # drop first NaN
+        daily_ret = daily_ret.reindex(ext_dates, fill_value=0.0)
+        # Benchmark always gets returns
+        ext_bench += daily_ret / n_stocks
+        # Switch only if LONG
+        if stock_results[t]["signal"] == "LONG":
+            ext_switch += daily_ret / n_stocks
+
+    # Concatenate
+    sw_ret = pd.concat([sw_ret, ext_switch])
+    bh_ret = pd.concat([bh_ret, ext_bench])
+    sw_ret = sw_ret[~sw_ret.index.duplicated(keep="first")]
+    bh_ret = bh_ret[~bh_ret.index.duplicated(keep="first")]
+
+    sw_eq = _equity(sw_ret)
+    bh_eq = _equity(bh_ret)
+    return sw_ret, bh_ret, sw_eq, bh_eq
+
+
 def _build_category_json(result: dict, category: str,
                          names_map: dict | None = None) -> dict:
     """
@@ -358,8 +416,11 @@ def _build_category_json(result: dict, category: str,
         names_map = {}
 
     stock_results = result["stock_results"]
-    sw_eq = result["sw_eq"]
-    bh_eq = result["bh_eq"]
+
+    # Extend equity to today using live signals
+    sw_ret_full, bh_ret_full, sw_eq, bh_eq = _extend_returns_live(result)
+    result["switch_ret"] = sw_ret_full
+    result["bench_ret"] = bh_ret_full
 
     # Per-stock data for individual signals
     stocks = []
@@ -531,8 +592,8 @@ def _build_category_json(result: dict, category: str,
         "stocks": stocks,
         "n_long": n_long,
         "n_total": len(stocks),
-        "sharpe_switch": round(result["sw_sharpe"], 2),
-        "sharpe_bh": round(result["bh_sharpe"], 2),
+        "sharpe_switch": round(float(sharpe_ratio(sw_ret_full, RF)), 2),
+        "sharpe_bh": round(float(sharpe_ratio(bh_ret_full, RF)), 2),
         "cagr_switch": round(float(cagr(sw_eq)), 4),
         "cagr_bh": round(float(cagr(bh_eq)), 4),
         "max_dd_switch": round(float(max_drawdown(sw_eq)), 4),
@@ -554,7 +615,7 @@ def _build_category_json(result: dict, category: str,
         "yearly_returns": yearly,
         "trades": trades,
         "start": result["start"].strftime("%Y-%m-%d") if hasattr(result["start"], "strftime") else str(result["start"]),
-        "end": result["end"].strftime("%Y-%m-%d") if hasattr(result["end"], "strftime") else str(result["end"]),
+        "end": sw_eq.index[-1].strftime("%Y-%m-%d") if len(sw_eq) > 0 else (result["end"].strftime("%Y-%m-%d") if hasattr(result["end"], "strftime") else str(result["end"])),
         # Historische Rebalance-Verschiebungen (nur Swarm)
         "recent_rebalances": result.get("recent_rebalances"),
     }
@@ -731,7 +792,7 @@ def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
         "yearly_returns": yearly,
         "trades": all_trades,
         "start": common_start.strftime("%Y-%m-%d"),
-        "end": common_end.strftime("%Y-%m-%d"),
+        "end": mix_sw_eq.index[-1].strftime("%Y-%m-%d") if len(mix_sw_eq) > 0 else common_end.strftime("%Y-%m-%d"),
     }
 
 
@@ -780,7 +841,7 @@ def _build_alpha_boost(categories: dict, mobile_data: dict,
         aligned_bh[key] = aligned_bh[key].reindex(ref_idx, fill_value=0.0)
 
     # Build leveraged mix returns (deduct margin cost on borrowed capital)
-    margin_rate = 0.055  # 5.5% annual margin cost
+    margin_rate = 0.095  # 9.5% annual margin cost (Alpaca)
     daily_margin_cost = (leverage - 1) * margin_rate / 252
     mix_sw = sum(aligned_sw[k] * best_weights[k] for k in best_weights) * leverage - daily_margin_cost
     mix_bh = sum(aligned_bh[k] * best_weights[k] for k in best_weights) * leverage - daily_margin_cost
@@ -862,7 +923,7 @@ def _build_alpha_boost(categories: dict, mobile_data: dict,
         "yearly_returns": yearly,
         "trades": alpha_mix.get("trades", []),
         "start": common_start.strftime("%Y-%m-%d"),
-        "end": common_end.strftime("%Y-%m-%d"),
+        "end": mix_sw_eq.index[-1].strftime("%Y-%m-%d") if len(mix_sw_eq) > 0 else common_end.strftime("%Y-%m-%d"),
     }
 
 
