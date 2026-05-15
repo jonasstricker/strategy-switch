@@ -5754,5 +5754,176 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-05-15 20:44 UTC",
+    "equity": 104521.5,
+    "cash": 44230.75,
+    "invested": 60290.75,
+    "pct_invested": 57.7,
+    "n_positions": 15,
+    "positions": {
+      "AAPL": {
+        "qty": 14,
+        "price": 299.93,
+        "value": 4199.02
+      },
+      "AMZN": {
+        "qty": 15,
+        "price": 262.82,
+        "value": 3942.3
+      },
+      "AVGO": {
+        "qty": 14,
+        "price": 424.8,
+        "value": 5947.2
+      },
+      "BAC": {
+        "qty": 84,
+        "price": 49.68,
+        "value": 4173.12
+      },
+      "CI": {
+        "qty": 14,
+        "price": 285.35,
+        "value": 3994.9
+      },
+      "GOOGL": {
+        "qty": 10,
+        "price": 396.31,
+        "value": 3963.1
+      },
+      "META": {
+        "qty": 10,
+        "price": 611.34,
+        "value": 6113.4
+      },
+      "NVDA": {
+        "qty": 17,
+        "price": 225.11,
+        "value": 3826.87
+      },
+      "ORCL": {
+        "qty": 10,
+        "price": 192.52,
+        "value": 1925.2
+      },
+      "T": {
+        "qty": 170,
+        "price": 24.07,
+        "value": 4091.9
+      },
+      "TSLA": {
+        "qty": 9,
+        "price": 421.65,
+        "value": 3794.85
+      },
+      "UNH": {
+        "qty": 5,
+        "price": 384.18,
+        "value": 1920.91
+      },
+      "UPS": {
+        "qty": 42,
+        "price": 98.93,
+        "value": 4154.93
+      },
+      "USB": {
+        "qty": 78,
+        "price": 53.12,
+        "value": 4143.36
+      },
+      "WMT": {
+        "qty": 31,
+        "price": 132.25,
+        "value": 4099.7
+      }
+    },
+    "targets": {
+      "NVDA": {
+        "dollars": 4180.86,
+        "reason": "swarm NVDA LONG"
+      },
+      "GOOGL": {
+        "dollars": 4180.86,
+        "reason": "swarm GOOGL LONG"
+      },
+      "AAPL": {
+        "dollars": 4180.86,
+        "reason": "swarm AAPL LONG"
+      },
+      "AMZN": {
+        "dollars": 4180.86,
+        "reason": "swarm AMZN LONG"
+      },
+      "AVGO": {
+        "dollars": 6271.29,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 6271.29,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "TSLA": {
+        "dollars": 4180.86,
+        "reason": "swarm TSLA LONG"
+      },
+      "WMT": {
+        "dollars": 4180.86,
+        "reason": "swarm WMT LONG"
+      },
+      "T": {
+        "dollars": 4180.86,
+        "reason": "value T LONG"
+      },
+      "USB": {
+        "dollars": 4180.86,
+        "reason": "value USB LONG"
+      },
+      "BAC": {
+        "dollars": 4180.86,
+        "reason": "value BAC LONG"
+      },
+      "CI": {
+        "dollars": 4180.86,
+        "reason": "value CI LONG"
+      },
+      "UPS": {
+        "dollars": 4180.86,
+        "reason": "value UPS LONG"
+      },
+      "ORCL": {
+        "dollars": 2090.43,
+        "reason": "turnaround ORCL LONG"
+      },
+      "UNH": {
+        "dollars": 2090.43,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AAPL",
+        "side": "sell",
+        "qty": 1,
+        "value": 299.93,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NVDA",
+        "side": "buy",
+        "qty": 1,
+        "value": 225.11,
+        "status": "accepted"
+      },
+      {
+        "symbol": "T",
+        "side": "buy",
+        "qty": 3,
+        "value": 72.21,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
   }
 ]
