@@ -252,9 +252,9 @@ def compute_orders(targets: dict, current_positions: dict,
             log.warning(f"  Kein Preis für {symbol} — übersprungen")
             continue
 
-        target_qty = int(target_dollars / price)
+        target_qty = round(target_dollars / price, 3)  # fractional shares
         current_qty = current_positions.get(symbol, 0)
-        diff = target_qty - current_qty
+        diff = round(target_qty - current_qty, 3)
 
         if abs(diff * price) < min_order_value:
             continue
@@ -263,7 +263,7 @@ def compute_orders(targets: dict, current_positions: dict,
             orders.append({
                 "symbol": symbol,
                 "side": "buy",
-                "qty": diff,
+                "qty": round(diff, 3),
                 "reason": target.get("reason", ""),
                 "value": round(diff * price, 2),
             })
@@ -271,7 +271,7 @@ def compute_orders(targets: dict, current_positions: dict,
             orders.append({
                 "symbol": symbol,
                 "side": "sell",
-                "qty": abs(diff),
+                "qty": round(abs(diff), 3),
                 "reason": target.get("reason", ""),
                 "value": round(abs(diff) * price, 2),
             })
@@ -345,7 +345,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
         print("\n── Aktuelle Positionen ──")
         for p in positions:
             sym = p["symbol"]
-            qty = int(float(p["qty"]))
+            qty = float(p["qty"])
             price = float(p["current_price"])
             value = float(p["market_value"])
             current[sym] = qty

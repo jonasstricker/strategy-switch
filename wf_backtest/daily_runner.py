@@ -143,6 +143,36 @@ def _equity(ret):
     return (1 + ret).cumprod()
 
 
+def _downsample_equity(sw_eq, bh_eq, max_sparse=200, daily_tail_days=90):
+    """Downsample equity to ~max_sparse points, but keep last daily_tail_days daily."""
+    if len(sw_eq) == 0:
+        return []
+    cutoff = sw_eq.index[-1] - pd.Timedelta(days=daily_tail_days)
+    head = sw_eq.loc[sw_eq.index < cutoff]
+    tail = sw_eq.loc[sw_eq.index >= cutoff]
+    equity = []
+    if len(head) > 0:
+        step_s = max(1, len(head) // max_sparse)
+        for i in range(0, len(head), step_s):
+            idx = head.index[i]
+            equity.append({
+                "date": idx.strftime("%Y-%m-%d"),
+                "switch": round(float(sw_eq.loc[idx]), 4),
+                "bh": round(float(bh_eq.loc[idx]), 4),
+            })
+    for idx in tail.index:
+        equity.append({
+            "date": idx.strftime("%Y-%m-%d"),
+            "switch": round(float(sw_eq.loc[idx]), 4),
+            "bh": round(float(bh_eq.loc[idx]), 4),
+        })
+    # Deduplicate (keep last)
+    seen = {}
+    for pt in equity:
+        seen[pt["date"]] = pt
+    return list(seen.values())
+
+
 def _select_median(results, keys, top_pct=0.20):
     df = pd.DataFrame(results).sort_values("sharpe", ascending=False)
     n_top = max(1, int(len(df) * top_pct))
@@ -492,22 +522,8 @@ def _build_category_json(result: dict, category: str,
                 pts.append(pt)
             stocks_1y[t] = pts
 
-    # Aggregated equity (downsampled ~200 points)
-    step_s = max(1, len(sw_eq) // 200)
-    equity = []
-    for i in range(0, len(sw_eq), step_s):
-        idx = sw_eq.index[i]
-        equity.append({
-            "date": idx.strftime("%Y-%m-%d"),
-            "switch": round(float(sw_eq.iloc[i]), 4),
-            "bh": round(float(bh_eq.iloc[i]), 4),
-        })
-    if equity and equity[-1]["date"] != sw_eq.index[-1].strftime("%Y-%m-%d"):
-        equity.append({
-            "date": sw_eq.index[-1].strftime("%Y-%m-%d"),
-            "switch": round(float(sw_eq.iloc[-1]), 4),
-            "bh": round(float(bh_eq.iloc[-1]), 4),
-        })
+    # Aggregated equity (downsampled, last 90 days daily)
+    equity = _downsample_equity(sw_eq, bh_eq)
 
     # Monthly heatmap (Switch + B&H)
     sw_ret = result["switch_ret"]
@@ -723,22 +739,8 @@ def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
         yearly.append({"year": int(yr), "switch": round(float(yr_sw.get(yr, 0)), 1),
                         "bh": round(float(yr_bh.get(yr, 0)), 1)})
 
-    # Equity curve (downsampled)
-    eq_len = len(mix_sw_eq)
-    step_s = max(1, eq_len // 200)
-    equity = []
-    for i in range(0, eq_len, step_s):
-        equity.append({
-            "date": mix_sw_eq.index[i].strftime("%Y-%m-%d"),
-            "switch": round(float(mix_sw_eq.iloc[i]), 4),
-            "bh": round(float(mix_bh_eq.iloc[i]), 4),
-        })
-    if eq_len > 0:
-        equity.append({
-            "date": mix_sw_eq.index[-1].strftime("%Y-%m-%d"),
-            "switch": round(float(mix_sw_eq.iloc[-1]), 4),
-            "bh": round(float(mix_bh_eq.iloc[-1]), 4),
-        })
+    # Equity curve (downsampled, last 90 days daily)
+    equity = _downsample_equity(mix_sw_eq, mix_bh_eq)
 
     # Combine trades from all categories
     all_trades = []
@@ -871,22 +873,8 @@ def _build_alpha_boost(categories: dict, mobile_data: dict,
         yearly.append({"year": int(yr), "switch": round(float(yr_sw.get(yr, 0)), 1),
                         "bh": round(float(yr_bh.get(yr, 0)), 1)})
 
-    # Equity curve (downsampled)
-    eq_len = len(mix_sw_eq)
-    step_s = max(1, eq_len // 200)
-    equity = []
-    for i in range(0, eq_len, step_s):
-        equity.append({
-            "date": mix_sw_eq.index[i].strftime("%Y-%m-%d"),
-            "switch": round(float(mix_sw_eq.iloc[i]), 4),
-            "bh": round(float(mix_bh_eq.iloc[i]), 4),
-        })
-    if eq_len > 0:
-        equity.append({
-            "date": mix_sw_eq.index[-1].strftime("%Y-%m-%d"),
-            "switch": round(float(mix_sw_eq.iloc[-1]), 4),
-            "bh": round(float(mix_bh_eq.iloc[-1]), 4),
-        })
+    # Equity curve (downsampled, last 90 days daily)
+    equity = _downsample_equity(mix_sw_eq, mix_bh_eq)
 
     tuw_sw = time_under_water(mix_sw_eq)
     tuw_bh = time_under_water(mix_bh_eq)
