@@ -141,8 +141,8 @@ def map_ticker(yahoo_ticker: str) -> str | None:
     """Convert Yahoo ticker to Alpaca symbol. Returns None if not tradeable."""
     if yahoo_ticker in TICKER_MAP:
         return TICKER_MAP[yahoo_ticker]
-    # US stocks: strip any suffix
-    clean = yahoo_ticker.split(".")[0]
+    # US stocks: strip any suffix, fix BRK-B → BRK.B
+    clean = yahoo_ticker.split(".")[0].replace("-", ".")
     return clean
 
 
@@ -353,7 +353,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
             pnl = float(p["unrealized_pl"])
             pnl_pct = float(p["unrealized_plpc"]) * 100
             icon = "📈" if pnl >= 0 else "📉"
-            print(f"  {icon} {sym:8s} {qty:4d} × ${price:.2f} = ${value:,.0f}  "
+            print(f"  {icon} {sym:8s} {qty:7.3f} × ${price:.2f} = ${value:,.0f}  "
                   f"({'+' if pnl>=0 else ''}{pnl_pct:.1f}%)")
     else:
         print("\n  Keine offenen Positionen.")
@@ -391,7 +391,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
     print(f"\n── {'⚠️  MOC Orders' if execute else 'DRY-RUN'} ──")
     for o in orders:
         icon = "🟢" if o["side"] == "buy" else "🔴"
-        print(f"  {icon} {o['side'].upper():4s} {o['qty']:4d}× {o['symbol']:8s}  "
+        print(f"  {icon} {o['side'].upper():4s} {o['qty']:7.3f}× {o['symbol']:8s}  "
               f"MOC  (~${o['value']:,.0f})  — {o['reason']}")
 
     executed_orders = []
