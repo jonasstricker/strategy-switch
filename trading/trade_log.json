@@ -1,1 +1,208 @@
-[]
+[
+  {
+    "date": "2026-05-20 21:24 UTC",
+    "equity": 100249.76,
+    "cash": 39860.99,
+    "invested": 60388.77,
+    "pct_invested": 60.2,
+    "n_positions": 15,
+    "positions": {
+      "AAPL": {
+        "qty": 13.372,
+        "price": 301.7,
+        "value": 4034.33
+      },
+      "AMZN": {
+        "qty": 15.421,
+        "price": 264.95,
+        "value": 4085.79
+      },
+      "AVGO": {
+        "qty": 14.595,
+        "price": 417.7,
+        "value": 6096.33
+      },
+      "BAC": {
+        "qty": 78.864,
+        "price": 51.22,
+        "value": 4039.02
+      },
+      "CI": {
+        "qty": 13.723,
+        "price": 283.1,
+        "value": 3884.98
+      },
+      "GOOGL": {
+        "qty": 10.316,
+        "price": 388.34,
+        "value": 4006.12
+      },
+      "META": {
+        "qty": 9.955,
+        "price": 604.12,
+        "value": 6014.05
+      },
+      "NVDA": {
+        "qty": 18.068,
+        "price": 222.07,
+        "value": 4012.36
+      },
+      "ORCL": {
+        "qty": 11.029,
+        "price": 186.93,
+        "value": 2061.61
+      },
+      "T": {
+        "qty": 160.096,
+        "price": 24.93,
+        "value": 3991.15
+      },
+      "TSLA": {
+        "qty": 9.903,
+        "price": 416.0,
+        "value": 4119.65
+      },
+      "UNH": {
+        "qty": 5.135,
+        "price": 381.99,
+        "value": 1961.52
+      },
+      "UPS": {
+        "qty": 41.32,
+        "price": 98.7,
+        "value": 4078.28
+      },
+      "USB": {
+        "qty": 75.04,
+        "price": 54.5,
+        "value": 4089.68
+      },
+      "WMT": {
+        "qty": 29.797,
+        "price": 131.34,
+        "value": 3913.54
+      }
+    },
+    "targets": {
+      "NVDA": {
+        "dollars": 4009.99,
+        "reason": "swarm NVDA LONG"
+      },
+      "GOOGL": {
+        "dollars": 4009.99,
+        "reason": "swarm GOOGL LONG"
+      },
+      "AAPL": {
+        "dollars": 4009.99,
+        "reason": "swarm AAPL LONG"
+      },
+      "AMZN": {
+        "dollars": 4009.99,
+        "reason": "swarm AMZN LONG"
+      },
+      "AVGO": {
+        "dollars": 6014.99,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 6014.99,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "TSLA": {
+        "dollars": 4009.99,
+        "reason": "swarm TSLA LONG"
+      },
+      "WMT": {
+        "dollars": 4009.99,
+        "reason": "swarm WMT LONG"
+      },
+      "T": {
+        "dollars": 4009.99,
+        "reason": "value T LONG"
+      },
+      "USB": {
+        "dollars": 4009.99,
+        "reason": "value USB LONG"
+      },
+      "BAC": {
+        "dollars": 4009.99,
+        "reason": "value BAC LONG"
+      },
+      "CI": {
+        "dollars": 4009.99,
+        "reason": "value CI LONG"
+      },
+      "UPS": {
+        "dollars": 4009.99,
+        "reason": "value UPS LONG"
+      },
+      "ORCL": {
+        "dollars": 2005.0,
+        "reason": "turnaround ORCL LONG"
+      },
+      "UNH": {
+        "dollars": 2005.0,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AMZN",
+        "side": "sell",
+        "qty": 0.286,
+        "value": 75.78,
+        "status": "accepted"
+      },
+      {
+        "symbol": "AVGO",
+        "side": "sell",
+        "qty": 0.195,
+        "value": 81.45,
+        "status": "accepted"
+      },
+      {
+        "symbol": "CI",
+        "side": "buy",
+        "qty": 0.442,
+        "value": 125.13,
+        "status": "accepted"
+      },
+      {
+        "symbol": "ORCL",
+        "side": "sell",
+        "qty": 0.303,
+        "value": 56.64,
+        "status": "accepted"
+      },
+      {
+        "symbol": "TSLA",
+        "side": "sell",
+        "qty": 0.264,
+        "value": 109.82,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UPS",
+        "side": "sell",
+        "qty": 0.692,
+        "value": 68.3,
+        "status": "accepted"
+      },
+      {
+        "symbol": "USB",
+        "side": "sell",
+        "qty": 1.462,
+        "value": 79.68,
+        "status": "accepted"
+      },
+      {
+        "symbol": "WMT",
+        "side": "buy",
+        "qty": 0.734,
+        "value": 96.4,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
+  }
+]
