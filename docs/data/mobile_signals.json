@@ -1,12 +1,12 @@
 {
-  "updated": "22.05.2026 21:54",
+  "updated": "25.05.2026 21:58",
   "etfs": [
     {
       "ticker": "SXR8.DE",
       "name": "S&P100_EU",
       "signal": "LONG",
       "strategy": "Momentum",
-      "price": 694.82,
+      "price": 696.54,
       "last_date": "20.05.2026",
       "sharpe_switch": 1.29,
       "sharpe_bh": 0.79,
@@ -5085,7 +5085,7 @@
         },
         {
           "date": "2024-12-18",
-          "switch": 4.353,
+          "switch": 4.3531,
           "bh": 2.7047,
           "cash": false
         },
@@ -5715,7 +5715,7 @@
         {
           "Datum": "12.08.2024",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie RSI aktiv",
           "Kurs": "$141.67",
           "Rendite": null
         },
@@ -5817,7 +5817,7 @@
       "ticker": "EEM",
       "name": "Emerging Markets",
       "signal": "LONG",
-      "strategy": "Double_MA",
+      "strategy": "MA",
       "price": 65.88,
       "last_date": "18.05.2026",
       "sharpe_switch": 0.81,
@@ -7085,7 +7085,7 @@
         },
         {
           "date": "2012-12-20",
-          "switch": 2.4808,
+          "switch": 2.4807,
           "bh": 1.2869,
           "cash": false
         },
@@ -7319,13 +7319,13 @@
         },
         {
           "date": "2015-12-01",
-          "switch": 2.9063,
+          "switch": 2.9062,
           "bh": 1.0607,
           "cash": true
         },
         {
           "date": "2015-12-29",
-          "switch": 2.9063,
+          "switch": 2.9062,
           "bh": 1.0316,
           "cash": true
         },
@@ -7391,7 +7391,7 @@
         },
         {
           "date": "2016-10-26",
-          "switch": 3.3987,
+          "switch": 3.3986,
           "bh": 1.1856,
           "cash": false
         },
@@ -7553,19 +7553,19 @@
         },
         {
           "date": "2018-11-08",
-          "switch": 4.3236,
+          "switch": 4.3235,
           "bh": 1.3346,
           "cash": true
         },
         {
           "date": "2018-12-07",
-          "switch": 4.3236,
+          "switch": 4.3235,
           "bh": 1.3125,
           "cash": true
         },
         {
           "date": "2019-01-07",
-          "switch": 4.3236,
+          "switch": 4.3235,
           "bh": 1.3289,
           "cash": true
         },
@@ -7655,7 +7655,7 @@
         },
         {
           "date": "2020-02-25",
-          "switch": 5.1087,
+          "switch": 5.1086,
           "bh": 1.4213,
           "cash": true
         },
@@ -7679,7 +7679,7 @@
         },
         {
           "date": "2020-06-12",
-          "switch": 5.3967,
+          "switch": 5.3966,
           "bh": 1.3707,
           "cash": false
         },
@@ -7727,7 +7727,7 @@
         },
         {
           "date": "2021-01-20",
-          "switch": 7.7198,
+          "switch": 7.7197,
           "bh": 1.9642,
           "cash": false
         },
@@ -7757,7 +7757,7 @@
         },
         {
           "date": "2021-06-07",
-          "switch": 7.5174,
+          "switch": 7.5173,
           "bh": 1.9463,
           "cash": false
         },
@@ -7920,7 +7920,7 @@
         {
           "date": "2023-06-21",
           "switch": 7.623,
-          "bh": 1.4658,
+          "bh": 1.4659,
           "cash": false
         },
         {
@@ -7967,7 +7967,7 @@
         },
         {
           "date": "2024-01-29",
-          "switch": 7.9087,
+          "switch": 7.9086,
           "bh": 1.4569,
           "cash": true
         },
@@ -8003,7 +8003,7 @@
         },
         {
           "date": "2024-07-12",
-          "switch": 9.1361,
+          "switch": 9.136,
           "bh": 1.6781,
           "cash": false
         },
@@ -8021,7 +8021,7 @@
         },
         {
           "date": "2024-10-02",
-          "switch": 9.5887,
+          "switch": 9.5886,
           "bh": 1.7757,
           "cash": false
         },
@@ -8039,13 +8039,13 @@
         },
         {
           "date": "2024-12-23",
-          "switch": 9.019,
+          "switch": 9.0189,
           "bh": 1.6297,
           "cash": true
         },
         {
           "date": "2025-01-23",
-          "switch": 9.019,
+          "switch": 9.0189,
           "bh": 1.6359,
           "cash": true
         },
@@ -8057,7 +8057,7 @@
         },
         {
           "date": "2025-03-19",
-          "switch": 9.0486,
+          "switch": 9.0485,
           "bh": 1.7336,
           "cash": true
         },
@@ -8081,13 +8081,13 @@
         },
         {
           "date": "2025-07-09",
-          "switch": 9.3052,
+          "switch": 9.3051,
           "bh": 1.8692,
           "cash": false
         },
         {
           "date": "2025-08-05",
-          "switch": 9.4112,
+          "switch": 9.4111,
           "bh": 1.8905,
           "cash": false
         },
@@ -8099,7 +8099,7 @@
         },
         {
           "date": "2025-09-29",
-          "switch": 10.2494,
+          "switch": 10.2493,
           "bh": 2.0589,
           "cash": false
         },
@@ -8111,7 +8111,7 @@
         },
         {
           "date": "2025-11-20",
-          "switch": 10.234,
+          "switch": 10.2339,
           "bh": 2.0558,
           "cash": false
         },
@@ -8123,13 +8123,13 @@
         },
         {
           "date": "2026-01-16",
-          "switch": 11.3108,
+          "switch": 11.3107,
           "bh": 2.2721,
           "cash": false
         },
         {
           "date": "2026-02-13",
-          "switch": 11.946,
+          "switch": 11.9459,
           "bh": 2.3997,
           "cash": false
         },
@@ -8153,7 +8153,7 @@
         },
         {
           "date": "2026-05-18",
-          "switch": 12.6985,
+          "switch": 12.6984,
           "bh": 2.5509,
           "cash": false
         }
@@ -8891,7 +8891,7 @@
         {
           "Datum": "13.09.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie Double_MA aktiv",
+          "Grund": "Strategie MA aktiv",
           "Kurs": "$41.13",
           "Rendite": null
         },
@@ -8905,7 +8905,7 @@
         {
           "Datum": "02.12.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie Double_MA aktiv",
+          "Grund": "Strategie MA aktiv",
           "Kurs": "$41.70",
           "Rendite": null
         },
@@ -9079,8 +9079,8 @@
         },
         {
           "date": "2025-07-03",
-          "switch": 1.033,
-          "bh": 1.033,
+          "switch": 1.0331,
+          "bh": 1.0331,
           "cash": false
         },
         {
@@ -9097,8 +9097,8 @@
         },
         {
           "date": "2025-07-14",
-          "switch": 1.033,
-          "bh": 1.033,
+          "switch": 1.0331,
+          "bh": 1.0331,
           "cash": false
         },
         {
@@ -9740,7 +9740,7 @@
         {
           "date": "2026-05-19",
           "switch": 1.2251,
-          "bh": 1.1674,
+          "bh": 1.1675,
           "cash": true
         },
         {
@@ -10881,7 +10881,7 @@
         },
         {
           "date": "2021-07-27",
-          "switch": 6.0433,
+          "switch": 6.0434,
           "bh": 1.6859,
           "cash": false
         },
@@ -10971,25 +10971,25 @@
         },
         {
           "date": "2022-08-22",
-          "switch": 6.2212,
+          "switch": 6.2213,
           "bh": 1.3665,
           "cash": false
         },
         {
           "date": "2022-09-16",
-          "switch": 6.2212,
+          "switch": 6.2213,
           "bh": 1.3041,
           "cash": true
         },
         {
           "date": "2022-10-12",
-          "switch": 6.2212,
+          "switch": 6.2213,
           "bh": 1.1857,
           "cash": true
         },
         {
           "date": "2022-11-07",
-          "switch": 6.2212,
+          "switch": 6.2213,
           "bh": 1.3335,
           "cash": true
         },
@@ -11037,7 +11037,7 @@
         },
         {
           "date": "2023-06-06",
-          "switch": 7.4153,
+          "switch": 7.4154,
           "bh": 1.6081,
           "cash": false
         },
@@ -11085,13 +11085,13 @@
         },
         {
           "date": "2024-01-02",
-          "switch": 7.7488,
+          "switch": 7.7489,
           "bh": 1.7157,
           "cash": false
         },
         {
           "date": "2024-01-29",
-          "switch": 7.806,
+          "switch": 7.8061,
           "bh": 1.7283,
           "cash": false
         },
@@ -11277,7 +11277,7 @@
         },
         {
           "date": "2026-04-21",
-          "switch": 10.8362,
+          "switch": 10.8363,
           "bh": 2.5107,
           "cash": false
         },
@@ -11941,7 +11941,7 @@
         {
           "Datum": "19.08.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$66.26",
           "Rendite": null
         },
@@ -11955,7 +11955,7 @@
         {
           "Datum": "12.09.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$66.00",
           "Rendite": null
         },
@@ -11969,7 +11969,7 @@
         {
           "Datum": "17.10.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$65.89",
           "Rendite": null
         },
@@ -12011,7 +12011,7 @@
         {
           "Datum": "25.11.2025",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$79.12",
           "Rendite": null
         },
@@ -12701,7 +12701,7 @@
       },
       {
         "date": "2021-07-29",
-        "switch": 2.4255,
+        "switch": 2.4254,
         "bh": 1.5986
       },
       {
@@ -13026,7 +13026,7 @@
       },
       {
         "date": "2024-01-25",
-        "switch": 4.1928,
+        "switch": 4.1929,
         "bh": 1.8373
       },
       {
@@ -14623,7 +14623,7 @@
         },
         {
           "date": "2025-12-23",
-          "value": 1.3554,
+          "value": 1.3555,
           "cash": false,
           "switch": 1.2472
         },
@@ -18188,7 +18188,7 @@
         "n_trades": 130,
         "pe": 11.792683,
         "pb": 1.951958,
-        "div_yield": 5.86,
+        "div_yield": 5.85,
         "pct_from_high": -6.4
       },
       {
@@ -18203,7 +18203,7 @@
         "n_trades": 95,
         "pe": 8.309211,
         "pb": 1.6083026,
-        "div_yield": 4.38,
+        "div_yield": 4.39,
         "pct_from_high": -15.2
       },
       {
@@ -18218,7 +18218,7 @@
         "n_trades": 113,
         "pe": 11.49476,
         "pb": 1.4606922,
-        "div_yield": 3.78,
+        "div_yield": 3.76,
         "pct_from_high": -10.4
       },
       {
@@ -18233,7 +18233,7 @@
         "n_trades": 104,
         "pe": 19.770992,
         "pb": 1.702939,
-        "div_yield": 6.63,
+        "div_yield": 6.64,
         "pct_from_high": -9.9
       },
       {
@@ -18246,7 +18246,7 @@
         "bh_sharpe": 0.45,
         "pct_invested": 0.558,
         "n_trades": 106,
-        "pe": 20.451612,
+        "pe": 20.416948,
         "pb": 2.2738168,
         "div_yield": 2.79,
         "pct_from_high": -11.3
@@ -18263,7 +18263,7 @@
         "n_trades": 81,
         "pe": 12.853597,
         "pb": 1.3397475,
-        "div_yield": 2.18,
+        "div_yield": 2.16,
         "pct_from_high": -10.0
       },
       {
@@ -18276,9 +18276,9 @@
         "bh_sharpe": 0.43,
         "pct_invested": 0.589,
         "n_trades": 114,
-        "pe": 19.363636,
+        "pe": 19.333845,
         "pb": 1.8280336,
-        "div_yield": 3.42,
+        "div_yield": 3.39,
         "pct_from_high": -6.6
       },
       {
@@ -18291,9 +18291,9 @@
         "bh_sharpe": 0.28,
         "pct_invested": 0.552,
         "n_trades": 107,
-        "pe": 2.5172808,
+        "pe": 2.5170593,
         "pb": 1.7943381,
-        "div_yield": 2.21,
+        "div_yield": 2.18,
         "pct_from_high": -15.5
       },
       {
@@ -18308,7 +18308,7 @@
         "n_trades": 95,
         "pe": 16.34628,
         "pb": 5.2854075,
-        "div_yield": 6.68,
+        "div_yield": 6.49,
         "pct_from_high": -17.5
       },
       {
@@ -18321,9 +18321,9 @@
         "bh_sharpe": 0.46,
         "pct_invested": 0.593,
         "n_trades": 108,
-        "pe": 26.036976,
+        "pe": 26.12479,
         "pb": 2.4959319,
-        "div_yield": 2.65,
+        "div_yield": 2.66,
         "pct_from_high": -12.2
       }
     ],
@@ -21423,7 +21423,7 @@
         },
         {
           "date": "2025-10-03",
-          "value": 1.1023,
+          "value": 1.1022,
           "cash": false,
           "switch": 1.138
         },
@@ -23045,7 +23045,7 @@
         },
         {
           "date": "2025-12-17",
-          "value": 1.0792,
+          "value": 1.0793,
           "cash": false,
           "switch": 0.951
         },
@@ -24048,7 +24048,7 @@
         "bh_sharpe": 0.5,
         "pct_invested": 0.634,
         "n_trades": 92,
-        "pe": 60.791668,
+        "pe": 61.15569,
         "pb": 8.98083,
         "div_yield": null,
         "pct_from_high": -51.7
@@ -24063,9 +24063,9 @@
         "bh_sharpe": 0.51,
         "pct_invested": 0.641,
         "n_trades": 83,
-        "pe": 22.183207,
+        "pe": 22.175146,
         "pb": 6.3560143,
-        "div_yield": 35.0,
+        "div_yield": 34.0,
         "pct_from_high": -23.4
       },
       {
@@ -24123,9 +24123,9 @@
         "bh_sharpe": 0.62,
         "pct_invested": 0.598,
         "n_trades": 103,
-        "pe": 34.42294,
+        "pe": 34.484737,
         "pb": 16.464941,
-        "div_yield": 1.05,
+        "div_yield": 1.04,
         "pct_from_high": -44.4
       },
       {
@@ -24138,7 +24138,7 @@
         "bh_sharpe": 0.76,
         "pct_invested": 0.658,
         "n_trades": 92,
-        "pe": 24.90006,
+        "pe": 24.944576,
         "pb": 7.504348,
         "div_yield": 87.0,
         "pct_from_high": -24.6
@@ -24148,15 +24148,15 @@
         "name": "Salesforce, Inc.",
         "signal": "CASH",
         "strategy": "—",
-        "signal_margin": -1691220.73,
+        "signal_margin": -881288.381,
         "sharpe": 1.17,
         "bh_sharpe": 0.28,
         "pct_invested": 0.583,
         "n_trades": 82,
-        "pe": 23.115534,
+        "pe": 23.085897,
         "pb": 2.8285322,
-        "div_yield": 1.0,
-        "pct_from_high": -35.9
+        "div_yield": 98.0,
+        "pct_from_high": -35.4
       },
       {
         "ticker": "UBER",
@@ -24183,9 +24183,9 @@
         "bh_sharpe": 0.37,
         "pct_invested": 0.605,
         "n_trades": 121,
-        "pe": 29.274302,
+        "pe": 29.23025,
         "pb": 3.603685,
-        "div_yield": 2.31,
+        "div_yield": 2.28,
         "pct_from_high": -3.9
       }
     ],
@@ -24365,7 +24365,7 @@
       },
       {
         "date": "2021-10-12",
-        "switch": 1.1796,
+        "switch": 1.1797,
         "bh": 1.1623
       },
       {
@@ -24830,7 +24830,7 @@
       },
       {
         "date": "2024-01-02",
-        "switch": 1.9918,
+        "switch": 1.9919,
         "bh": 1.3786
       },
       {
@@ -25295,7 +25295,7 @@
       },
       {
         "date": "2026-02-26",
-        "switch": 3.6469,
+        "switch": 3.647,
         "bh": 1.916
       },
       {
@@ -27755,7 +27755,7 @@
         },
         {
           "date": "2025-12-23",
-          "value": 1.2466,
+          "value": 1.2465,
           "cash": true,
           "switch": 1.8614
         },
@@ -30072,7 +30072,7 @@
         "n_trades": 130,
         "pe": 11.792683,
         "pb": 1.951958,
-        "div_yield": 5.86,
+        "div_yield": 5.85,
         "pct_from_high": -6.4,
         "category": "value"
       },
@@ -30088,7 +30088,7 @@
         "n_trades": 95,
         "pe": 8.309211,
         "pb": 1.6083026,
-        "div_yield": 4.38,
+        "div_yield": 4.39,
         "pct_from_high": -15.2,
         "category": "value"
       },
@@ -30104,7 +30104,7 @@
         "n_trades": 113,
         "pe": 11.49476,
         "pb": 1.4606922,
-        "div_yield": 3.78,
+        "div_yield": 3.76,
         "pct_from_high": -10.4,
         "category": "value"
       },
@@ -30120,7 +30120,7 @@
         "n_trades": 104,
         "pe": 19.770992,
         "pb": 1.702939,
-        "div_yield": 6.63,
+        "div_yield": 6.64,
         "pct_from_high": -9.9,
         "category": "value"
       },
@@ -30134,7 +30134,7 @@
         "bh_sharpe": 0.45,
         "pct_invested": 0.558,
         "n_trades": 106,
-        "pe": 20.451612,
+        "pe": 20.416948,
         "pb": 2.2738168,
         "div_yield": 2.79,
         "pct_from_high": -11.3,
@@ -30152,7 +30152,7 @@
         "n_trades": 81,
         "pe": 12.853597,
         "pb": 1.3397475,
-        "div_yield": 2.18,
+        "div_yield": 2.16,
         "pct_from_high": -10.0,
         "category": "value"
       },
@@ -30166,9 +30166,9 @@
         "bh_sharpe": 0.43,
         "pct_invested": 0.589,
         "n_trades": 114,
-        "pe": 19.363636,
+        "pe": 19.333845,
         "pb": 1.8280336,
-        "div_yield": 3.42,
+        "div_yield": 3.39,
         "pct_from_high": -6.6,
         "category": "value"
       },
@@ -30182,9 +30182,9 @@
         "bh_sharpe": 0.28,
         "pct_invested": 0.552,
         "n_trades": 107,
-        "pe": 2.5172808,
+        "pe": 2.5170593,
         "pb": 1.7943381,
-        "div_yield": 2.21,
+        "div_yield": 2.18,
         "pct_from_high": -15.5,
         "category": "value"
       },
@@ -30200,7 +30200,7 @@
         "n_trades": 95,
         "pe": 16.34628,
         "pb": 5.2854075,
-        "div_yield": 6.68,
+        "div_yield": 6.49,
         "pct_from_high": -17.5,
         "category": "value"
       },
@@ -30214,9 +30214,9 @@
         "bh_sharpe": 0.46,
         "pct_invested": 0.593,
         "n_trades": 108,
-        "pe": 26.036976,
+        "pe": 26.12479,
         "pb": 2.4959319,
-        "div_yield": 2.65,
+        "div_yield": 2.66,
         "pct_from_high": -12.2,
         "category": "value"
       },
@@ -30230,7 +30230,7 @@
         "bh_sharpe": 0.5,
         "pct_invested": 0.634,
         "n_trades": 92,
-        "pe": 60.791668,
+        "pe": 61.15569,
         "pb": 8.98083,
         "div_yield": null,
         "pct_from_high": -51.7,
@@ -30246,9 +30246,9 @@
         "bh_sharpe": 0.51,
         "pct_invested": 0.641,
         "n_trades": 83,
-        "pe": 22.183207,
+        "pe": 22.175146,
         "pb": 6.3560143,
-        "div_yield": 35.0,
+        "div_yield": 34.0,
         "pct_from_high": -23.4,
         "category": "turnaround"
       },
@@ -30310,9 +30310,9 @@
         "bh_sharpe": 0.62,
         "pct_invested": 0.598,
         "n_trades": 103,
-        "pe": 34.42294,
+        "pe": 34.484737,
         "pb": 16.464941,
-        "div_yield": 1.05,
+        "div_yield": 1.04,
         "pct_from_high": -44.4,
         "category": "turnaround"
       },
@@ -30326,7 +30326,7 @@
         "bh_sharpe": 0.76,
         "pct_invested": 0.658,
         "n_trades": 92,
-        "pe": 24.90006,
+        "pe": 24.944576,
         "pb": 7.504348,
         "div_yield": 87.0,
         "pct_from_high": -24.6,
@@ -30337,15 +30337,15 @@
         "name": "Salesforce, Inc.",
         "signal": "CASH",
         "strategy": "—",
-        "signal_margin": -1691220.73,
+        "signal_margin": -881288.381,
         "sharpe": 1.17,
         "bh_sharpe": 0.28,
         "pct_invested": 0.583,
         "n_trades": 82,
-        "pe": 23.115534,
+        "pe": 23.085897,
         "pb": 2.8285322,
-        "div_yield": 1.0,
-        "pct_from_high": -35.9,
+        "div_yield": 98.0,
+        "pct_from_high": -35.4,
         "category": "turnaround"
       },
       {
@@ -30374,9 +30374,9 @@
         "bh_sharpe": 0.37,
         "pct_invested": 0.605,
         "n_trades": 121,
-        "pe": 29.274302,
+        "pe": 29.23025,
         "pb": 3.603685,
-        "div_yield": 2.31,
+        "div_yield": 2.28,
         "pct_from_high": -3.9,
         "category": "turnaround"
       }
@@ -32452,7 +32452,7 @@
         "n_trades": 130,
         "pe": 11.792683,
         "pb": 1.951958,
-        "div_yield": 5.86,
+        "div_yield": 5.85,
         "pct_from_high": -6.4,
         "category": "value"
       },
@@ -32468,7 +32468,7 @@
         "n_trades": 95,
         "pe": 8.309211,
         "pb": 1.6083026,
-        "div_yield": 4.38,
+        "div_yield": 4.39,
         "pct_from_high": -15.2,
         "category": "value"
       },
@@ -32484,7 +32484,7 @@
         "n_trades": 113,
         "pe": 11.49476,
         "pb": 1.4606922,
-        "div_yield": 3.78,
+        "div_yield": 3.76,
         "pct_from_high": -10.4,
         "category": "value"
       },
@@ -32500,7 +32500,7 @@
         "n_trades": 104,
         "pe": 19.770992,
         "pb": 1.702939,
-        "div_yield": 6.63,
+        "div_yield": 6.64,
         "pct_from_high": -9.9,
         "category": "value"
       },
@@ -32514,7 +32514,7 @@
         "bh_sharpe": 0.45,
         "pct_invested": 0.558,
         "n_trades": 106,
-        "pe": 20.451612,
+        "pe": 20.416948,
         "pb": 2.2738168,
         "div_yield": 2.79,
         "pct_from_high": -11.3,
@@ -32532,7 +32532,7 @@
         "n_trades": 81,
         "pe": 12.853597,
         "pb": 1.3397475,
-        "div_yield": 2.18,
+        "div_yield": 2.16,
         "pct_from_high": -10.0,
         "category": "value"
       },
@@ -32546,9 +32546,9 @@
         "bh_sharpe": 0.43,
         "pct_invested": 0.589,
         "n_trades": 114,
-        "pe": 19.363636,
+        "pe": 19.333845,
         "pb": 1.8280336,
-        "div_yield": 3.42,
+        "div_yield": 3.39,
         "pct_from_high": -6.6,
         "category": "value"
       },
@@ -32562,9 +32562,9 @@
         "bh_sharpe": 0.28,
         "pct_invested": 0.552,
         "n_trades": 107,
-        "pe": 2.5172808,
+        "pe": 2.5170593,
         "pb": 1.7943381,
-        "div_yield": 2.21,
+        "div_yield": 2.18,
         "pct_from_high": -15.5,
         "category": "value"
       },
@@ -32580,7 +32580,7 @@
         "n_trades": 95,
         "pe": 16.34628,
         "pb": 5.2854075,
-        "div_yield": 6.68,
+        "div_yield": 6.49,
         "pct_from_high": -17.5,
         "category": "value"
       },
@@ -32594,9 +32594,9 @@
         "bh_sharpe": 0.46,
         "pct_invested": 0.593,
         "n_trades": 108,
-        "pe": 26.036976,
+        "pe": 26.12479,
         "pb": 2.4959319,
-        "div_yield": 2.65,
+        "div_yield": 2.66,
         "pct_from_high": -12.2,
         "category": "value"
       },
@@ -32610,7 +32610,7 @@
         "bh_sharpe": 0.5,
         "pct_invested": 0.634,
         "n_trades": 92,
-        "pe": 60.791668,
+        "pe": 61.15569,
         "pb": 8.98083,
         "div_yield": null,
         "pct_from_high": -51.7,
@@ -32626,9 +32626,9 @@
         "bh_sharpe": 0.51,
         "pct_invested": 0.641,
         "n_trades": 83,
-        "pe": 22.183207,
+        "pe": 22.175146,
         "pb": 6.3560143,
-        "div_yield": 35.0,
+        "div_yield": 34.0,
         "pct_from_high": -23.4,
         "category": "turnaround"
       },
@@ -32690,9 +32690,9 @@
         "bh_sharpe": 0.62,
         "pct_invested": 0.598,
         "n_trades": 103,
-        "pe": 34.42294,
+        "pe": 34.484737,
         "pb": 16.464941,
-        "div_yield": 1.05,
+        "div_yield": 1.04,
         "pct_from_high": -44.4,
         "category": "turnaround"
       },
@@ -32706,7 +32706,7 @@
         "bh_sharpe": 0.76,
         "pct_invested": 0.658,
         "n_trades": 92,
-        "pe": 24.90006,
+        "pe": 24.944576,
         "pb": 7.504348,
         "div_yield": 87.0,
         "pct_from_high": -24.6,
@@ -32717,15 +32717,15 @@
         "name": "Salesforce, Inc.",
         "signal": "CASH",
         "strategy": "—",
-        "signal_margin": -1691220.73,
+        "signal_margin": -881288.381,
         "sharpe": 1.17,
         "bh_sharpe": 0.28,
         "pct_invested": 0.583,
         "n_trades": 82,
-        "pe": 23.115534,
+        "pe": 23.085897,
         "pb": 2.8285322,
-        "div_yield": 1.0,
-        "pct_from_high": -35.9,
+        "div_yield": 98.0,
+        "pct_from_high": -35.4,
         "category": "turnaround"
       },
       {
@@ -32754,9 +32754,9 @@
         "bh_sharpe": 0.37,
         "pct_invested": 0.605,
         "n_trades": 121,
-        "pe": 29.274302,
+        "pe": 29.23025,
         "pb": 3.603685,
-        "div_yield": 2.31,
+        "div_yield": 2.28,
         "pct_from_high": -3.9,
         "category": "turnaround"
       }
