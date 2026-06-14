@@ -424,11 +424,55 @@ def _extend_returns_live(result: dict) -> tuple:
         if stock_results[t]["signal"] == "LONG":
             ext_switch += daily_ret / n_stocks
 
-    # Concatenate
+    # Concatenate (WF data wins for pre-extension dates)
     sw_ret = pd.concat([sw_ret, ext_switch])
     bh_ret = pd.concat([bh_ret, ext_bench])
     sw_ret = sw_ret[~sw_ret.index.duplicated(keep="first")]
     bh_ret = bh_ret[~bh_ret.index.duplicated(keep="first")]
+
+    # ── Validation-period override ────────────────────────────────────────
+    # Dates >= validation_start are ALWAYS recomputed with the extension
+    # formula (current signals, equal-weight) so the comparison chart
+    # stays stable and doesn't shift when a new WF OOS window closes.
+    trade_log_path = ROOT / "trading" / "trade_log.json"
+    validation_start = None
+    try:
+        tl = json.loads(trade_log_path.read_text())
+        if tl:
+            validation_start = pd.Timestamp(tl[0]["date"][:10])
+    except Exception:
+        pass
+
+    if validation_start is not None:
+        val_dates = sw_ret.index[sw_ret.index >= validation_start]
+        if len(val_dates) > 0:
+            # Build per-stock daily returns from one day before validation start
+            val_close: dict[str, pd.Series] = {}
+            for t, sr in stock_results.items():
+                close = sr.get("close")
+                if close is None:
+                    continue
+                base_candidates = close.index[close.index < validation_start]
+                if len(base_candidates) == 0:
+                    continue
+                base_date = base_candidates[-1]
+                close_slice = close.loc[close.index >= base_date]
+                if len(close_slice) < 2:
+                    continue
+                val_close[t] = close_slice.pct_change()
+
+            n_val = len(val_close)
+            if n_val > 0:
+                val_sw = pd.Series(0.0, index=val_dates)
+                val_bh = pd.Series(0.0, index=val_dates)
+                for t, daily in val_close.items():
+                    d = daily.reindex(val_dates, fill_value=0.0)
+                    val_bh += d / n_val
+                    if stock_results[t]["signal"] == "LONG":
+                        val_sw += d / n_val
+                sw_ret.loc[val_dates] = val_sw.values
+                bh_ret.loc[val_dates] = val_bh.values
+    # ─────────────────────────────────────────────────────────────────────
 
     sw_eq = _equity(sw_ret)
     bh_eq = _equity(bh_ret)
