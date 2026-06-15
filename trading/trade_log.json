@@ -1,10 +1,10 @@
 [
   {
     "date": "2026-06-15 00:00 UTC",
-    "equity": 99870.36,
+    "equity": 99188.75,
     "cash": 41054.24,
-    "invested": 58816.12,
-    "pct_invested": 0.5889,
+    "invested": 58134.51,
+    "pct_invested": 0.5862,
     "n_positions": 15,
     "positions": {},
     "targets": {},
