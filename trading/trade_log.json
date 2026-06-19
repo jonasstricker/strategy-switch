@@ -979,5 +979,215 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-06-19 20:56 UTC",
+    "equity": 98903.35,
+    "cash": 33161.02,
+    "invested": 65742.33,
+    "pct_invested": 66.5,
+    "n_positions": 17,
+    "positions": {
+      "AAPL": {
+        "qty": 13.33,
+        "price": 298.01,
+        "value": 3972.47
+      },
+      "AMZN": {
+        "qty": 16.569,
+        "price": 244.39,
+        "value": 4049.3
+      },
+      "AVGO": {
+        "qty": 13.729,
+        "price": 411.35,
+        "value": 5647.42
+      },
+      "BAC": {
+        "qty": 78.392,
+        "price": 56.2,
+        "value": 4405.63
+      },
+      "BRK.B": {
+        "qty": 8.075,
+        "price": 489.46,
+        "value": 3952.39
+      },
+      "CI": {
+        "qty": 15.569,
+        "price": 279.27,
+        "value": 4347.95
+      },
+      "GOOGL": {
+        "qty": 10.822,
+        "price": 368.03,
+        "value": 3982.82
+      },
+      "META": {
+        "qty": 9.463,
+        "price": 577.22,
+        "value": 5462.23
+      },
+      "NOW": {
+        "qty": 15.366,
+        "price": 95.04,
+        "value": 1460.38
+      },
+      "NVDA": {
+        "qty": 19.193,
+        "price": 210.69,
+        "value": 4043.77
+      },
+      "ORCL": {
+        "qty": 7.786,
+        "price": 184.29,
+        "value": 1434.88
+      },
+      "T": {
+        "qty": 195.511,
+        "price": 22.01,
+        "value": 4303.2
+      },
+      "TSLA": {
+        "qty": 9.943,
+        "price": 400.49,
+        "value": 3982.07
+      },
+      "UNH": {
+        "qty": 3.647,
+        "price": 400.96,
+        "value": 1462.3
+      },
+      "UPS": {
+        "qty": 42.003,
+        "price": 104.86,
+        "value": 4404.43
+      },
+      "USB": {
+        "qty": 76.217,
+        "price": 58.14,
+        "value": 4431.26
+      },
+      "VZ": {
+        "qty": 96.976,
+        "price": 45.37,
+        "value": 4399.8
+      }
+    },
+    "targets": {
+      "NVDA": {
+        "dollars": 3956.13,
+        "reason": "swarm NVDA LONG"
+      },
+      "GOOGL": {
+        "dollars": 3956.13,
+        "reason": "swarm GOOGL LONG"
+      },
+      "AAPL": {
+        "dollars": 3956.13,
+        "reason": "swarm AAPL LONG"
+      },
+      "AMZN": {
+        "dollars": 3956.13,
+        "reason": "swarm AMZN LONG"
+      },
+      "AVGO": {
+        "dollars": 5439.68,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "META": {
+        "dollars": 5439.68,
+        "reason": "swarm META LONG + turnaround"
+      },
+      "TSLA": {
+        "dollars": 3956.13,
+        "reason": "swarm TSLA LONG"
+      },
+      "BRK.B": {
+        "dollars": 3956.13,
+        "reason": "swarm BRK-B LONG"
+      },
+      "VZ": {
+        "dollars": 4450.65,
+        "reason": "value VZ LONG"
+      },
+      "T": {
+        "dollars": 4450.65,
+        "reason": "value T LONG"
+      },
+      "USB": {
+        "dollars": 4450.65,
+        "reason": "value USB LONG"
+      },
+      "BAC": {
+        "dollars": 4450.65,
+        "reason": "value BAC LONG"
+      },
+      "CI": {
+        "dollars": 4450.65,
+        "reason": "value CI LONG"
+      },
+      "UPS": {
+        "dollars": 4450.65,
+        "reason": "value UPS LONG"
+      },
+      "NOW": {
+        "dollars": 1483.55,
+        "reason": "turnaround NOW LONG"
+      },
+      "ORCL": {
+        "dollars": 1483.55,
+        "reason": "turnaround ORCL LONG"
+      },
+      "UNH": {
+        "dollars": 1483.55,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AMZN",
+        "side": "sell",
+        "qty": 0.381,
+        "value": 93.11,
+        "status": "accepted"
+      },
+      {
+        "symbol": "AVGO",
+        "side": "sell",
+        "qty": 0.505,
+        "value": 207.73,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "CI",
+        "side": "buy",
+        "qty": 0.368,
+        "value": 102.77,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "NVDA",
+        "side": "sell",
+        "qty": 0.416,
+        "value": 87.65,
+        "status": "accepted"
+      },
+      {
+        "symbol": "T",
+        "side": "buy",
+        "qty": 6.699,
+        "value": 147.44,
+        "status": "ERROR: HTTP 403: "
+      },
+      {
+        "symbol": "VZ",
+        "side": "buy",
+        "qty": 1.121,
+        "value": 50.86,
+        "status": "ERROR: HTTP 403: "
+      }
+    ],
+    "executed": true
   }
 ]
