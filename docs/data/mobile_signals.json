@@ -1,798 +1,798 @@
 {
-  "updated": "18.06.2026 22:48",
+  "updated": "19.06.2026 21:57",
   "etfs": [
     {
       "ticker": "SXR8.DE",
       "name": "S&P100_EU",
       "signal": "LONG",
-      "strategy": "Momentum",
-      "price": 698.02,
-      "last_date": "20.05.2026",
-      "sharpe_switch": 1.29,
-      "sharpe_bh": 0.79,
-      "cagr_switch": 0.1627,
-      "cagr_bh": 0.1462,
+      "strategy": "MA",
+      "price": 703.54,
+      "last_date": "18.06.2026",
+      "sharpe_switch": 1.3,
+      "sharpe_bh": 0.8,
+      "cagr_switch": 0.1636,
+      "cagr_bh": 0.1472,
       "max_dd_switch": -0.1762,
       "max_dd_bh": -0.3378,
       "vol_switch": 0.1055,
-      "vol_bh": 0.1642,
-      "pct_invested": 0.7561,
-      "sortino_switch": 1.75,
-      "sortino_bh": 1.0,
-      "calmar_switch": 0.92,
-      "calmar_bh": 0.43,
+      "vol_bh": 0.1639,
+      "pct_invested": 0.7577,
+      "sortino_switch": 1.76,
+      "sortino_bh": 1.01,
+      "calmar_switch": 0.93,
+      "calmar_bh": 0.44,
       "max_uw_switch": 605,
       "max_uw_bh": 342,
       "best_year_switch": 36.3,
       "best_year_bh": 35.1,
       "worst_year_switch": -4.9,
       "worst_year_bh": -13.6,
-      "win_rate_switch": 38.7,
-      "win_rate_bh": 55.1,
-      "return_1y_switch": 0.1077,
-      "return_1y_bh": 0.2199,
-      "pct_invested_1y": 0.7579,
+      "win_rate_switch": 38.8,
+      "win_rate_bh": 55.0,
+      "return_1y_switch": 0.1811,
+      "return_1y_bh": 0.2629,
+      "pct_invested_1y": 0.7937,
       "equity_1y": [
         {
-          "date": "2025-05-20",
-          "switch": 1.0006,
-          "bh": 1.0006,
-          "cash": false
-        },
-        {
-          "date": "2025-05-22",
-          "switch": 0.9821,
-          "bh": 0.9821,
-          "cash": false
-        },
-        {
-          "date": "2025-05-26",
-          "switch": 0.9689,
-          "bh": 0.9774,
-          "cash": false
-        },
-        {
-          "date": "2025-05-28",
-          "switch": 0.9725,
-          "bh": 0.9903,
-          "cash": false
-        },
-        {
-          "date": "2025-05-30",
-          "switch": 0.9666,
-          "bh": 0.9842,
-          "cash": false
-        },
-        {
-          "date": "2025-06-03",
-          "switch": 0.96,
-          "bh": 0.9932,
-          "cash": false
-        },
-        {
-          "date": "2025-06-05",
-          "switch": 0.9598,
-          "bh": 0.9928,
+          "date": "2025-06-18",
+          "switch": 1.0,
+          "bh": 0.9996,
           "cash": true
         },
         {
-          "date": "2025-06-09",
-          "switch": 0.9598,
-          "bh": 0.9967,
+          "date": "2025-06-20",
+          "switch": 1.0,
+          "bh": 0.9956,
           "cash": true
         },
         {
-          "date": "2025-06-11",
-          "switch": 0.9595,
-          "bh": 0.9985,
+          "date": "2025-06-24",
+          "switch": 0.9997,
+          "bh": 1.0039,
           "cash": false
         },
         {
-          "date": "2025-06-13",
-          "switch": 0.9595,
-          "bh": 0.9853,
+          "date": "2025-06-26",
+          "switch": 0.9997,
+          "bh": 1.0045,
           "cash": true
         },
         {
-          "date": "2025-06-17",
-          "switch": 0.9595,
-          "bh": 0.9887,
+          "date": "2025-06-30",
+          "switch": 0.9997,
+          "bh": 1.0104,
           "cash": true
         },
         {
-          "date": "2025-06-19",
-          "switch": 0.9595,
-          "bh": 0.9798,
-          "cash": true
-        },
-        {
-          "date": "2025-06-23",
-          "switch": 0.9595,
-          "bh": 0.9832,
-          "cash": true
-        },
-        {
-          "date": "2025-06-25",
-          "switch": 0.9592,
-          "bh": 0.9937,
-          "cash": true
-        },
-        {
-          "date": "2025-06-27",
-          "switch": 0.9592,
-          "bh": 1.0005,
-          "cash": true
-        },
-        {
-          "date": "2025-07-01",
-          "switch": 0.9578,
-          "bh": 0.9979,
+          "date": "2025-07-02",
+          "switch": 1.0009,
+          "bh": 1.012,
           "cash": false
         },
         {
-          "date": "2025-07-03",
-          "switch": 0.9718,
-          "bh": 1.0124,
-          "cash": false
-        },
-        {
-          "date": "2025-07-07",
-          "switch": 0.9684,
-          "bh": 1.0089,
-          "cash": false
-        },
-        {
-          "date": "2025-07-09",
-          "switch": 0.9711,
-          "bh": 1.0117,
-          "cash": false
-        },
-        {
-          "date": "2025-07-11",
-          "switch": 0.9743,
-          "bh": 1.015,
-          "cash": false
-        },
-        {
-          "date": "2025-07-15",
-          "switch": 0.9836,
-          "bh": 1.0248,
-          "cash": false
-        },
-        {
-          "date": "2025-07-17",
-          "switch": 0.9881,
-          "bh": 1.0294,
-          "cash": false
-        },
-        {
-          "date": "2025-07-21",
-          "switch": 0.9851,
-          "bh": 1.0266,
-          "cash": false
-        },
-        {
-          "date": "2025-07-23",
-          "switch": 0.9848,
-          "bh": 1.0243,
-          "cash": true
-        },
-        {
-          "date": "2025-07-25",
-          "switch": 0.9848,
-          "bh": 1.0318,
-          "cash": true
-        },
-        {
-          "date": "2025-07-29",
-          "switch": 0.9887,
-          "bh": 1.0485,
-          "cash": false
-        },
-        {
-          "date": "2025-07-31",
-          "switch": 0.9994,
-          "bh": 1.0598,
-          "cash": false
-        },
-        {
-          "date": "2025-08-04",
-          "switch": 0.9766,
-          "bh": 1.0356,
-          "cash": false
-        },
-        {
-          "date": "2025-08-06",
-          "switch": 0.9752,
-          "bh": 1.0341,
-          "cash": false
-        },
-        {
-          "date": "2025-08-08",
-          "switch": 0.9782,
-          "bh": 1.0373,
-          "cash": false
-        },
-        {
-          "date": "2025-08-12",
-          "switch": 0.9846,
-          "bh": 1.0441,
-          "cash": false
-        },
-        {
-          "date": "2025-08-14",
-          "switch": 0.9917,
-          "bh": 1.0517,
-          "cash": false
-        },
-        {
-          "date": "2025-08-18",
-          "switch": 0.9881,
-          "bh": 1.0478,
-          "cash": false
-        },
-        {
-          "date": "2025-08-20",
-          "switch": 0.98,
-          "bh": 1.0392,
-          "cash": false
-        },
-        {
-          "date": "2025-08-22",
-          "switch": 0.9902,
-          "bh": 1.05,
-          "cash": false
-        },
-        {
-          "date": "2025-08-26",
-          "switch": 0.9896,
-          "bh": 1.0493,
-          "cash": false
-        },
-        {
-          "date": "2025-08-28",
-          "switch": 0.9954,
-          "bh": 1.0555,
-          "cash": false
-        },
-        {
-          "date": "2025-09-01",
-          "switch": 0.9907,
-          "bh": 1.0506,
-          "cash": false
-        },
-        {
-          "date": "2025-09-03",
-          "switch": 0.9875,
-          "bh": 1.0471,
-          "cash": false
-        },
-        {
-          "date": "2025-09-05",
-          "switch": 0.9875,
-          "bh": 1.0472,
-          "cash": false
-        },
-        {
-          "date": "2025-09-09",
-          "switch": 0.9932,
-          "bh": 1.0532,
-          "cash": false
-        },
-        {
-          "date": "2025-09-11",
+          "date": "2025-07-04",
           "switch": 1.0055,
-          "bh": 1.0663,
+          "bh": 1.0166,
           "cash": false
         },
         {
-          "date": "2025-09-15",
-          "switch": 1.0076,
-          "bh": 1.0685,
+          "date": "2025-07-08",
+          "switch": 1.0091,
+          "bh": 1.0202,
           "cash": false
         },
         {
-          "date": "2025-09-17",
-          "switch": 0.9984,
-          "bh": 1.0587,
+          "date": "2025-07-10",
+          "switch": 1.0206,
+          "bh": 1.0318,
           "cash": false
         },
         {
-          "date": "2025-09-19",
-          "switch": 1.0131,
-          "bh": 1.0743,
+          "date": "2025-07-14",
+          "switch": 1.0165,
+          "bh": 1.0277,
           "cash": false
         },
         {
-          "date": "2025-09-23",
-          "switch": 1.0169,
-          "bh": 1.0783,
+          "date": "2025-07-16",
+          "switch": 1.0074,
+          "bh": 1.0186,
           "cash": false
         },
         {
-          "date": "2025-09-25",
-          "switch": 1.0151,
-          "bh": 1.0764,
+          "date": "2025-07-18",
+          "switch": 1.0255,
+          "bh": 1.0371,
           "cash": false
         },
         {
-          "date": "2025-09-29",
-          "switch": 1.0174,
-          "bh": 1.0789,
+          "date": "2025-07-22",
+          "switch": 1.0264,
+          "bh": 1.0297,
           "cash": false
         },
         {
-          "date": "2025-10-01",
-          "switch": 1.0231,
-          "bh": 1.0849,
+          "date": "2025-07-24",
+          "switch": 1.0264,
+          "bh": 1.0393,
+          "cash": true
+        },
+        {
+          "date": "2025-07-28",
+          "switch": 1.0264,
+          "bh": 1.0559,
+          "cash": true
+        },
+        {
+          "date": "2025-07-30",
+          "switch": 1.0363,
+          "bh": 1.0664,
           "cash": false
         },
         {
-          "date": "2025-10-03",
-          "switch": 1.0298,
-          "bh": 1.092,
+          "date": "2025-08-01",
+          "switch": 1.0071,
+          "bh": 1.0363,
           "cash": false
         },
         {
-          "date": "2025-10-07",
-          "switch": 1.0315,
-          "bh": 1.0938,
+          "date": "2025-08-05",
+          "switch": 1.0136,
+          "bh": 1.0431,
           "cash": false
         },
         {
-          "date": "2025-10-09",
-          "switch": 1.0441,
-          "bh": 1.1072,
-          "cash": false
-        },
-        {
-          "date": "2025-10-13",
-          "switch": 1.031,
-          "bh": 1.0932,
-          "cash": false
-        },
-        {
-          "date": "2025-10-15",
-          "switch": 1.0308,
-          "bh": 1.093,
-          "cash": false
-        },
-        {
-          "date": "2025-10-17",
+          "date": "2025-08-07",
           "switch": 1.0162,
-          "bh": 1.0776,
+          "bh": 1.0457,
           "cash": false
         },
         {
-          "date": "2025-10-21",
-          "switch": 1.0415,
-          "bh": 1.1044,
+          "date": "2025-08-11",
+          "switch": 1.0272,
+          "bh": 1.0571,
           "cash": false
         },
         {
-          "date": "2025-10-23",
-          "switch": 1.0394,
-          "bh": 1.1021,
+          "date": "2025-08-13",
+          "switch": 1.0274,
+          "bh": 1.0573,
           "cash": false
         },
         {
-          "date": "2025-10-28",
-          "switch": 1.0593,
-          "bh": 1.1233,
+          "date": "2025-08-15",
+          "switch": 1.0285,
+          "bh": 1.0584,
           "cash": false
         },
         {
-          "date": "2025-10-30",
-          "switch": 1.0643,
-          "bh": 1.1286,
+          "date": "2025-08-19",
+          "switch": 1.0284,
+          "bh": 1.0583,
           "cash": false
         },
         {
-          "date": "2025-11-03",
-          "switch": 1.0658,
-          "bh": 1.1302,
+          "date": "2025-08-21",
+          "switch": 1.0263,
+          "bh": 1.0562,
           "cash": false
         },
         {
-          "date": "2025-11-05",
-          "switch": 1.0636,
-          "bh": 1.1279,
+          "date": "2025-08-25",
+          "switch": 1.0328,
+          "bh": 1.0629,
           "cash": false
         },
         {
-          "date": "2025-11-07",
-          "switch": 1.0302,
-          "bh": 1.0924,
+          "date": "2025-08-27",
+          "switch": 1.0419,
+          "bh": 1.0722,
           "cash": false
         },
         {
-          "date": "2025-11-11",
-          "switch": 1.0547,
-          "bh": 1.1184,
+          "date": "2025-08-29",
+          "switch": 1.0301,
+          "bh": 1.06,
           "cash": false
         },
         {
-          "date": "2025-11-13",
-          "switch": 1.0442,
-          "bh": 1.1073,
+          "date": "2025-09-02",
+          "switch": 1.0204,
+          "bh": 1.0501,
           "cash": false
         },
         {
-          "date": "2025-11-17",
-          "switch": 1.0408,
-          "bh": 1.1037,
+          "date": "2025-09-04",
+          "switch": 1.0382,
+          "bh": 1.0684,
           "cash": false
         },
         {
-          "date": "2025-11-19",
-          "switch": 1.0312,
-          "bh": 1.0935,
+          "date": "2025-09-08",
+          "switch": 1.0345,
+          "bh": 1.0646,
           "cash": false
         },
         {
-          "date": "2025-11-21",
-          "switch": 1.0267,
-          "bh": 1.0887,
+          "date": "2025-09-10",
+          "switch": 1.0413,
+          "bh": 1.0715,
           "cash": false
         },
         {
-          "date": "2025-11-25",
-          "switch": 1.0436,
-          "bh": 1.1067,
+          "date": "2025-09-12",
+          "switch": 1.0499,
+          "bh": 1.0804,
           "cash": false
         },
         {
-          "date": "2025-11-27",
-          "switch": 1.0551,
-          "bh": 1.1189,
+          "date": "2025-09-16",
+          "switch": 1.0421,
+          "bh": 1.0724,
           "cash": false
         },
         {
-          "date": "2025-12-01",
-          "switch": 1.0548,
-          "bh": 1.1185,
+          "date": "2025-09-18",
+          "switch": 1.0541,
+          "bh": 1.0848,
           "cash": false
         },
         {
-          "date": "2025-12-03",
-          "switch": 1.0542,
-          "bh": 1.1179,
+          "date": "2025-09-22",
+          "switch": 1.0591,
+          "bh": 1.0898,
           "cash": false
         },
         {
-          "date": "2025-12-05",
-          "switch": 1.0606,
-          "bh": 1.1247,
+          "date": "2025-09-24",
+          "switch": 1.0582,
+          "bh": 1.089,
           "cash": false
         },
         {
-          "date": "2025-12-09",
-          "switch": 1.0593,
-          "bh": 1.1233,
+          "date": "2025-09-26",
+          "switch": 1.0578,
+          "bh": 1.0886,
           "cash": false
         },
         {
-          "date": "2025-12-11",
-          "switch": 1.0498,
-          "bh": 1.1132,
+          "date": "2025-09-30",
+          "switch": 1.059,
+          "bh": 1.0898,
           "cash": false
         },
         {
-          "date": "2025-12-15",
-          "switch": 1.043,
-          "bh": 1.106,
+          "date": "2025-10-02",
+          "switch": 1.0706,
+          "bh": 1.1017,
           "cash": false
         },
         {
-          "date": "2025-12-17",
-          "switch": 1.0315,
-          "bh": 1.0938,
+          "date": "2025-10-06",
+          "switch": 1.0757,
+          "bh": 1.1069,
           "cash": false
         },
         {
-          "date": "2025-12-19",
-          "switch": 1.0475,
+          "date": "2025-10-08",
+          "switch": 1.086,
+          "bh": 1.1175,
+          "cash": false
+        },
+        {
+          "date": "2025-10-10",
+          "switch": 1.0657,
+          "bh": 1.0966,
+          "cash": false
+        },
+        {
+          "date": "2025-10-14",
+          "switch": 1.069,
+          "bh": 1.1001,
+          "cash": false
+        },
+        {
+          "date": "2025-10-16",
+          "switch": 1.0706,
+          "bh": 1.1018,
+          "cash": false
+        },
+        {
+          "date": "2025-10-20",
+          "switch": 1.0794,
           "bh": 1.1108,
           "cash": false
         },
         {
-          "date": "2025-12-23",
-          "switch": 1.0525,
-          "bh": 1.116,
+          "date": "2025-10-22",
+          "switch": 1.0785,
+          "bh": 1.1098,
           "cash": false
         },
         {
-          "date": "2025-12-30",
-          "switch": 1.0555,
-          "bh": 1.1192,
+          "date": "2025-10-27",
+          "switch": 1.1019,
+          "bh": 1.1339,
           "cash": false
         },
         {
-          "date": "2026-01-05",
-          "switch": 1.0604,
-          "bh": 1.1244,
+          "date": "2025-10-29",
+          "switch": 1.1074,
+          "bh": 1.1396,
           "cash": false
         },
         {
-          "date": "2026-01-07",
-          "switch": 1.0692,
-          "bh": 1.1338,
+          "date": "2025-10-31",
+          "switch": 1.1093,
+          "bh": 1.1415,
           "cash": false
         },
         {
-          "date": "2026-01-09",
-          "switch": 1.0745,
-          "bh": 1.1394,
+          "date": "2025-11-04",
+          "switch": 1.1066,
+          "bh": 1.1388,
           "cash": false
         },
         {
-          "date": "2026-01-13",
-          "switch": 1.0758,
-          "bh": 1.1407,
+          "date": "2025-11-06",
+          "switch": 1.0897,
+          "bh": 1.1214,
           "cash": false
         },
         {
-          "date": "2026-01-15",
+          "date": "2025-11-10",
+          "switch": 1.097,
+          "bh": 1.1289,
+          "cash": false
+        },
+        {
+          "date": "2025-11-12",
+          "switch": 1.1043,
+          "bh": 1.1364,
+          "cash": false
+        },
+        {
+          "date": "2025-11-14",
+          "switch": 1.0882,
+          "bh": 1.1198,
+          "cash": false
+        },
+        {
+          "date": "2025-11-18",
+          "switch": 1.0715,
+          "bh": 1.1027,
+          "cash": false
+        },
+        {
+          "date": "2025-11-20",
+          "switch": 1.0839,
+          "bh": 1.1154,
+          "cash": false
+        },
+        {
+          "date": "2025-11-24",
+          "switch": 1.0865,
+          "bh": 1.1181,
+          "cash": false
+        },
+        {
+          "date": "2025-11-26",
+          "switch": 1.101,
+          "bh": 1.133,
+          "cash": false
+        },
+        {
+          "date": "2025-11-28",
+          "switch": 1.1039,
+          "bh": 1.1359,
+          "cash": false
+        },
+        {
+          "date": "2025-12-02",
+          "switch": 1.0992,
+          "bh": 1.1311,
+          "cash": false
+        },
+        {
+          "date": "2025-12-04",
+          "switch": 1.0995,
+          "bh": 1.1315,
+          "cash": false
+        },
+        {
+          "date": "2025-12-08",
+          "switch": 1.1028,
+          "bh": 1.1349,
+          "cash": false
+        },
+        {
+          "date": "2025-12-10",
+          "switch": 1.1012,
+          "bh": 1.1332,
+          "cash": false
+        },
+        {
+          "date": "2025-12-12",
+          "switch": 1.0872,
+          "bh": 1.1188,
+          "cash": false
+        },
+        {
+          "date": "2025-12-16",
           "switch": 1.0799,
-          "bh": 1.1452,
+          "bh": 1.1113,
           "cash": false
         },
         {
-          "date": "2026-01-19",
-          "switch": 1.0603,
-          "bh": 1.1243,
+          "date": "2025-12-18",
+          "switch": 1.0877,
+          "bh": 1.1193,
           "cash": false
         },
         {
-          "date": "2026-01-21",
-          "switch": 1.0531,
-          "bh": 1.1167,
+          "date": "2025-12-22",
+          "switch": 1.095,
+          "bh": 1.1269,
           "cash": false
         },
         {
-          "date": "2026-01-23",
-          "switch": 1.0579,
-          "bh": 1.1218,
+          "date": "2025-12-29",
+          "switch": 1.0991,
+          "bh": 1.1311,
           "cash": false
         },
         {
-          "date": "2026-01-27",
-          "switch": 1.0486,
-          "bh": 1.1119,
+          "date": "2026-01-02",
+          "switch": 1.0922,
+          "bh": 1.124,
           "cash": false
         },
         {
-          "date": "2026-01-29",
-          "switch": 1.0514,
-          "bh": 1.1037,
+          "date": "2026-01-06",
+          "switch": 1.1088,
+          "bh": 1.141,
           "cash": false
         },
         {
-          "date": "2026-02-02",
-          "switch": 1.0514,
-          "bh": 1.1271,
-          "cash": true
-        },
-        {
-          "date": "2026-02-04",
-          "switch": 1.0514,
-          "bh": 1.1146,
-          "cash": true
-        },
-        {
-          "date": "2026-02-06",
-          "switch": 1.0514,
-          "bh": 1.1138,
-          "cash": true
-        },
-        {
-          "date": "2026-02-10",
-          "switch": 1.0508,
-          "bh": 1.1166,
+          "date": "2026-01-08",
+          "switch": 1.1119,
+          "bh": 1.1442,
           "cash": false
         },
         {
-          "date": "2026-02-12",
-          "switch": 1.039,
-          "bh": 1.1041,
+          "date": "2026-01-12",
+          "switch": 1.1183,
+          "bh": 1.1508,
           "cash": false
         },
         {
-          "date": "2026-02-16",
-          "switch": 1.0349,
-          "bh": 1.0998,
+          "date": "2026-01-14",
+          "switch": 1.1103,
+          "bh": 1.1426,
           "cash": false
         },
         {
-          "date": "2026-02-18",
-          "switch": 1.0346,
-          "bh": 1.1145,
-          "cash": true
-        },
-        {
-          "date": "2026-02-20",
-          "switch": 1.0346,
-          "bh": 1.116,
-          "cash": true
-        },
-        {
-          "date": "2026-02-24",
-          "switch": 1.04,
-          "bh": 1.1125,
+          "date": "2026-01-16",
+          "switch": 1.1232,
+          "bh": 1.1558,
           "cash": false
         },
         {
-          "date": "2026-02-26",
-          "switch": 1.044,
-          "bh": 1.1168,
+          "date": "2026-01-20",
+          "switch": 1.0964,
+          "bh": 1.1282,
           "cash": false
         },
         {
-          "date": "2026-03-02",
-          "switch": 1.0469,
-          "bh": 1.1199,
+          "date": "2026-01-22",
+          "switch": 1.1046,
+          "bh": 1.1367,
           "cash": false
         },
         {
-          "date": "2026-03-04",
-          "switch": 1.0466,
+          "date": "2026-01-26",
+          "switch": 1.0965,
+          "bh": 1.1284,
+          "cash": false
+        },
+        {
+          "date": "2026-01-28",
+          "switch": 1.0961,
+          "bh": 1.128,
+          "cash": false
+        },
+        {
+          "date": "2026-01-30",
+          "switch": 1.0958,
           "bh": 1.1267,
           "cash": true
         },
         {
-          "date": "2026-03-09",
-          "switch": 1.0466,
-          "bh": 1.1071,
+          "date": "2026-02-03",
+          "switch": 1.0958,
+          "bh": 1.1323,
           "cash": true
         },
         {
-          "date": "2026-03-11",
-          "switch": 1.0466,
-          "bh": 1.1171,
+          "date": "2026-02-05",
+          "switch": 1.0958,
+          "bh": 1.1163,
           "cash": true
         },
         {
-          "date": "2026-03-13",
-          "switch": 1.0466,
-          "bh": 1.111,
+          "date": "2026-02-09",
+          "switch": 1.0958,
+          "bh": 1.1297,
           "cash": true
         },
         {
-          "date": "2026-03-17",
-          "switch": 1.0466,
-          "bh": 1.1138,
-          "cash": true
-        },
-        {
-          "date": "2026-03-19",
-          "switch": 1.0466,
-          "bh": 1.091,
-          "cash": true
-        },
-        {
-          "date": "2026-03-23",
-          "switch": 1.0466,
-          "bh": 1.0853,
-          "cash": true
-        },
-        {
-          "date": "2026-03-25",
-          "switch": 1.0463,
-          "bh": 1.0908,
-          "cash": true
-        },
-        {
-          "date": "2026-03-27",
-          "switch": 1.0463,
-          "bh": 1.0635,
-          "cash": true
-        },
-        {
-          "date": "2026-03-31",
-          "switch": 1.0459,
-          "bh": 1.0674,
+          "date": "2026-02-11",
+          "switch": 1.0936,
+          "bh": 1.1278,
           "cash": false
         },
         {
-          "date": "2026-04-02",
-          "switch": 1.0459,
-          "bh": 1.0878,
+          "date": "2026-02-13",
+          "switch": 1.0805,
+          "bh": 1.1143,
+          "cash": false
+        },
+        {
+          "date": "2026-02-17",
+          "switch": 1.0783,
+          "bh": 1.1152,
+          "cash": false
+        },
+        {
+          "date": "2026-02-19",
+          "switch": 1.0783,
+          "bh": 1.1258,
           "cash": true
         },
         {
-          "date": "2026-04-08",
-          "switch": 1.0459,
-          "bh": 1.1058,
+          "date": "2026-02-23",
+          "switch": 1.0783,
+          "bh": 1.1191,
           "cash": true
         },
         {
-          "date": "2026-04-10",
-          "switch": 1.0459,
-          "bh": 1.113,
+          "date": "2026-02-25",
+          "switch": 1.0918,
+          "bh": 1.1335,
+          "cash": false
+        },
+        {
+          "date": "2026-02-27",
+          "switch": 1.0814,
+          "bh": 1.1227,
+          "cash": false
+        },
+        {
+          "date": "2026-03-03",
+          "switch": 1.0908,
+          "bh": 1.1289,
+          "cash": false
+        },
+        {
+          "date": "2026-03-05",
+          "switch": 1.0908,
+          "bh": 1.1376,
           "cash": true
         },
         {
-          "date": "2026-04-14",
-          "switch": 1.0459,
+          "date": "2026-03-10",
+          "switch": 1.0908,
+          "bh": 1.1313,
+          "cash": true
+        },
+        {
+          "date": "2026-03-12",
+          "switch": 1.0908,
+          "bh": 1.1239,
+          "cash": true
+        },
+        {
+          "date": "2026-03-16",
+          "switch": 1.0908,
+          "bh": 1.1251,
+          "cash": true
+        },
+        {
+          "date": "2026-03-18",
+          "switch": 1.0908,
+          "bh": 1.1197,
+          "cash": true
+        },
+        {
+          "date": "2026-03-20",
+          "switch": 1.0908,
+          "bh": 1.0948,
+          "cash": true
+        },
+        {
+          "date": "2026-03-24",
+          "switch": 1.0905,
+          "bh": 1.0962,
+          "cash": false
+        },
+        {
+          "date": "2026-03-26",
+          "switch": 1.0905,
+          "bh": 1.0924,
+          "cash": true
+        },
+        {
+          "date": "2026-03-30",
+          "switch": 1.0905,
+          "bh": 1.0802,
+          "cash": true
+        },
+        {
+          "date": "2026-04-01",
+          "switch": 1.0901,
+          "bh": 1.098,
+          "cash": true
+        },
+        {
+          "date": "2026-04-07",
+          "switch": 1.0901,
+          "bh": 1.095,
+          "cash": true
+        },
+        {
+          "date": "2026-04-09",
+          "switch": 1.0901,
+          "bh": 1.1231,
+          "cash": true
+        },
+        {
+          "date": "2026-04-13",
+          "switch": 1.0901,
           "bh": 1.1256,
           "cash": true
         },
         {
-          "date": "2026-04-16",
-          "switch": 1.0459,
-          "bh": 1.1423,
+          "date": "2026-04-15",
+          "switch": 1.0901,
+          "bh": 1.146,
           "cash": true
         },
         {
-          "date": "2026-04-20",
-          "switch": 1.0459,
-          "bh": 1.1515,
+          "date": "2026-04-17",
+          "switch": 1.0901,
+          "bh": 1.1683,
           "cash": true
         },
         {
-          "date": "2026-04-22",
-          "switch": 1.0546,
-          "bh": 1.1614,
+          "date": "2026-04-21",
+          "switch": 1.0916,
+          "bh": 1.1666,
           "cash": false
         },
         {
-          "date": "2026-04-24",
-          "switch": 1.0591,
-          "bh": 1.1663,
+          "date": "2026-04-23",
+          "switch": 1.1039,
+          "bh": 1.1798,
           "cash": false
         },
         {
-          "date": "2026-04-28",
-          "switch": 1.0553,
-          "bh": 1.1622,
+          "date": "2026-04-27",
+          "switch": 1.1028,
+          "bh": 1.1786,
           "cash": false
         },
         {
-          "date": "2026-04-30",
-          "switch": 1.0605,
-          "bh": 1.1679,
+          "date": "2026-04-29",
+          "switch": 1.1032,
+          "bh": 1.1791,
           "cash": false
         },
         {
-          "date": "2026-05-05",
-          "switch": 1.0757,
-          "bh": 1.1846,
+          "date": "2026-05-04",
+          "switch": 1.1134,
+          "bh": 1.19,
           "cash": false
         },
         {
-          "date": "2026-05-07",
-          "switch": 1.088,
-          "bh": 1.1983,
+          "date": "2026-05-06",
+          "switch": 1.1303,
+          "bh": 1.208,
           "cash": false
         },
         {
-          "date": "2026-05-11",
-          "switch": 1.0935,
-          "bh": 1.2043,
+          "date": "2026-05-08",
+          "switch": 1.1359,
+          "bh": 1.2139,
           "cash": false
         },
         {
-          "date": "2026-05-13",
-          "switch": 1.0993,
-          "bh": 1.2107,
+          "date": "2026-05-12",
+          "switch": 1.1337,
+          "bh": 1.2117,
           "cash": false
         },
         {
-          "date": "2026-05-15",
-          "switch": 1.1107,
-          "bh": 1.2232,
+          "date": "2026-05-14",
+          "switch": 1.1635,
+          "bh": 1.2435,
           "cash": false
         },
         {
-          "date": "2026-05-19",
-          "switch": 1.0998,
-          "bh": 1.2112,
+          "date": "2026-05-18",
+          "switch": 1.148,
+          "bh": 1.227,
           "cash": false
         },
         {
           "date": "2026-05-20",
-          "switch": 1.1084,
-          "bh": 1.2207,
+          "switch": 1.1552,
+          "bh": 1.2346,
+          "cash": false
+        },
+        {
+          "date": "2026-05-22",
+          "switch": 1.1696,
+          "bh": 1.25,
+          "cash": false
+        },
+        {
+          "date": "2026-05-26",
+          "switch": 1.1712,
+          "bh": 1.2517,
+          "cash": false
+        },
+        {
+          "date": "2026-05-28",
+          "switch": 1.1744,
+          "bh": 1.2552,
+          "cash": false
+        },
+        {
+          "date": "2026-06-01",
+          "switch": 1.1824,
+          "bh": 1.2637,
+          "cash": false
+        },
+        {
+          "date": "2026-06-03",
+          "switch": 1.1813,
+          "bh": 1.2625,
+          "cash": false
+        },
+        {
+          "date": "2026-06-05",
+          "switch": 1.1755,
+          "bh": 1.2563,
+          "cash": false
+        },
+        {
+          "date": "2026-06-09",
+          "switch": 1.1489,
+          "bh": 1.2279,
+          "cash": false
+        },
+        {
+          "date": "2026-06-11",
+          "switch": 1.1468,
+          "bh": 1.2256,
+          "cash": false
+        },
+        {
+          "date": "2026-06-15",
+          "switch": 1.181,
+          "bh": 1.2622,
+          "cash": false
+        },
+        {
+          "date": "2026-06-17",
+          "switch": 1.175,
+          "bh": 1.2558,
+          "cash": false
+        },
+        {
+          "date": "2026-06-18",
+          "switch": 1.1811,
+          "bh": 1.2623,
           "cash": false
         }
       ],
@@ -2322,9 +2322,21 @@
           "cash": false
         },
         {
-          "date": "2026-05-20",
-          "switch": 7.1893,
-          "bh": 5.9386,
+          "date": "2026-05-28",
+          "switch": 7.3089,
+          "bh": 6.0374,
+          "cash": false
+        },
+        {
+          "date": "2026-06-16",
+          "switch": 7.3299,
+          "bh": 6.0547,
+          "cash": false
+        },
+        {
+          "date": "2026-06-18",
+          "switch": 7.3506,
+          "bh": 6.0718,
           "cash": false
         }
       ],
@@ -2512,7 +2524,8 @@
           "2": -1.3,
           "3": 0.8,
           "4": 1.4,
-          "5": 4.5
+          "5": 6.3,
+          "6": 0.4
         }
       },
       "months_bh": {
@@ -2699,7 +2712,8 @@
           "2": -0.3,
           "3": -3.8,
           "4": 9.1,
-          "5": 4.5
+          "5": 6.3,
+          "6": 0.4
         }
       },
       "yearly_returns": [
@@ -2770,8 +2784,8 @@
         },
         {
           "year": 2026,
-          "switch": 5.0,
-          "bh": 8.9
+          "switch": 7.3,
+          "bh": 11.2
         }
       ],
       "trades": [
@@ -2916,13 +2930,13 @@
           "Rendite": null
         }
       ],
-      "signal_margin": 4.365,
+      "signal_margin": 4.928,
       "strat_margins": {
-        "RSI": 3.366,
-        "Momentum": 4.365,
-        "MA": 3.26,
-        "Double_MA": 0.655,
-        "Dual_Momentum": 3.451
+        "RSI": 4.021,
+        "Momentum": 4.533,
+        "MA": 4.928,
+        "Double_MA": 1.284,
+        "Dual_Momentum": 4.114
       }
     },
     {
@@ -4149,7 +4163,7 @@
         },
         {
           "date": "2018-02-23",
-          "switch": 1.3613,
+          "switch": 1.3612,
           "bh": 1.3805,
           "cash": false
         },
@@ -4234,7 +4248,7 @@
         {
           "date": "2018-10-03",
           "switch": 1.4186,
-          "bh": 1.4272,
+          "bh": 1.4271,
           "cash": false
         },
         {
@@ -4492,7 +4506,7 @@
         {
           "date": "2020-08-20",
           "switch": 2.1043,
-          "bh": 1.629,
+          "bh": 1.6289,
           "cash": false
         },
         {
@@ -4557,7 +4571,7 @@
         },
         {
           "date": "2021-02-12",
-          "switch": 2.4309,
+          "switch": 2.4308,
           "bh": 1.9306,
           "cash": false
         },
@@ -4605,7 +4619,7 @@
         },
         {
           "date": "2021-06-21",
-          "switch": 2.5952,
+          "switch": 2.5951,
           "bh": 2.0611,
           "cash": false
         },
@@ -4677,7 +4691,7 @@
         },
         {
           "date": "2021-12-28",
-          "switch": 2.9084,
+          "switch": 2.9083,
           "bh": 2.2505,
           "cash": false
         },
@@ -4827,7 +4841,7 @@
         },
         {
           "date": "2023-02-01",
-          "switch": 3.1944,
+          "switch": 3.1943,
           "bh": 1.9918,
           "cash": false
         },
@@ -4857,7 +4871,7 @@
         },
         {
           "date": "2023-04-21",
-          "switch": 3.21,
+          "switch": 3.2099,
           "bh": 2.0083,
           "cash": false
         },
@@ -4959,7 +4973,7 @@
         },
         {
           "date": "2024-01-19",
-          "switch": 3.7009,
+          "switch": 3.7008,
           "bh": 2.2916,
           "cash": false
         },
@@ -5032,7 +5046,7 @@
         {
           "date": "2024-07-30",
           "switch": 4.1227,
-          "bh": 2.5528,
+          "bh": 2.5527,
           "cash": false
         },
         {
@@ -5067,7 +5081,7 @@
         },
         {
           "date": "2024-10-31",
-          "switch": 4.2775,
+          "switch": 4.2774,
           "bh": 2.6577,
           "cash": false
         },
@@ -5085,7 +5099,7 @@
         },
         {
           "date": "2024-12-18",
-          "switch": 4.3531,
+          "switch": 4.353,
           "bh": 2.7047,
           "cash": false
         },
@@ -5097,7 +5111,7 @@
         },
         {
           "date": "2025-01-23",
-          "switch": 4.3432,
+          "switch": 4.3431,
           "bh": 2.8176,
           "cash": false
         },
@@ -5277,7 +5291,7 @@
         },
         {
           "date": "2026-05-18",
-          "switch": 5.1727,
+          "switch": 5.1726,
           "bh": 3.541,
           "cash": false
         },
@@ -5729,7 +5743,7 @@
         {
           "Datum": "07.01.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie MA aktiv",
+          "Grund": "Strategie Dual_Momentum aktiv",
           "Kurs": "$152.95",
           "Rendite": null
         },
@@ -5743,7 +5757,7 @@
         {
           "Datum": "23.01.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie MA aktiv",
+          "Grund": "Strategie Dual_Momentum aktiv",
           "Kurs": "$158.29",
           "Rendite": null
         },
@@ -5831,7 +5845,7 @@
       "ticker": "EEM",
       "name": "Emerging Markets",
       "signal": "LONG",
-      "strategy": "Dual_Momentum",
+      "strategy": "Momentum",
       "price": 70.79,
       "last_date": "17.06.2026",
       "sharpe_switch": 0.82,
@@ -6782,7 +6796,7 @@
         {
           "date": "2008-12-19",
           "switch": 1.2552,
-          "bh": 0.6885,
+          "bh": 0.6886,
           "cash": true
         },
         {
@@ -6841,7 +6855,7 @@
         },
         {
           "date": "2009-09-23",
-          "switch": 1.8565,
+          "switch": 1.8566,
           "bh": 1.0706,
           "cash": false
         },
@@ -7027,7 +7041,7 @@
         },
         {
           "date": "2012-01-25",
-          "switch": 2.3729,
+          "switch": 2.373,
           "bh": 1.2219,
           "cash": false
         },
@@ -7075,7 +7089,7 @@
         },
         {
           "date": "2012-08-30",
-          "switch": 2.1825,
+          "switch": 2.1826,
           "bh": 1.1371,
           "cash": false
         },
@@ -7093,7 +7107,7 @@
         },
         {
           "date": "2012-11-23",
-          "switch": 2.3452,
+          "switch": 2.3453,
           "bh": 1.2166,
           "cash": false
         },
@@ -7183,19 +7197,19 @@
         },
         {
           "date": "2014-01-13",
-          "switch": 2.532,
+          "switch": 2.5321,
           "bh": 1.1964,
           "cash": true
         },
         {
           "date": "2014-02-10",
-          "switch": 2.532,
+          "switch": 2.5321,
           "bh": 1.1516,
           "cash": true
         },
         {
           "date": "2014-03-10",
-          "switch": 2.532,
+          "switch": 2.5321,
           "bh": 1.1801,
           "cash": true
         },
@@ -7291,7 +7305,7 @@
         },
         {
           "date": "2015-05-22",
-          "switch": 3.0546,
+          "switch": 3.0547,
           "bh": 1.3139,
           "cash": false
         },
@@ -7567,19 +7581,19 @@
         },
         {
           "date": "2018-11-08",
-          "switch": 4.3235,
+          "switch": 4.3236,
           "bh": 1.3346,
           "cash": true
         },
         {
           "date": "2018-12-07",
-          "switch": 4.3235,
+          "switch": 4.3236,
           "bh": 1.3125,
           "cash": true
         },
         {
           "date": "2019-01-07",
-          "switch": 4.3235,
+          "switch": 4.3236,
           "bh": 1.3289,
           "cash": true
         },
@@ -7597,7 +7611,7 @@
         },
         {
           "date": "2019-03-29",
-          "switch": 4.6865,
+          "switch": 4.6866,
           "bh": 1.4338,
           "cash": false
         },
@@ -7651,7 +7665,7 @@
         },
         {
           "date": "2019-12-02",
-          "switch": 4.7794,
+          "switch": 4.7795,
           "bh": 1.4316,
           "cash": false
         },
@@ -7669,7 +7683,7 @@
         },
         {
           "date": "2020-02-25",
-          "switch": 5.1086,
+          "switch": 5.1087,
           "bh": 1.4213,
           "cash": true
         },
@@ -7741,7 +7755,7 @@
         },
         {
           "date": "2021-01-20",
-          "switch": 7.7197,
+          "switch": 7.7198,
           "bh": 1.9642,
           "cash": false
         },
@@ -7771,7 +7785,7 @@
         },
         {
           "date": "2021-06-07",
-          "switch": 7.5173,
+          "switch": 7.5174,
           "bh": 1.9463,
           "cash": false
         },
@@ -7789,13 +7803,13 @@
         },
         {
           "date": "2021-08-26",
-          "switch": 7.4628,
+          "switch": 7.4629,
           "bh": 1.7882,
           "cash": true
         },
         {
           "date": "2021-09-23",
-          "switch": 7.4628,
+          "switch": 7.4629,
           "bh": 1.8033,
           "cash": true
         },
@@ -7813,7 +7827,7 @@
         },
         {
           "date": "2021-12-14",
-          "switch": 7.4642,
+          "switch": 7.4643,
           "bh": 1.7255,
           "cash": true
         },
@@ -7933,8 +7947,8 @@
         },
         {
           "date": "2023-06-21",
-          "switch": 7.623,
-          "bh": 1.4659,
+          "switch": 7.6231,
+          "bh": 1.4658,
           "cash": false
         },
         {
@@ -7957,7 +7971,7 @@
         },
         {
           "date": "2023-10-09",
-          "switch": 7.48,
+          "switch": 7.4801,
           "bh": 1.3835,
           "cash": true
         },
@@ -7981,7 +7995,7 @@
         },
         {
           "date": "2024-01-29",
-          "switch": 7.9086,
+          "switch": 7.9087,
           "bh": 1.4569,
           "cash": true
         },
@@ -8017,25 +8031,25 @@
         },
         {
           "date": "2024-07-12",
-          "switch": 9.136,
+          "switch": 9.1361,
           "bh": 1.6781,
           "cash": false
         },
         {
           "date": "2024-08-08",
-          "switch": 8.6129,
+          "switch": 8.613,
           "bh": 1.577,
           "cash": true
         },
         {
           "date": "2024-09-05",
-          "switch": 8.6838,
+          "switch": 8.6839,
           "bh": 1.6045,
           "cash": false
         },
         {
           "date": "2024-10-02",
-          "switch": 9.5886,
+          "switch": 9.5887,
           "bh": 1.7757,
           "cash": false
         },
@@ -8053,13 +8067,13 @@
         },
         {
           "date": "2024-12-23",
-          "switch": 9.0189,
+          "switch": 9.019,
           "bh": 1.6297,
           "cash": true
         },
         {
           "date": "2025-01-23",
-          "switch": 9.0189,
+          "switch": 9.019,
           "bh": 1.6359,
           "cash": true
         },
@@ -8071,13 +8085,13 @@
         },
         {
           "date": "2025-03-19",
-          "switch": 9.0485,
+          "switch": 9.0486,
           "bh": 1.7336,
           "cash": true
         },
         {
           "date": "2025-04-15",
-          "switch": 8.5931,
+          "switch": 8.5932,
           "bh": 1.6136,
           "cash": true
         },
@@ -8095,13 +8109,13 @@
         },
         {
           "date": "2025-07-09",
-          "switch": 9.3051,
+          "switch": 9.3052,
           "bh": 1.8692,
           "cash": false
         },
         {
           "date": "2025-08-05",
-          "switch": 9.4111,
+          "switch": 9.4112,
           "bh": 1.8905,
           "cash": false
         },
@@ -8113,7 +8127,7 @@
         },
         {
           "date": "2025-09-29",
-          "switch": 10.2493,
+          "switch": 10.2494,
           "bh": 2.0589,
           "cash": false
         },
@@ -8125,7 +8139,7 @@
         },
         {
           "date": "2025-11-20",
-          "switch": 10.2339,
+          "switch": 10.234,
           "bh": 2.0558,
           "cash": false
         },
@@ -8137,13 +8151,13 @@
         },
         {
           "date": "2026-01-16",
-          "switch": 11.3107,
+          "switch": 11.3108,
           "bh": 2.2721,
           "cash": false
         },
         {
           "date": "2026-02-13",
-          "switch": 11.9459,
+          "switch": 11.946,
           "bh": 2.3997,
           "cash": false
         },
@@ -8167,13 +8181,13 @@
         },
         {
           "date": "2026-06-04",
-          "switch": 13.5056,
+          "switch": 13.5057,
           "bh": 2.713,
           "cash": false
         },
         {
           "date": "2026-06-17",
-          "switch": 13.4697,
+          "switch": 13.4698,
           "bh": 2.7058,
           "cash": false
         }
@@ -9101,8 +9115,8 @@
         },
         {
           "date": "2025-07-03",
-          "switch": 1.033,
-          "bh": 1.033,
+          "switch": 1.0331,
+          "bh": 1.0331,
           "cash": false
         },
         {
@@ -9119,8 +9133,8 @@
         },
         {
           "date": "2025-07-14",
-          "switch": 1.033,
-          "bh": 1.033,
+          "switch": 1.0331,
+          "bh": 1.0331,
           "cash": false
         },
         {
@@ -9383,7 +9397,7 @@
         },
         {
           "date": "2025-11-14",
-          "switch": 1.0785,
+          "switch": 1.0786,
           "bh": 1.0799,
           "cash": false
         },
@@ -9762,7 +9776,7 @@
         {
           "date": "2026-05-19",
           "switch": 1.2251,
-          "bh": 1.1674,
+          "bh": 1.1675,
           "cash": true
         },
         {
@@ -10003,7 +10017,7 @@
         },
         {
           "date": "2010-11-02",
-          "switch": 1.508,
+          "switch": 1.5079,
           "bh": 0.8559,
           "cash": false
         },
@@ -10441,19 +10455,19 @@
         },
         {
           "date": "2016-01-25",
-          "switch": 2.8147,
+          "switch": 2.8146,
           "bh": 0.9453,
           "cash": true
         },
         {
           "date": "2016-02-19",
-          "switch": 2.8147,
+          "switch": 2.8146,
           "bh": 0.9534,
           "cash": true
         },
         {
           "date": "2016-03-16",
-          "switch": 2.8147,
+          "switch": 2.8146,
           "bh": 1.0071,
           "cash": true
         },
@@ -11047,7 +11061,7 @@
         },
         {
           "date": "2023-04-14",
-          "switch": 7.6085,
+          "switch": 7.6084,
           "bh": 1.65,
           "cash": false
         },
@@ -11209,7 +11223,7 @@
         },
         {
           "date": "2025-03-24",
-          "switch": 8.9165,
+          "switch": 8.9164,
           "bh": 2.0085,
           "cash": false
         },
@@ -11936,140 +11950,140 @@
           "Datum": "04.10.2023",
           "Aktion": "KAUF VGK",
           "Grund": "Strategie Momentum aktiv",
-          "Kurs": "$52.42",
+          "Kurs": "$51.71",
           "Rendite": null
         },
         {
           "Datum": "11.10.2023",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$54.44",
+          "Kurs": "$53.70",
           "Rendite": 3.9
         },
         {
           "Datum": "20.11.2023",
           "Aktion": "KAUF VGK",
           "Grund": "Strategie MA aktiv",
-          "Kurs": "$56.65",
+          "Kurs": "$55.89",
           "Rendite": null
         },
         {
           "Datum": "07.08.2024",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$62.20",
+          "Kurs": "$61.37",
           "Rendite": 9.8
         },
         {
           "Datum": "19.08.2024",
           "Aktion": "KAUF VGK",
           "Grund": "Strategie Momentum aktiv",
-          "Kurs": "$66.26",
+          "Kurs": "$65.37",
           "Rendite": null
         },
         {
           "Datum": "05.09.2024",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$65.95",
+          "Kurs": "$65.06",
           "Rendite": -0.5
         },
         {
           "Datum": "12.09.2024",
           "Aktion": "KAUF VGK",
           "Grund": "Strategie Momentum aktiv",
-          "Kurs": "$66.00",
+          "Kurs": "$65.12",
           "Rendite": null
         },
         {
           "Datum": "10.10.2024",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$66.09",
+          "Kurs": "$65.20",
           "Rendite": 0.1
         },
         {
           "Datum": "17.10.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Double_MA aktiv",
-          "Kurs": "$65.89",
+          "Grund": "Strategie Momentum aktiv",
+          "Kurs": "$65.01",
           "Rendite": null
         },
         {
           "Datum": "29.10.2024",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$65.07",
+          "Kurs": "$64.20",
           "Rendite": -1.2
         },
         {
           "Datum": "05.11.2024",
           "Aktion": "KAUF VGK",
           "Grund": "Strategie Double_MA aktiv",
-          "Kurs": "$64.80",
+          "Kurs": "$63.93",
           "Rendite": null
         },
         {
           "Datum": "12.11.2024",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$62.16",
+          "Kurs": "$61.33",
           "Rendite": -4.1
         },
         {
           "Datum": "31.01.2025",
           "Aktion": "KAUF VGK",
           "Grund": "Strategie MA aktiv",
-          "Kurs": "$65.15",
+          "Kurs": "$64.28",
           "Rendite": null
         },
         {
           "Datum": "18.11.2025",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$78.18",
+          "Kurs": "$77.13",
           "Rendite": 20.0
         },
         {
           "Datum": "25.11.2025",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Double_MA aktiv",
-          "Kurs": "$79.12",
+          "Grund": "Strategie Dual_Momentum aktiv",
+          "Kurs": "$78.06",
           "Rendite": null
         },
         {
           "Datum": "25.03.2026",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$81.76",
+          "Kurs": "$80.66",
           "Rendite": 3.3
         },
         {
           "Datum": "01.04.2026",
           "Aktion": "KAUF VGK",
           "Grund": "Strategie Momentum aktiv",
-          "Kurs": "$83.62",
+          "Kurs": "$82.50",
           "Rendite": null
         },
         {
           "Datum": "27.04.2026",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$86.55",
+          "Kurs": "$85.39",
           "Rendite": 3.5
         },
         {
           "Datum": "06.05.2026",
           "Aktion": "KAUF VGK",
           "Grund": "Strategie Momentum aktiv",
-          "Kurs": "$89.23",
+          "Kurs": "$88.03",
           "Rendite": null
         },
         {
           "Datum": "13.05.2026",
           "Aktion": "VERKAUF VGK",
           "Grund": "Keine Strategie positiv → Cash",
-          "Kurs": "$87.60",
+          "Kurs": "$86.42",
           "Rendite": -1.8
         }
       ],
@@ -12165,7 +12179,7 @@
         "ticker": "AVGO",
         "name": "Broadcom",
         "signal": "LONG",
-        "strategy": "Momentum",
+        "strategy": "RSI",
         "signal_margin": 0.281,
         "sharpe": 1.41,
         "bh_sharpe": 0.98,
@@ -12938,7 +12952,7 @@
       },
       {
         "date": "2023-03-23",
-        "switch": 2.987,
+        "switch": 2.9869,
         "bh": 1.3186
       },
       {
@@ -13593,12 +13607,12 @@
       },
       {
         "date": "2026-06-02",
-        "switch": 8.987,
+        "switch": 8.9869,
         "bh": 3.3048
       },
       {
         "date": "2026-06-03",
-        "switch": 8.9351,
+        "switch": 8.935,
         "bh": 3.2925
       },
       {
@@ -13981,7 +13995,7 @@
           "date": "2026-04-23",
           "value": 1.3725,
           "cash": false,
-          "switch": 1.2825
+          "switch": 1.2824
         },
         {
           "date": "2026-04-29",
@@ -14825,7 +14839,7 @@
         },
         {
           "date": "2025-06-25",
-          "value": 1.025,
+          "value": 1.0251,
           "cash": false,
           "switch": 1.0416
         },
@@ -17353,7 +17367,7 @@
           "date": "2026-01-14",
           "value": 1.2679,
           "cash": false,
-          "switch": 1.1515
+          "switch": 1.1514
         },
         {
           "date": "2026-01-21",
@@ -18363,18 +18377,18 @@
     ],
     "n_long": 6,
     "n_total": 10,
-    "sharpe_switch": 2.15,
-    "sharpe_bh": 0.66,
-    "cagr_switch": 0.2272,
-    "cagr_bh": 0.124,
+    "sharpe_switch": 2.16,
+    "sharpe_bh": 0.68,
+    "cagr_switch": 0.2287,
+    "cagr_bh": 0.1269,
     "max_dd_switch": -0.048,
     "max_dd_bh": -0.2548,
-    "sortino_switch": 3.41,
-    "sortino_bh": 1.0,
-    "calmar_switch": 4.73,
-    "calmar_bh": 0.49,
+    "sortino_switch": 3.43,
+    "sortino_bh": 1.03,
+    "calmar_switch": 4.76,
+    "calmar_bh": 0.5,
     "vol_switch": 0.0871,
-    "vol_bh": 0.1636,
+    "vol_bh": 0.1635,
     "max_uw_switch": 186,
     "max_uw_bh": 798,
     "pct_invested": 0.5703,
@@ -18752,7 +18766,7 @@
       },
       {
         "date": "2022-10-20",
-        "switch": 1.2973,
+        "switch": 1.2972,
         "bh": 0.99
       },
       {
@@ -18907,7 +18921,7 @@
       },
       {
         "date": "2023-07-20",
-        "switch": 1.4656,
+        "switch": 1.4655,
         "bh": 1.1027
       },
       {
@@ -19466,6 +19480,11 @@
         "bh": 1.8919
       },
       {
+        "date": "2026-03-19",
+        "switch": 2.9615,
+        "bh": 1.8828
+      },
+      {
         "date": "2026-03-20",
         "switch": 2.9641,
         "bh": 1.8823
@@ -19774,11 +19793,6 @@
         "date": "2026-06-17",
         "switch": 3.0096,
         "bh": 1.8836
-      },
-      {
-        "date": "2026-06-18",
-        "switch": 2.9932,
-        "bh": 1.8586
       }
     ],
     "stocks_1y": {
@@ -20556,386 +20570,386 @@
       ],
       "USB": [
         {
-          "date": "2025-06-18",
+          "date": "2025-06-17",
           "value": 1.0,
           "cash": true,
           "switch": 0.9986
         },
         {
-          "date": "2025-06-25",
-          "value": 1.0358,
+          "date": "2025-06-24",
+          "value": 1.0433,
           "cash": false,
-          "switch": 1.0334
+          "switch": 1.0269
         },
         {
-          "date": "2025-07-01",
-          "value": 1.0863,
+          "date": "2025-06-30",
+          "value": 1.0717,
           "cash": false,
-          "switch": 1.0837
+          "switch": 1.0548
         },
         {
-          "date": "2025-07-08",
-          "value": 1.1136,
+          "date": "2025-07-07",
+          "value": 1.1316,
           "cash": false,
-          "switch": 1.111
+          "switch": 1.1138
         },
         {
-          "date": "2025-07-14",
-          "value": 1.0996,
+          "date": "2025-07-11",
+          "value": 1.1164,
           "cash": false,
-          "switch": 1.097
+          "switch": 1.0989
         },
         {
-          "date": "2025-07-18",
-          "value": 1.0676,
+          "date": "2025-07-17",
+          "value": 1.0707,
           "cash": false,
-          "switch": 1.0651
+          "switch": 1.0539
         },
         {
-          "date": "2025-07-24",
-          "value": 1.0762,
+          "date": "2025-07-23",
+          "value": 1.0963,
           "cash": false,
-          "switch": 1.0737
+          "switch": 1.0791
         },
         {
-          "date": "2025-07-30",
-          "value": 1.072,
-          "cash": false,
-          "switch": 1.0695
+          "date": "2025-07-29",
+          "value": 1.0916,
+          "cash": true,
+          "switch": 1.0744
         },
         {
-          "date": "2025-08-05",
-          "value": 1.0412,
+          "date": "2025-08-04",
+          "value": 1.052,
           "cash": false,
-          "switch": 1.0387
+          "switch": 1.0355
         },
         {
-          "date": "2025-08-11",
-          "value": 1.0412,
+          "date": "2025-08-08",
+          "value": 1.0624,
           "cash": true,
           "switch": 1.0354
         },
         {
-          "date": "2025-08-15",
-          "value": 1.0732,
+          "date": "2025-08-14",
+          "value": 1.1091,
           "cash": false,
-          "switch": 1.0198
+          "switch": 1.0398
         },
         {
-          "date": "2025-08-21",
-          "value": 1.0788,
+          "date": "2025-08-20",
+          "value": 1.0991,
           "cash": false,
-          "switch": 1.0251
+          "switch": 1.0305
         },
         {
-          "date": "2025-08-27",
-          "value": 1.1393,
+          "date": "2025-08-26",
+          "value": 1.1503,
           "cash": false,
-          "switch": 1.0826
+          "switch": 1.0784
         },
         {
-          "date": "2025-09-03",
-          "value": 1.1342,
+          "date": "2025-09-02",
+          "value": 1.1491,
           "cash": false,
-          "switch": 1.0778
+          "switch": 1.0773
         },
         {
-          "date": "2025-09-09",
-          "value": 1.1536,
+          "date": "2025-09-08",
+          "value": 1.1522,
           "cash": false,
-          "switch": 1.0962
+          "switch": 1.0802
         },
         {
-          "date": "2025-09-15",
-          "value": 1.1517,
+          "date": "2025-09-12",
+          "value": 1.1636,
           "cash": false,
-          "switch": 1.0944
+          "switch": 1.0909
         },
         {
-          "date": "2025-09-19",
-          "value": 1.1779,
+          "date": "2025-09-18",
+          "value": 1.1891,
           "cash": false,
-          "switch": 1.1193
+          "switch": 1.1148
         },
         {
-          "date": "2025-09-25",
-          "value": 1.1456,
+          "date": "2025-09-24",
+          "value": 1.1648,
           "cash": false,
-          "switch": 1.0886
+          "switch": 1.092
         },
         {
-          "date": "2025-10-01",
-          "value": 1.1308,
+          "date": "2025-09-30",
+          "value": 1.1569,
           "cash": false,
-          "switch": 1.0745
+          "switch": 1.0846
         },
         {
-          "date": "2025-10-07",
-          "value": 1.1218,
+          "date": "2025-10-06",
+          "value": 1.1423,
           "cash": false,
-          "switch": 1.066
+          "switch": 1.0709
         },
         {
-          "date": "2025-10-13",
-          "value": 1.0901,
+          "date": "2025-10-10",
+          "value": 1.0839,
           "cash": true,
           "switch": 1.057
         },
         {
-          "date": "2025-10-17",
-          "value": 1.079,
+          "date": "2025-10-16",
+          "value": 1.0927,
           "cash": true,
           "switch": 1.0778
         },
         {
-          "date": "2025-10-23",
-          "value": 1.1293,
+          "date": "2025-10-22",
+          "value": 1.133,
+          "cash": false,
+          "switch": 1.0772
+        },
+        {
+          "date": "2025-10-28",
+          "value": 1.1315,
           "cash": true,
           "switch": 1.0772
         },
         {
-          "date": "2025-10-29",
-          "value": 1.1015,
+          "date": "2025-11-03",
+          "value": 1.116,
           "cash": true,
           "switch": 1.0772
         },
         {
-          "date": "2025-11-04",
-          "value": 1.0965,
+          "date": "2025-11-07",
+          "value": 1.1327,
           "cash": true,
           "switch": 1.0772
         },
         {
-          "date": "2025-11-10",
-          "value": 1.1237,
+          "date": "2025-11-13",
+          "value": 1.1325,
           "cash": true,
           "switch": 1.0772
         },
         {
-          "date": "2025-11-14",
-          "value": 1.1123,
+          "date": "2025-11-19",
+          "value": 1.1203,
           "cash": true,
           "switch": 1.0772
         },
         {
-          "date": "2025-11-20",
-          "value": 1.0979,
-          "cash": true,
-          "switch": 1.0772
-        },
-        {
-          "date": "2025-11-26",
-          "value": 1.156,
+          "date": "2025-11-25",
+          "value": 1.1708,
           "cash": false,
-          "switch": 1.1038
+          "switch": 1.1029
         },
         {
-          "date": "2025-12-03",
-          "value": 1.2028,
+          "date": "2025-12-02",
+          "value": 1.1892,
           "cash": false,
-          "switch": 1.1484
+          "switch": 1.1202
         },
         {
-          "date": "2025-12-09",
-          "value": 1.2179,
+          "date": "2025-12-08",
+          "value": 1.2306,
           "cash": false,
-          "switch": 1.1628
+          "switch": 1.1592
         },
         {
-          "date": "2025-12-15",
-          "value": 1.2685,
+          "date": "2025-12-12",
+          "value": 1.2787,
           "cash": false,
-          "switch": 1.2111
+          "switch": 1.2046
         },
         {
-          "date": "2025-12-19",
-          "value": 1.2791,
+          "date": "2025-12-18",
+          "value": 1.2895,
           "cash": false,
-          "switch": 1.2212
+          "switch": 1.2147
         },
         {
-          "date": "2025-12-26",
-          "value": 1.2987,
+          "date": "2025-12-24",
+          "value": 1.3151,
           "cash": false,
-          "switch": 1.24
+          "switch": 1.2388
         },
         {
-          "date": "2026-01-02",
-          "value": 1.286,
+          "date": "2025-12-31",
+          "value": 1.2897,
           "cash": false,
-          "switch": 1.2278
+          "switch": 1.2148
         },
         {
-          "date": "2026-01-08",
-          "value": 1.3241,
+          "date": "2026-01-07",
+          "value": 1.3262,
           "cash": false,
-          "switch": 1.2642
+          "switch": 1.2492
         },
         {
-          "date": "2026-01-14",
-          "value": 1.2757,
+          "date": "2026-01-13",
+          "value": 1.3063,
           "cash": false,
-          "switch": 1.218
+          "switch": 1.2305
         },
         {
-          "date": "2026-01-21",
-          "value": 1.3227,
+          "date": "2026-01-20",
+          "value": 1.3143,
           "cash": false,
-          "switch": 1.2629
+          "switch": 1.2381
         },
         {
-          "date": "2026-01-27",
-          "value": 1.348,
+          "date": "2026-01-26",
+          "value": 1.3494,
           "cash": false,
-          "switch": 1.287
+          "switch": 1.2711
         },
         {
-          "date": "2026-02-02",
-          "value": 1.3677,
+          "date": "2026-01-30",
+          "value": 1.3561,
           "cash": false,
-          "switch": 1.3059
+          "switch": 1.2774
         },
         {
-          "date": "2026-02-06",
-          "value": 1.4472,
+          "date": "2026-02-05",
+          "value": 1.4286,
           "cash": false,
-          "switch": 1.3817
+          "switch": 1.3457
         },
         {
-          "date": "2026-02-12",
-          "value": 1.379,
+          "date": "2026-02-11",
+          "value": 1.425,
           "cash": false,
-          "switch": 1.3166
+          "switch": 1.3423
         },
         {
-          "date": "2026-02-19",
-          "value": 1.3804,
+          "date": "2026-02-18",
+          "value": 1.4202,
           "cash": false,
-          "switch": 1.318
+          "switch": 1.3378
         },
         {
-          "date": "2026-02-25",
-          "value": 1.3365,
+          "date": "2026-02-24",
+          "value": 1.33,
           "cash": false,
-          "switch": 1.2935
+          "switch": 1.27
         },
         {
-          "date": "2026-03-03",
-          "value": 1.2874,
+          "date": "2026-03-02",
+          "value": 1.3204,
           "cash": false,
-          "switch": 1.246
+          "switch": 1.2608
         },
         {
-          "date": "2026-03-09",
-          "value": 1.243,
-          "cash": true,
-          "switch": 1.2435
-        },
-        {
-          "date": "2026-03-13",
-          "value": 1.2161,
-          "cash": true,
-          "switch": 1.2435
-        },
-        {
-          "date": "2026-03-19",
-          "value": 1.2232,
-          "cash": true,
-          "switch": 1.2435
-        },
-        {
-          "date": "2026-03-25",
-          "value": 1.2373,
-          "cash": true,
-          "switch": 1.2435
-        },
-        {
-          "date": "2026-03-31",
-          "value": 1.253,
-          "cash": true,
-          "switch": 1.2435
-        },
-        {
-          "date": "2026-04-07",
-          "value": 1.2937,
-          "cash": true,
-          "switch": 1.2435
-        },
-        {
-          "date": "2026-04-13",
-          "value": 1.3614,
-          "cash": true,
-          "switch": 1.2435
-        },
-        {
-          "date": "2026-04-17",
-          "value": 1.3715,
-          "cash": true,
-          "switch": 1.2435
-        },
-        {
-          "date": "2026-04-23",
-          "value": 1.3643,
+          "date": "2026-03-06",
+          "value": 1.2657,
           "cash": false,
           "switch": 1.2435
         },
         {
-          "date": "2026-04-29",
-          "value": 1.3532,
-          "cash": false,
-          "switch": 1.2334
+          "date": "2026-03-12",
+          "value": 1.2442,
+          "cash": true,
+          "switch": 1.2435
         },
         {
-          "date": "2026-05-05",
-          "value": 1.3395,
-          "cash": false,
-          "switch": 1.2124
+          "date": "2026-03-18",
+          "value": 1.2404,
+          "cash": true,
+          "switch": 1.2435
         },
         {
-          "date": "2026-05-11",
-          "value": 1.3127,
+          "date": "2026-03-24",
+          "value": 1.2602,
+          "cash": true,
+          "switch": 1.2435
+        },
+        {
+          "date": "2026-03-30",
+          "value": 1.2297,
+          "cash": true,
+          "switch": 1.2435
+        },
+        {
+          "date": "2026-04-06",
+          "value": 1.3049,
+          "cash": true,
+          "switch": 1.2435
+        },
+        {
+          "date": "2026-04-10",
+          "value": 1.3591,
+          "cash": true,
+          "switch": 1.2435
+        },
+        {
+          "date": "2026-04-16",
+          "value": 1.3547,
+          "cash": true,
+          "switch": 1.2435
+        },
+        {
+          "date": "2026-04-22",
+          "value": 1.3821,
+          "cash": true,
+          "switch": 1.2435
+        },
+        {
+          "date": "2026-04-28",
+          "value": 1.3726,
+          "cash": false,
+          "switch": 1.2343
+        },
+        {
+          "date": "2026-05-04",
+          "value": 1.3489,
+          "cash": false,
+          "switch": 1.213
+        },
+        {
+          "date": "2026-05-08",
+          "value": 1.356,
+          "cash": false,
+          "switch": 1.1929
+        },
+        {
+          "date": "2026-05-14",
+          "value": 1.3044,
           "cash": true,
           "switch": 1.1929
         },
         {
-          "date": "2026-05-15",
-          "value": 1.2797,
+          "date": "2026-05-20",
+          "value": 1.3308,
           "cash": true,
           "switch": 1.1929
         },
         {
-          "date": "2026-05-21",
-          "value": 1.3144,
-          "cash": true,
-          "switch": 1.1929
-        },
-        {
-          "date": "2026-05-28",
-          "value": 1.3118,
+          "date": "2026-05-27",
+          "value": 1.3354,
           "cash": false,
-          "switch": 1.184
+          "switch": 1.1892
         },
         {
-          "date": "2026-06-03",
-          "value": 1.2802,
+          "date": "2026-06-02",
+          "value": 1.3333,
           "cash": true,
           "switch": 1.1828
         },
         {
-          "date": "2026-06-09",
-          "value": 1.3496,
+          "date": "2026-06-08",
+          "value": 1.3516,
           "cash": true,
           "switch": 1.1828
         },
         {
-          "date": "2026-06-15",
-          "value": 1.3922,
+          "date": "2026-06-12",
+          "value": 1.4392,
           "cash": false,
           "switch": 1.2091
         },
         {
-          "date": "2026-06-18",
-          "value": 1.4007,
+          "date": "2026-06-17",
+          "value": 1.4141,
           "cash": false,
           "switch": 1.2091
         }
@@ -22100,772 +22114,772 @@
       ],
       "DUK": [
         {
-          "date": "2025-06-18",
+          "date": "2025-06-17",
           "value": 1.0,
           "cash": true,
           "switch": 1.0039
         },
         {
-          "date": "2025-06-25",
-          "value": 1.012,
+          "date": "2025-06-24",
+          "value": 1.0188,
           "cash": true,
           "switch": 1.0039
         },
         {
-          "date": "2025-07-01",
-          "value": 1.0374,
+          "date": "2025-06-30",
+          "value": 1.028,
           "cash": true,
           "switch": 1.0039
         },
         {
-          "date": "2025-07-08",
-          "value": 1.0151,
+          "date": "2025-07-07",
+          "value": 1.0218,
           "cash": true,
           "switch": 1.0039
         },
         {
-          "date": "2025-07-14",
-          "value": 1.0292,
-          "cash": false,
-          "switch": 1.0074
+          "date": "2025-07-11",
+          "value": 1.0233,
+          "cash": true,
+          "switch": 1.0039
         },
         {
-          "date": "2025-07-18",
-          "value": 1.0335,
+          "date": "2025-07-17",
+          "value": 1.0233,
           "cash": false,
-          "switch": 1.0116
+          "switch": 1.0034
         },
         {
-          "date": "2025-07-24",
-          "value": 1.0451,
+          "date": "2025-07-23",
+          "value": 1.0411,
           "cash": false,
-          "switch": 1.0229
+          "switch": 1.0209
         },
         {
-          "date": "2025-07-30",
-          "value": 1.0515,
+          "date": "2025-07-29",
+          "value": 1.0409,
           "cash": false,
-          "switch": 1.0292
+          "switch": 1.0207
         },
         {
-          "date": "2025-08-05",
-          "value": 1.0822,
+          "date": "2025-08-04",
+          "value": 1.0817,
           "cash": false,
-          "switch": 1.0592
+          "switch": 1.0607
         },
         {
-          "date": "2025-08-11",
-          "value": 1.0958,
+          "date": "2025-08-08",
+          "value": 1.0917,
           "cash": false,
-          "switch": 1.0726
+          "switch": 1.0705
         },
         {
-          "date": "2025-08-15",
-          "value": 1.0779,
+          "date": "2025-08-14",
+          "value": 1.0825,
           "cash": false,
-          "switch": 1.055
+          "switch": 1.0615
         },
         {
-          "date": "2025-08-21",
-          "value": 1.0928,
+          "date": "2025-08-20",
+          "value": 1.0938,
           "cash": false,
-          "switch": 1.0696
+          "switch": 1.0725
         },
         {
-          "date": "2025-08-27",
-          "value": 1.0888,
+          "date": "2025-08-26",
+          "value": 1.0832,
           "cash": false,
-          "switch": 1.0656
+          "switch": 1.0622
         },
         {
-          "date": "2025-09-03",
-          "value": 1.0696,
+          "date": "2025-09-02",
+          "value": 1.071,
           "cash": false,
-          "switch": 1.0469
+          "switch": 1.0502
         },
         {
-          "date": "2025-09-09",
-          "value": 1.0597,
+          "date": "2025-09-08",
+          "value": 1.0559,
           "cash": false,
-          "switch": 1.0372
+          "switch": 1.0354
         },
         {
-          "date": "2025-09-15",
-          "value": 1.0772,
+          "date": "2025-09-12",
+          "value": 1.0716,
           "cash": false,
-          "switch": 1.0544
+          "switch": 1.0507
         },
         {
-          "date": "2025-09-19",
-          "value": 1.0659,
+          "date": "2025-09-18",
+          "value": 1.0579,
           "cash": false,
-          "switch": 1.0432
+          "switch": 1.0373
         },
         {
-          "date": "2025-09-25",
-          "value": 1.0768,
+          "date": "2025-09-24",
+          "value": 1.0864,
           "cash": false,
-          "switch": 1.0539
+          "switch": 1.0653
         },
         {
-          "date": "2025-10-01",
-          "value": 1.0774,
+          "date": "2025-09-30",
+          "value": 1.0874,
           "cash": false,
-          "switch": 1.0545
+          "switch": 1.0663
         },
         {
-          "date": "2025-10-07",
-          "value": 1.1053,
+          "date": "2025-10-06",
+          "value": 1.0929,
           "cash": true,
           "switch": 1.054
         },
         {
-          "date": "2025-10-13",
-          "value": 1.11,
+          "date": "2025-10-10",
+          "value": 1.1161,
           "cash": false,
-          "switch": 1.0651
+          "switch": 1.073
         },
         {
-          "date": "2025-10-17",
-          "value": 1.1314,
+          "date": "2025-10-16",
+          "value": 1.1194,
           "cash": false,
-          "switch": 1.0858
+          "switch": 1.0762
         },
         {
-          "date": "2025-10-23",
-          "value": 1.1203,
+          "date": "2025-10-22",
+          "value": 1.1338,
           "cash": false,
-          "switch": 1.075
+          "switch": 1.09
         },
         {
-          "date": "2025-10-29",
-          "value": 1.0941,
+          "date": "2025-10-28",
+          "value": 1.1041,
           "cash": false,
-          "switch": 1.0499
+          "switch": 1.0614
         },
         {
-          "date": "2025-11-04",
-          "value": 1.0901,
+          "date": "2025-11-03",
+          "value": 1.0867,
           "cash": false,
-          "switch": 1.0461
+          "switch": 1.0447
         },
         {
-          "date": "2025-11-10",
-          "value": 1.0821,
+          "date": "2025-11-07",
+          "value": 1.0866,
           "cash": false,
-          "switch": 1.0385
+          "switch": 1.0446
         },
         {
-          "date": "2025-11-14",
-          "value": 1.0896,
+          "date": "2025-11-13",
+          "value": 1.086,
           "cash": false,
-          "switch": 1.0456
+          "switch": 1.044
         },
         {
-          "date": "2025-11-20",
-          "value": 1.0881,
+          "date": "2025-11-19",
+          "value": 1.0834,
           "cash": false,
-          "switch": 1.0442
+          "switch": 1.0415
         },
         {
-          "date": "2025-11-26",
-          "value": 1.096,
+          "date": "2025-11-25",
+          "value": 1.0807,
+          "cash": false,
+          "switch": 1.0398
+        },
+        {
+          "date": "2025-12-02",
+          "value": 1.0608,
           "cash": true,
           "switch": 1.0398
         },
         {
-          "date": "2025-12-03",
-          "value": 1.0533,
+          "date": "2025-12-08",
+          "value": 1.0212,
           "cash": true,
           "switch": 1.0398
         },
         {
-          "date": "2025-12-09",
-          "value": 1.0233,
+          "date": "2025-12-12",
+          "value": 1.0219,
           "cash": true,
           "switch": 1.0398
         },
         {
-          "date": "2025-12-15",
-          "value": 1.0365,
+          "date": "2025-12-18",
+          "value": 1.0419,
           "cash": true,
           "switch": 1.0398
         },
         {
-          "date": "2025-12-19",
-          "value": 1.0261,
+          "date": "2025-12-24",
+          "value": 1.0413,
           "cash": true,
           "switch": 1.0398
         },
         {
-          "date": "2025-12-26",
+          "date": "2025-12-31",
+          "value": 1.0389,
+          "cash": true,
+          "switch": 1.0398
+        },
+        {
+          "date": "2026-01-07",
+          "value": 1.0298,
+          "cash": true,
+          "switch": 1.0398
+        },
+        {
+          "date": "2026-01-13",
           "value": 1.0405,
           "cash": true,
           "switch": 1.0398
         },
         {
-          "date": "2026-01-02",
-          "value": 1.0428,
+          "date": "2026-01-20",
+          "value": 1.0596,
           "cash": true,
           "switch": 1.0398
         },
         {
-          "date": "2026-01-08",
-          "value": 1.0417,
+          "date": "2026-01-26",
+          "value": 1.0528,
           "cash": true,
           "switch": 1.0398
         },
         {
-          "date": "2026-01-14",
-          "value": 1.0538,
+          "date": "2026-01-30",
+          "value": 1.0756,
           "cash": true,
           "switch": 1.0398
         },
         {
-          "date": "2026-01-21",
-          "value": 1.0599,
-          "cash": true,
-          "switch": 1.0398
-        },
-        {
-          "date": "2026-01-27",
-          "value": 1.0681,
-          "cash": true,
-          "switch": 1.0398
-        },
-        {
-          "date": "2026-02-02",
-          "value": 1.061,
+          "date": "2026-02-05",
+          "value": 1.0938,
           "cash": false,
-          "switch": 1.0233
+          "switch": 1.0569
         },
         {
-          "date": "2026-02-06",
-          "value": 1.0821,
+          "date": "2026-02-11",
+          "value": 1.1097,
           "cash": false,
-          "switch": 1.0436
+          "switch": 1.0722
         },
         {
-          "date": "2026-02-12",
-          "value": 1.1198,
+          "date": "2026-02-18",
+          "value": 1.1195,
           "cash": false,
-          "switch": 1.08
+          "switch": 1.0817
         },
         {
-          "date": "2026-02-19",
-          "value": 1.1317,
+          "date": "2026-02-24",
+          "value": 1.1483,
           "cash": false,
-          "switch": 1.0915
+          "switch": 1.1095
         },
         {
-          "date": "2026-02-25",
-          "value": 1.1546,
+          "date": "2026-03-02",
+          "value": 1.1766,
           "cash": false,
-          "switch": 1.1136
+          "switch": 1.1369
         },
         {
-          "date": "2026-03-03",
-          "value": 1.177,
+          "date": "2026-03-06",
+          "value": 1.1844,
           "cash": false,
-          "switch": 1.1352
+          "switch": 1.1444
         },
         {
-          "date": "2026-03-09",
-          "value": 1.1738,
-          "cash": false,
-          "switch": 1.1322
-        },
-        {
-          "date": "2026-03-13",
-          "value": 1.1924,
-          "cash": false,
-          "switch": 1.15
-        },
-        {
-          "date": "2026-03-19",
-          "value": 1.1618,
-          "cash": false,
-          "switch": 1.1206
-        },
-        {
-          "date": "2026-03-25",
-          "value": 1.1477,
-          "cash": false,
-          "switch": 1.1069
-        },
-        {
-          "date": "2026-03-31",
-          "value": 1.1726,
-          "cash": false,
-          "switch": 1.131
-        },
-        {
-          "date": "2026-04-07",
-          "value": 1.1805,
+          "date": "2026-03-12",
+          "value": 1.1783,
           "cash": false,
           "switch": 1.1386
         },
         {
-          "date": "2026-04-13",
-          "value": 1.1677,
+          "date": "2026-03-18",
+          "value": 1.1687,
           "cash": false,
-          "switch": 1.1263
+          "switch": 1.1293
         },
         {
-          "date": "2026-04-17",
-          "value": 1.1465,
+          "date": "2026-03-24",
+          "value": 1.1386,
+          "cash": false,
+          "switch": 1.1002
+        },
+        {
+          "date": "2026-03-30",
+          "value": 1.1773,
+          "cash": false,
+          "switch": 1.1376
+        },
+        {
+          "date": "2026-04-06",
+          "value": 1.1746,
+          "cash": false,
+          "switch": 1.135
+        },
+        {
+          "date": "2026-04-10",
+          "value": 1.178,
+          "cash": false,
+          "switch": 1.1383
+        },
+        {
+          "date": "2026-04-16",
+          "value": 1.1498,
           "cash": true,
           "switch": 1.1257
         },
         {
-          "date": "2026-04-23",
-          "value": 1.1466,
+          "date": "2026-04-22",
+          "value": 1.1196,
           "cash": true,
           "switch": 1.1257
         },
         {
-          "date": "2026-04-29",
-          "value": 1.1329,
+          "date": "2026-04-28",
+          "value": 1.1424,
+          "cash": true,
+          "switch": 1.1257
+        },
+        {
+          "date": "2026-05-04",
+          "value": 1.1392,
+          "cash": true,
+          "switch": 1.1252
+        },
+        {
+          "date": "2026-05-08",
+          "value": 1.1099,
+          "cash": true,
+          "switch": 1.1252
+        },
+        {
+          "date": "2026-05-14",
+          "value": 1.1112,
+          "cash": true,
+          "switch": 1.1252
+        },
+        {
+          "date": "2026-05-20",
+          "value": 1.1163,
           "cash": false,
-          "switch": 1.1252
+          "switch": 1.1246
         },
         {
-          "date": "2026-05-05",
-          "value": 1.1425,
-          "cash": true,
-          "switch": 1.1252
-        },
-        {
-          "date": "2026-05-11",
-          "value": 1.1185,
-          "cash": true,
-          "switch": 1.1252
-        },
-        {
-          "date": "2026-05-15",
-          "value": 1.0925,
-          "cash": true,
-          "switch": 1.1252
-        },
-        {
-          "date": "2026-05-21",
-          "value": 1.126,
+          "date": "2026-05-27",
+          "value": 1.1302,
           "cash": true,
           "switch": 1.1246
         },
         {
-          "date": "2026-05-28",
-          "value": 1.1179,
-          "cash": false,
-          "switch": 1.124
-        },
-        {
-          "date": "2026-06-03",
-          "value": 1.0933,
+          "date": "2026-06-02",
+          "value": 1.0917,
           "cash": true,
           "switch": 1.124
         },
         {
-          "date": "2026-06-09",
-          "value": 1.1184,
+          "date": "2026-06-08",
+          "value": 1.1004,
           "cash": true,
           "switch": 1.124
         },
         {
-          "date": "2026-06-15",
-          "value": 1.1316,
-          "cash": false,
+          "date": "2026-06-12",
+          "value": 1.1267,
+          "cash": true,
           "switch": 1.124
         },
         {
-          "date": "2026-06-18",
-          "value": 1.1188,
+          "date": "2026-06-17",
+          "value": 1.1155,
           "cash": false,
           "switch": 1.124
         }
       ],
       "CI": [
         {
-          "date": "2025-06-18",
+          "date": "2025-06-17",
           "value": 1.0,
           "cash": true,
           "switch": 1.0
         },
         {
-          "date": "2025-06-25",
-          "value": 1.0051,
+          "date": "2025-06-24",
+          "value": 1.0138,
           "cash": true,
           "switch": 1.0
         },
         {
-          "date": "2025-07-01",
-          "value": 1.0636,
+          "date": "2025-06-30",
+          "value": 1.0578,
           "cash": false,
-          "switch": 1.0577
+          "switch": 1.0456
         },
         {
-          "date": "2025-07-08",
-          "value": 0.9924,
+          "date": "2025-07-07",
+          "value": 1.0036,
           "cash": true,
           "switch": 1.0129
         },
         {
-          "date": "2025-07-14",
-          "value": 0.9639,
+          "date": "2025-07-11",
+          "value": 0.9704,
           "cash": true,
           "switch": 1.0129
         },
         {
-          "date": "2025-07-18",
-          "value": 0.9406,
+          "date": "2025-07-17",
+          "value": 0.9545,
           "cash": true,
           "switch": 1.0124
         },
         {
-          "date": "2025-07-24",
+          "date": "2025-07-23",
+          "value": 0.9739,
+          "cash": true,
+          "switch": 1.0119
+        },
+        {
+          "date": "2025-07-29",
           "value": 0.9349,
           "cash": true,
           "switch": 1.0119
         },
         {
-          "date": "2025-07-30",
-          "value": 0.9474,
+          "date": "2025-08-04",
+          "value": 0.8531,
           "cash": true,
           "switch": 1.0119
         },
         {
-          "date": "2025-08-05",
-          "value": 0.8611,
+          "date": "2025-08-08",
+          "value": 0.8797,
           "cash": true,
           "switch": 1.0119
         },
         {
-          "date": "2025-08-11",
-          "value": 0.8812,
+          "date": "2025-08-14",
+          "value": 0.9291,
           "cash": true,
           "switch": 1.0119
         },
         {
-          "date": "2025-08-15",
-          "value": 0.9442,
+          "date": "2025-08-20",
+          "value": 0.9746,
           "cash": true,
           "switch": 1.0119
         },
         {
-          "date": "2025-08-21",
-          "value": 0.9572,
+          "date": "2025-08-26",
+          "value": 0.961,
           "cash": true,
           "switch": 1.0119
         },
         {
-          "date": "2025-08-27",
-          "value": 0.954,
+          "date": "2025-09-02",
+          "value": 0.9623,
           "cash": true,
           "switch": 1.0119
         },
         {
-          "date": "2025-09-03",
-          "value": 0.9557,
-          "cash": true,
-          "switch": 1.0119
-        },
-        {
-          "date": "2025-09-09",
-          "value": 0.9654,
+          "date": "2025-09-08",
+          "value": 0.9677,
           "cash": false,
-          "switch": 1.0217
+          "switch": 1.0179
         },
         {
-          "date": "2025-09-15",
-          "value": 0.9499,
+          "date": "2025-09-12",
+          "value": 0.9737,
           "cash": false,
-          "switch": 1.0237
+          "switch": 1.0242
         },
         {
-          "date": "2025-09-19",
-          "value": 0.9282,
+          "date": "2025-09-18",
+          "value": 0.9447,
           "cash": true,
           "switch": 1.0237
         },
         {
-          "date": "2025-09-25",
-          "value": 0.9081,
+          "date": "2025-09-24",
+          "value": 0.9373,
           "cash": true,
           "switch": 1.0237
         },
         {
-          "date": "2025-10-01",
-          "value": 0.9323,
+          "date": "2025-09-30",
+          "value": 0.927,
           "cash": false,
-          "switch": 1.0347
+          "switch": 1.0232
         },
         {
-          "date": "2025-10-07",
-          "value": 0.9818,
+          "date": "2025-10-06",
+          "value": 0.9744,
           "cash": false,
-          "switch": 1.0897
+          "switch": 1.075
         },
         {
-          "date": "2025-10-13",
-          "value": 0.9443,
+          "date": "2025-10-10",
+          "value": 0.9672,
           "cash": false,
-          "switch": 1.0481
+          "switch": 1.067
         },
         {
-          "date": "2025-10-17",
-          "value": 0.9567,
+          "date": "2025-10-16",
+          "value": 0.9361,
           "cash": true,
           "switch": 1.0714
         },
         {
-          "date": "2025-10-23",
-          "value": 0.9752,
+          "date": "2025-10-22",
+          "value": 0.9901,
+          "cash": true,
+          "switch": 1.0714
+        },
+        {
+          "date": "2025-10-28",
+          "value": 0.9919,
           "cash": false,
-          "switch": 1.0611
+          "switch": 1.0727
         },
         {
-          "date": "2025-10-29",
-          "value": 0.9562,
-          "cash": false,
-          "switch": 1.0404
-        },
-        {
-          "date": "2025-11-04",
-          "value": 0.846,
+          "date": "2025-11-03",
+          "value": 0.8317,
           "cash": true,
           "switch": 1.0399
         },
         {
-          "date": "2025-11-10",
-          "value": 0.8253,
+          "date": "2025-11-07",
+          "value": 0.8509,
           "cash": true,
           "switch": 1.0399
         },
         {
-          "date": "2025-11-14",
-          "value": 0.862,
+          "date": "2025-11-13",
+          "value": 0.8712,
           "cash": true,
           "switch": 1.0399
         },
         {
-          "date": "2025-11-20",
-          "value": 0.8618,
+          "date": "2025-11-19",
+          "value": 0.8747,
           "cash": true,
           "switch": 1.0394
         },
         {
-          "date": "2025-11-26",
-          "value": 0.8898,
+          "date": "2025-11-25",
+          "value": 0.8947,
           "cash": true,
           "switch": 1.0394
         },
         {
-          "date": "2025-12-03",
-          "value": 0.8641,
+          "date": "2025-12-02",
+          "value": 0.8815,
+          "cash": false,
+          "switch": 1.0389
+        },
+        {
+          "date": "2025-12-08",
+          "value": 0.8523,
           "cash": true,
           "switch": 1.0389
         },
         {
-          "date": "2025-12-09",
-          "value": 0.8445,
+          "date": "2025-12-12",
+          "value": 0.8884,
           "cash": true,
           "switch": 1.0389
         },
         {
-          "date": "2025-12-15",
-          "value": 0.8909,
+          "date": "2025-12-18",
+          "value": 0.8862,
           "cash": true,
           "switch": 1.0389
         },
         {
-          "date": "2025-12-19",
-          "value": 0.874,
-          "cash": true,
-          "switch": 1.0389
-        },
-        {
-          "date": "2025-12-26",
+          "date": "2025-12-24",
           "value": 0.8889,
           "cash": true,
           "switch": 1.0389
         },
         {
-          "date": "2026-01-02",
-          "value": 0.8973,
+          "date": "2025-12-31",
+          "value": 0.8901,
+          "cash": true,
+          "switch": 1.0389
+        },
+        {
+          "date": "2026-01-07",
+          "value": 0.9027,
           "cash": false,
           "switch": 1.053
         },
         {
-          "date": "2026-01-08",
-          "value": 0.9127,
-          "cash": false,
-          "switch": 1.0711
-        },
-        {
-          "date": "2026-01-14",
-          "value": 0.8712,
+          "date": "2026-01-13",
+          "value": 0.8791,
           "cash": true,
           "switch": 1.0519
         },
         {
-          "date": "2026-01-21",
-          "value": 0.8837,
+          "date": "2026-01-20",
+          "value": 0.8772,
           "cash": true,
           "switch": 1.0519
         },
         {
-          "date": "2026-01-27",
-          "value": 0.8683,
+          "date": "2026-01-26",
+          "value": 0.9069,
           "cash": true,
           "switch": 1.0519
         },
         {
-          "date": "2026-02-02",
-          "value": 0.8729,
+          "date": "2026-01-30",
+          "value": 0.8865,
           "cash": true,
           "switch": 1.0519
         },
         {
-          "date": "2026-02-06",
-          "value": 0.9388,
+          "date": "2026-02-05",
+          "value": 0.9202,
           "cash": false,
-          "switch": 1.1307
+          "switch": 1.1016
         },
         {
-          "date": "2026-02-12",
-          "value": 0.9246,
+          "date": "2026-02-11",
+          "value": 0.9532,
           "cash": false,
-          "switch": 1.1136
+          "switch": 1.1411
         },
         {
-          "date": "2026-02-19",
-          "value": 0.9191,
+          "date": "2026-02-18",
+          "value": 0.9383,
           "cash": false,
-          "switch": 1.107
+          "switch": 1.1233
         },
         {
-          "date": "2026-02-25",
-          "value": 0.9144,
+          "date": "2026-02-24",
+          "value": 0.9088,
           "cash": false,
-          "switch": 1.1013
+          "switch": 1.088
         },
         {
-          "date": "2026-03-03",
-          "value": 0.9127,
+          "date": "2026-03-02",
+          "value": 0.9406,
           "cash": false,
-          "switch": 1.0993
+          "switch": 1.1261
         },
         {
-          "date": "2026-03-09",
-          "value": 0.8716,
+          "date": "2026-03-06",
+          "value": 0.8833,
+          "cash": false,
+          "switch": 1.0945
+        },
+        {
+          "date": "2026-03-12",
+          "value": 0.8646,
           "cash": true,
           "switch": 1.0945
         },
         {
-          "date": "2026-03-13",
-          "value": 0.8637,
-          "cash": true,
-          "switch": 1.0945
-        },
-        {
-          "date": "2026-03-19",
-          "value": 0.8552,
+          "date": "2026-03-18",
+          "value": 0.8605,
           "cash": true,
           "switch": 1.0939
         },
         {
-          "date": "2026-03-25",
-          "value": 0.8739,
+          "date": "2026-03-24",
+          "value": 0.8646,
           "cash": false,
-          "switch": 1.1305
+          "switch": 1.1117
         },
         {
-          "date": "2026-03-31",
-          "value": 0.8622,
+          "date": "2026-03-30",
+          "value": 0.8393,
           "cash": true,
           "switch": 1.1371
         },
         {
-          "date": "2026-04-07",
-          "value": 0.8865,
+          "date": "2026-04-06",
+          "value": 0.8965,
           "cash": false,
+          "switch": 1.1604
+        },
+        {
+          "date": "2026-04-10",
+          "value": 0.8821,
+          "cash": true,
           "switch": 1.1543
         },
         {
-          "date": "2026-04-13",
-          "value": 0.8893,
-          "cash": false,
-          "switch": 1.1538
-        },
-        {
-          "date": "2026-04-17",
-          "value": 0.9007,
+          "date": "2026-04-16",
+          "value": 0.8987,
           "cash": true,
           "switch": 1.1538
         },
         {
-          "date": "2026-04-23",
-          "value": 0.9042,
+          "date": "2026-04-22",
+          "value": 0.8933,
           "cash": true,
           "switch": 1.1538
         },
         {
-          "date": "2026-04-29",
-          "value": 0.9449,
-          "cash": false,
-          "switch": 1.1831
+          "date": "2026-04-28",
+          "value": 0.9265,
+          "cash": true,
+          "switch": 1.1538
         },
         {
-          "date": "2026-05-05",
-          "value": 0.891,
+          "date": "2026-05-04",
+          "value": 0.9084,
           "cash": true,
           "switch": 1.145
         },
         {
-          "date": "2026-05-11",
-          "value": 0.9344,
+          "date": "2026-05-08",
+          "value": 0.9368,
           "cash": true,
           "switch": 1.1798
         },
         {
-          "date": "2026-05-15",
-          "value": 0.9221,
-          "cash": true,
+          "date": "2026-05-14",
+          "value": 0.9591,
+          "cash": false,
           "switch": 1.2037
         },
         {
-          "date": "2026-05-21",
-          "value": 0.9116,
+          "date": "2026-05-20",
+          "value": 0.9206,
           "cash": true,
           "switch": 1.223
         },
         {
-          "date": "2026-05-28",
-          "value": 0.9191,
+          "date": "2026-05-27",
+          "value": 0.9292,
           "cash": true,
           "switch": 1.223
         },
         {
-          "date": "2026-06-03",
-          "value": 0.8751,
-          "cash": true,
+          "date": "2026-06-02",
+          "value": 0.8869,
+          "cash": false,
           "switch": 1.1788
         },
         {
-          "date": "2026-06-09",
-          "value": 0.9591,
+          "date": "2026-06-08",
+          "value": 0.9473,
           "cash": false,
-          "switch": 1.2919
+          "switch": 1.2683
         },
         {
-          "date": "2026-06-15",
-          "value": 0.9553,
+          "date": "2026-06-12",
+          "value": 0.9747,
           "cash": false,
           "switch": 1.3051
         },
         {
-          "date": "2026-06-18",
-          "value": 0.9079,
+          "date": "2026-06-17",
+          "value": 0.9325,
           "cash": false,
           "switch": 1.3051
         }
@@ -23720,7 +23734,7 @@
         "3": 2.7,
         "4": -1.1,
         "5": -0.4,
-        "6": 0.1
+        "6": 0.7
       }
     },
     "months_bh": {
@@ -23800,7 +23814,7 @@
         "3": 0.4,
         "4": 0.7,
         "5": -3.4,
-        "6": -1.4
+        "6": -0.1
       }
     },
     "yearly_returns": [
@@ -23831,8 +23845,8 @@
       },
       {
         "year": 2026,
-        "switch": 13.7,
-        "bh": 8.8
+        "switch": 14.2,
+        "bh": 10.1
       }
     ],
     "trades": [
@@ -24078,7 +24092,7 @@
       }
     ],
     "start": "2021-01-15",
-    "end": "2026-06-18",
+    "end": "2026-06-17",
     "recent_rebalances": null
   },
   "turnaround": {
@@ -24118,7 +24132,7 @@
         "ticker": "AVGO",
         "name": "Broadcom Inc.",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "RSI",
         "signal_margin": 0.281,
         "sharpe": 1.41,
         "bh_sharpe": 0.98,
@@ -27981,7 +27995,7 @@
         },
         {
           "date": "2025-06-25",
-          "value": 1.025,
+          "value": 1.0251,
           "cash": false,
           "switch": 1.0416
         },
@@ -30042,7 +30056,7 @@
         "ticker": "AVGO",
         "name": "Broadcom",
         "signal": "LONG",
-        "strategy": "Momentum",
+        "strategy": "RSI",
         "signal_margin": 0.281,
         "sharpe": 1.41,
         "bh_sharpe": 0.98,
@@ -30314,7 +30328,7 @@
         "ticker": "AVGO",
         "name": "Broadcom Inc.",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "RSI",
         "signal_margin": 0.281,
         "sharpe": 1.41,
         "bh_sharpe": 0.98,
@@ -31250,7 +31264,7 @@
       },
       {
         "date": "2024-08-27",
-        "switch": 2.186,
+        "switch": 2.1859,
         "bh": 1.4963
       },
       {
@@ -32439,7 +32453,7 @@
         "ticker": "AVGO",
         "name": "Broadcom",
         "signal": "LONG",
-        "strategy": "Momentum",
+        "strategy": "RSI",
         "signal_margin": 0.281,
         "sharpe": 1.41,
         "bh_sharpe": 0.98,
@@ -32711,7 +32725,7 @@
         "ticker": "AVGO",
         "name": "Broadcom Inc.",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "RSI",
         "signal_margin": 0.281,
         "sharpe": 1.41,
         "bh_sharpe": 0.98,
@@ -34022,7 +34036,7 @@
       },
       {
         "date": "2026-03-30",
-        "switch": 6.9594,
+        "switch": 6.9593,
         "bh": 2.0313
       },
       {
@@ -34082,7 +34096,7 @@
       },
       {
         "date": "2026-04-15",
-        "switch": 7.1649,
+        "switch": 7.1648,
         "bh": 2.3406
       },
       {
@@ -34122,7 +34136,7 @@
       },
       {
         "date": "2026-04-27",
-        "switch": 7.2717,
+        "switch": 7.2716,
         "bh": 2.4113
       },
       {
