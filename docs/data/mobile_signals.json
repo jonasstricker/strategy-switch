@@ -1,12 +1,12 @@
 {
-  "updated": "02.07.2026 21:55",
+  "updated": "03.07.2026 21:53",
   "etfs": [
     {
       "ticker": "SXR8.DE",
       "name": "S&P100_EU",
       "signal": "LONG",
       "strategy": "MA",
-      "price": 704.54,
+      "price": 706.12,
       "last_date": "18.06.2026",
       "sharpe_switch": 1.3,
       "sharpe_bh": 0.8,
@@ -4163,7 +4163,7 @@
         },
         {
           "date": "2018-02-23",
-          "switch": 1.3613,
+          "switch": 1.3612,
           "bh": 1.3805,
           "cash": false
         },
@@ -4248,7 +4248,7 @@
         {
           "date": "2018-10-03",
           "switch": 1.4186,
-          "bh": 1.4272,
+          "bh": 1.4271,
           "cash": false
         },
         {
@@ -4506,7 +4506,7 @@
         {
           "date": "2020-08-20",
           "switch": 2.1043,
-          "bh": 1.6289,
+          "bh": 1.629,
           "cash": false
         },
         {
@@ -5046,7 +5046,7 @@
         {
           "date": "2024-07-30",
           "switch": 4.1227,
-          "bh": 2.5527,
+          "bh": 2.5528,
           "cash": false
         },
         {
@@ -5099,7 +5099,7 @@
         },
         {
           "date": "2024-12-18",
-          "switch": 4.353,
+          "switch": 4.3531,
           "bh": 2.7047,
           "cash": false
         },
@@ -5715,7 +5715,7 @@
         {
           "Datum": "11.05.2023",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$112.54",
           "Rendite": null
         },
@@ -5757,7 +5757,7 @@
         {
           "Datum": "07.01.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$152.95",
           "Rendite": null
         },
@@ -5771,7 +5771,7 @@
         {
           "Datum": "23.01.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$158.29",
           "Rendite": null
         },
@@ -5785,7 +5785,7 @@
         {
           "Datum": "24.03.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$153.93",
           "Rendite": null
         },
@@ -5859,7 +5859,7 @@
       "ticker": "EEM",
       "name": "Emerging Markets",
       "signal": "LONG",
-      "strategy": "MA",
+      "strategy": "Dual_Momentum",
       "price": 65.7,
       "last_date": "17.06.2026",
       "sharpe_switch": 0.82,
@@ -6810,7 +6810,7 @@
         {
           "date": "2008-12-19",
           "switch": 1.2552,
-          "bh": 0.6886,
+          "bh": 0.6885,
           "cash": true
         },
         {
@@ -6869,7 +6869,7 @@
         },
         {
           "date": "2009-09-23",
-          "switch": 1.8566,
+          "switch": 1.8565,
           "bh": 1.0706,
           "cash": false
         },
@@ -7103,7 +7103,7 @@
         },
         {
           "date": "2012-08-30",
-          "switch": 2.1826,
+          "switch": 2.1825,
           "bh": 1.1371,
           "cash": false
         },
@@ -7116,12 +7116,12 @@
         {
           "date": "2012-10-24",
           "switch": 2.3043,
-          "bh": 1.2006,
+          "bh": 1.2005,
           "cash": false
         },
         {
           "date": "2012-11-23",
-          "switch": 2.3453,
+          "switch": 2.3452,
           "bh": 1.2166,
           "cash": false
         },
@@ -7319,7 +7319,7 @@
         },
         {
           "date": "2015-05-22",
-          "switch": 3.0547,
+          "switch": 3.0546,
           "bh": 1.3139,
           "cash": false
         },
@@ -7619,13 +7619,13 @@
         },
         {
           "date": "2019-03-04",
-          "switch": 4.6462,
+          "switch": 4.6461,
           "bh": 1.4214,
           "cash": false
         },
         {
           "date": "2019-03-29",
-          "switch": 4.6866,
+          "switch": 4.6865,
           "bh": 1.4338,
           "cash": false
         },
@@ -7679,7 +7679,7 @@
         },
         {
           "date": "2019-12-02",
-          "switch": 4.7795,
+          "switch": 4.7794,
           "bh": 1.4316,
           "cash": false
         },
@@ -7817,13 +7817,13 @@
         },
         {
           "date": "2021-08-26",
-          "switch": 7.4629,
+          "switch": 7.4628,
           "bh": 1.7882,
           "cash": true
         },
         {
           "date": "2021-09-23",
-          "switch": 7.4629,
+          "switch": 7.4628,
           "bh": 1.8033,
           "cash": true
         },
@@ -7841,7 +7841,7 @@
         },
         {
           "date": "2021-12-14",
-          "switch": 7.4643,
+          "switch": 7.4642,
           "bh": 1.7255,
           "cash": true
         },
@@ -7961,7 +7961,7 @@
         },
         {
           "date": "2023-06-21",
-          "switch": 7.6231,
+          "switch": 7.623,
           "bh": 1.4659,
           "cash": false
         },
@@ -7985,7 +7985,7 @@
         },
         {
           "date": "2023-10-09",
-          "switch": 7.4801,
+          "switch": 7.48,
           "bh": 1.3835,
           "cash": true
         },
@@ -8057,7 +8057,7 @@
         },
         {
           "date": "2024-09-05",
-          "switch": 8.6839,
+          "switch": 8.6838,
           "bh": 1.6045,
           "cash": false
         },
@@ -8941,7 +8941,7 @@
         {
           "Datum": "13.09.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie MA aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$40.91",
           "Rendite": null
         },
@@ -8955,7 +8955,7 @@
         {
           "Datum": "02.12.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie MA aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$41.49",
           "Rendite": null
         },
@@ -11207,7 +11207,7 @@
         },
         {
           "date": "2024-11-08",
-          "switch": 8.4261,
+          "switch": 8.4262,
           "bh": 1.8327,
           "cash": true
         },
@@ -11231,7 +11231,7 @@
         },
         {
           "date": "2025-02-26",
-          "switch": 8.7652,
+          "switch": 8.7653,
           "bh": 1.9745,
           "cash": false
         },
@@ -11291,13 +11291,13 @@
         },
         {
           "date": "2025-11-12",
-          "switch": 9.7174,
+          "switch": 9.7175,
           "bh": 2.3437,
           "cash": false
         },
         {
           "date": "2025-12-09",
-          "switch": 9.7778,
+          "switch": 9.7779,
           "bh": 2.3249,
           "cash": false
         },
@@ -11345,7 +11345,7 @@
         },
         {
           "date": "2026-06-24",
-          "switch": 10.8319,
+          "switch": 10.832,
           "bh": 2.5463,
           "cash": false
         }
@@ -12020,7 +12020,7 @@
         {
           "Datum": "17.10.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Double_MA aktiv",
+          "Grund": "Strategie Momentum aktiv",
           "Kurs": "$65.01",
           "Rendite": null
         },
@@ -12062,7 +12062,7 @@
         {
           "Datum": "25.11.2025",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Double_MA aktiv",
+          "Grund": "Strategie Dual_Momentum aktiv",
           "Kurs": "$78.06",
           "Rendite": null
         },
@@ -12759,7 +12759,7 @@
       },
       {
         "date": "2021-07-29",
-        "switch": 2.4254,
+        "switch": 2.4255,
         "bh": 1.5987
       },
       {
@@ -12789,7 +12789,7 @@
       },
       {
         "date": "2021-10-21",
-        "switch": 2.4879,
+        "switch": 2.488,
         "bh": 1.6244
       },
       {
@@ -12974,7 +12974,7 @@
       },
       {
         "date": "2023-03-23",
-        "switch": 2.9869,
+        "switch": 2.987,
         "bh": 1.3187
       },
       {
@@ -13584,12 +13584,12 @@
       },
       {
         "date": "2026-06-02",
-        "switch": 8.9869,
+        "switch": 8.987,
         "bh": 3.3049
       },
       {
         "date": "2026-06-03",
-        "switch": 8.935,
+        "switch": 8.9351,
         "bh": 3.2926
       },
       {
@@ -14301,7 +14301,7 @@
           "date": "2026-01-28",
           "value": 1.8838,
           "cash": false,
-          "switch": 1.8976
+          "switch": 1.8975
         },
         {
           "date": "2026-02-03",
@@ -18260,7 +18260,7 @@
         "n_trades": 131,
         "pe": 10.380488,
         "pb": 1.7202216,
-        "div_yield": 6.74,
+        "div_yield": 6.65,
         "pct_from_high": -17.6
       },
       {
@@ -18275,7 +18275,7 @@
         "n_trades": 97,
         "pe": 6.9292927,
         "pb": 1.3070816,
-        "div_yield": 5.42,
+        "div_yield": 5.39,
         "pct_from_high": -30.9
       },
       {
@@ -18290,7 +18290,7 @@
         "n_trades": 115,
         "pe": 12.941299,
         "pb": 1.6445107,
-        "div_yield": 3.36,
+        "div_yield": 3.37,
         "pct_from_high": -1.0
       },
       {
@@ -18305,7 +18305,7 @@
         "n_trades": 104,
         "pe": 18.564886,
         "pb": 1.5382669,
-        "div_yield": null,
+        "div_yield": 7.07,
         "pct_from_high": -15.4
       },
       {
@@ -18320,7 +18320,7 @@
         "n_trades": 108,
         "pe": 17.750847,
         "pb": 1.9768957,
-        "div_yield": 3.26,
+        "div_yield": 3.21,
         "pct_from_high": -22.9
       },
       {
@@ -18335,7 +18335,7 @@
         "n_trades": 81,
         "pe": 14.5732,
         "pb": 1.518984,
-        "div_yield": 1.92,
+        "div_yield": 1.91,
         "pct_from_high": -0.8
       },
       {
@@ -18348,10 +18348,10 @@
         "bh_sharpe": 0.27,
         "pct_invested": 0.557,
         "n_trades": 107,
-        "pe": 12.203986,
+        "pe": 12.193644,
         "pb": 1.8039291,
-        "div_yield": 2.25,
-        "pct_from_high": -10.9
+        "div_yield": 2.17,
+        "pct_from_high": -10.3
       },
       {
         "ticker": "DUK",
@@ -18363,9 +18363,9 @@
         "bh_sharpe": 0.43,
         "pct_invested": 0.585,
         "n_trades": 116,
-        "pe": 19.938463,
+        "pe": 19.907835,
         "pb": 1.8852006,
-        "div_yield": null,
+        "div_yield": 3.29,
         "pct_from_high": -3.6
       },
       {
@@ -18378,9 +18378,9 @@
         "bh_sharpe": 0.15,
         "pct_invested": 0.538,
         "n_trades": 95,
-        "pe": 17.90615,
+        "pe": 17.935171,
         "pb": 5.7897763,
-        "div_yield": 5.99,
+        "div_yield": 5.93,
         "pct_from_high": -9.6
       },
       {
@@ -18395,7 +18395,7 @@
         "n_trades": 110,
         "pe": 23.079124,
         "pb": 2.2086709,
-        "div_yield": null,
+        "div_yield": 3.01,
         "pct_from_high": -22.3
       }
     ],
@@ -18665,7 +18665,7 @@
       },
       {
         "date": "2022-03-17",
-        "switch": 1.26,
+        "switch": 1.2599,
         "bh": 1.1473
       },
       {
@@ -19500,7 +19500,7 @@
       },
       {
         "date": "2026-03-17",
-        "switch": 3.0309,
+        "switch": 3.0308,
         "bh": 1.9203
       },
       {
@@ -24142,7 +24142,7 @@
         "pe": 63.285717,
         "pb": 9.349279,
         "div_yield": null,
-        "pct_from_high": -49.7
+        "pct_from_high": -49.4
       },
       {
         "ticker": "META",
@@ -24154,16 +24154,16 @@
         "bh_sharpe": 0.49,
         "pct_invested": 0.645,
         "n_trades": 83,
-        "pe": 21.18096,
+        "pe": 21.18866,
         "pb": 6.071053,
-        "div_yield": 34.0,
+        "div_yield": 36.0,
         "pct_from_high": -26.8
       },
       {
         "ticker": "AVGO",
         "name": "Broadcom Inc.",
         "signal": "LONG",
-        "strategy": "Momentum",
+        "strategy": "RSI",
         "signal_margin": 0.281,
         "sharpe": 1.41,
         "bh_sharpe": 0.98,
@@ -24171,7 +24171,7 @@
         "n_trades": 85,
         "pe": 59.875416,
         "pb": 19.557787,
-        "div_yield": 70.0,
+        "div_yield": 72.0,
         "pct_from_high": -27.2
       },
       {
@@ -24187,7 +24187,7 @@
         "pe": 25.048388,
         "pb": 10.508864,
         "div_yield": null,
-        "pct_from_high": -40.4
+        "pct_from_high": -40.0
       },
       {
         "ticker": "ADBE",
@@ -24214,9 +24214,9 @@
         "bh_sharpe": 0.6,
         "pct_invested": 0.602,
         "n_trades": 103,
-        "pe": 24.060036,
+        "pe": 24.018835,
         "pb": 10.756902,
-        "div_yield": 1.4,
+        "div_yield": 1.43,
         "pct_from_high": -59.4
       },
       {
@@ -24231,7 +24231,7 @@
         "n_trades": 94,
         "pe": 23.257294,
         "pb": 7.000914,
-        "div_yield": null,
+        "div_yield": 93.0,
         "pct_from_high": -29.7
       },
       {
@@ -24244,9 +24244,9 @@
         "bh_sharpe": 0.28,
         "pct_invested": 0.577,
         "n_trades": 82,
-        "pe": 19.247972,
+        "pe": 19.225695,
         "pb": 3.9738286,
-        "div_yield": 1.08,
+        "div_yield": 1.06,
         "pct_from_high": -40.0
       },
       {
@@ -25582,7 +25582,7 @@
       {
         "date": "2026-05-28",
         "switch": 3.8331,
-        "bh": 2.0103
+        "bh": 2.0102
       },
       {
         "date": "2026-05-29",
@@ -28789,7 +28789,7 @@
         },
         {
           "date": "2026-07-02",
-          "value": 0.6222,
+          "value": 0.6223,
           "cash": false,
           "switch": 0.9165
         }
@@ -30182,7 +30182,7 @@
         "n_trades": 131,
         "pe": 10.380488,
         "pb": 1.7202216,
-        "div_yield": 6.74,
+        "div_yield": 6.65,
         "pct_from_high": -17.6,
         "category": "value"
       },
@@ -30198,7 +30198,7 @@
         "n_trades": 97,
         "pe": 6.9292927,
         "pb": 1.3070816,
-        "div_yield": 5.42,
+        "div_yield": 5.39,
         "pct_from_high": -30.9,
         "category": "value"
       },
@@ -30214,7 +30214,7 @@
         "n_trades": 115,
         "pe": 12.941299,
         "pb": 1.6445107,
-        "div_yield": 3.36,
+        "div_yield": 3.37,
         "pct_from_high": -1.0,
         "category": "value"
       },
@@ -30230,7 +30230,7 @@
         "n_trades": 104,
         "pe": 18.564886,
         "pb": 1.5382669,
-        "div_yield": null,
+        "div_yield": 7.07,
         "pct_from_high": -15.4,
         "category": "value"
       },
@@ -30246,7 +30246,7 @@
         "n_trades": 108,
         "pe": 17.750847,
         "pb": 1.9768957,
-        "div_yield": 3.26,
+        "div_yield": 3.21,
         "pct_from_high": -22.9,
         "category": "value"
       },
@@ -30262,7 +30262,7 @@
         "n_trades": 81,
         "pe": 14.5732,
         "pb": 1.518984,
-        "div_yield": 1.92,
+        "div_yield": 1.91,
         "pct_from_high": -0.8,
         "category": "value"
       },
@@ -30276,10 +30276,10 @@
         "bh_sharpe": 0.27,
         "pct_invested": 0.557,
         "n_trades": 107,
-        "pe": 12.203986,
+        "pe": 12.193644,
         "pb": 1.8039291,
-        "div_yield": 2.25,
-        "pct_from_high": -10.9,
+        "div_yield": 2.17,
+        "pct_from_high": -10.3,
         "category": "value"
       },
       {
@@ -30292,9 +30292,9 @@
         "bh_sharpe": 0.43,
         "pct_invested": 0.585,
         "n_trades": 116,
-        "pe": 19.938463,
+        "pe": 19.907835,
         "pb": 1.8852006,
-        "div_yield": null,
+        "div_yield": 3.29,
         "pct_from_high": -3.6,
         "category": "value"
       },
@@ -30308,9 +30308,9 @@
         "bh_sharpe": 0.15,
         "pct_invested": 0.538,
         "n_trades": 95,
-        "pe": 17.90615,
+        "pe": 17.935171,
         "pb": 5.7897763,
-        "div_yield": 5.99,
+        "div_yield": 5.93,
         "pct_from_high": -9.6,
         "category": "value"
       },
@@ -30326,7 +30326,7 @@
         "n_trades": 110,
         "pe": 23.079124,
         "pb": 2.2086709,
-        "div_yield": null,
+        "div_yield": 3.01,
         "pct_from_high": -22.3,
         "category": "value"
       },
@@ -30343,7 +30343,7 @@
         "pe": 63.285717,
         "pb": 9.349279,
         "div_yield": null,
-        "pct_from_high": -49.7,
+        "pct_from_high": -49.4,
         "category": "turnaround"
       },
       {
@@ -30356,9 +30356,9 @@
         "bh_sharpe": 0.49,
         "pct_invested": 0.645,
         "n_trades": 83,
-        "pe": 21.18096,
+        "pe": 21.18866,
         "pb": 6.071053,
-        "div_yield": 34.0,
+        "div_yield": 36.0,
         "pct_from_high": -26.8,
         "category": "turnaround"
       },
@@ -30366,7 +30366,7 @@
         "ticker": "AVGO",
         "name": "Broadcom Inc.",
         "signal": "LONG",
-        "strategy": "Momentum",
+        "strategy": "RSI",
         "signal_margin": 0.281,
         "sharpe": 1.41,
         "bh_sharpe": 0.98,
@@ -30374,7 +30374,7 @@
         "n_trades": 85,
         "pe": 59.875416,
         "pb": 19.557787,
-        "div_yield": 70.0,
+        "div_yield": 72.0,
         "pct_from_high": -27.2,
         "category": "turnaround"
       },
@@ -30391,7 +30391,7 @@
         "pe": 25.048388,
         "pb": 10.508864,
         "div_yield": null,
-        "pct_from_high": -40.4,
+        "pct_from_high": -40.0,
         "category": "turnaround"
       },
       {
@@ -30420,9 +30420,9 @@
         "bh_sharpe": 0.6,
         "pct_invested": 0.602,
         "n_trades": 103,
-        "pe": 24.060036,
+        "pe": 24.018835,
         "pb": 10.756902,
-        "div_yield": 1.4,
+        "div_yield": 1.43,
         "pct_from_high": -59.4,
         "category": "turnaround"
       },
@@ -30438,7 +30438,7 @@
         "n_trades": 94,
         "pe": 23.257294,
         "pb": 7.000914,
-        "div_yield": null,
+        "div_yield": 93.0,
         "pct_from_high": -29.7,
         "category": "turnaround"
       },
@@ -30452,9 +30452,9 @@
         "bh_sharpe": 0.28,
         "pct_invested": 0.577,
         "n_trades": 82,
-        "pe": 19.247972,
+        "pe": 19.225695,
         "pb": 3.9738286,
-        "div_yield": 1.08,
+        "div_yield": 1.06,
         "pct_from_high": -40.0,
         "category": "turnaround"
       },
@@ -31623,7 +31623,7 @@
       {
         "date": "2026-02-16",
         "switch": 3.4553,
-        "bh": 2.0862
+        "bh": 2.0861
       },
       {
         "date": "2026-02-24",
@@ -32586,7 +32586,7 @@
         "n_trades": 131,
         "pe": 10.380488,
         "pb": 1.7202216,
-        "div_yield": 6.74,
+        "div_yield": 6.65,
         "pct_from_high": -17.6,
         "category": "value"
       },
@@ -32602,7 +32602,7 @@
         "n_trades": 97,
         "pe": 6.9292927,
         "pb": 1.3070816,
-        "div_yield": 5.42,
+        "div_yield": 5.39,
         "pct_from_high": -30.9,
         "category": "value"
       },
@@ -32618,7 +32618,7 @@
         "n_trades": 115,
         "pe": 12.941299,
         "pb": 1.6445107,
-        "div_yield": 3.36,
+        "div_yield": 3.37,
         "pct_from_high": -1.0,
         "category": "value"
       },
@@ -32634,7 +32634,7 @@
         "n_trades": 104,
         "pe": 18.564886,
         "pb": 1.5382669,
-        "div_yield": null,
+        "div_yield": 7.07,
         "pct_from_high": -15.4,
         "category": "value"
       },
@@ -32650,7 +32650,7 @@
         "n_trades": 108,
         "pe": 17.750847,
         "pb": 1.9768957,
-        "div_yield": 3.26,
+        "div_yield": 3.21,
         "pct_from_high": -22.9,
         "category": "value"
       },
@@ -32666,7 +32666,7 @@
         "n_trades": 81,
         "pe": 14.5732,
         "pb": 1.518984,
-        "div_yield": 1.92,
+        "div_yield": 1.91,
         "pct_from_high": -0.8,
         "category": "value"
       },
@@ -32680,10 +32680,10 @@
         "bh_sharpe": 0.27,
         "pct_invested": 0.557,
         "n_trades": 107,
-        "pe": 12.203986,
+        "pe": 12.193644,
         "pb": 1.8039291,
-        "div_yield": 2.25,
-        "pct_from_high": -10.9,
+        "div_yield": 2.17,
+        "pct_from_high": -10.3,
         "category": "value"
       },
       {
@@ -32696,9 +32696,9 @@
         "bh_sharpe": 0.43,
         "pct_invested": 0.585,
         "n_trades": 116,
-        "pe": 19.938463,
+        "pe": 19.907835,
         "pb": 1.8852006,
-        "div_yield": null,
+        "div_yield": 3.29,
         "pct_from_high": -3.6,
         "category": "value"
       },
@@ -32712,9 +32712,9 @@
         "bh_sharpe": 0.15,
         "pct_invested": 0.538,
         "n_trades": 95,
-        "pe": 17.90615,
+        "pe": 17.935171,
         "pb": 5.7897763,
-        "div_yield": 5.99,
+        "div_yield": 5.93,
         "pct_from_high": -9.6,
         "category": "value"
       },
@@ -32730,7 +32730,7 @@
         "n_trades": 110,
         "pe": 23.079124,
         "pb": 2.2086709,
-        "div_yield": null,
+        "div_yield": 3.01,
         "pct_from_high": -22.3,
         "category": "value"
       },
@@ -32747,7 +32747,7 @@
         "pe": 63.285717,
         "pb": 9.349279,
         "div_yield": null,
-        "pct_from_high": -49.7,
+        "pct_from_high": -49.4,
         "category": "turnaround"
       },
       {
@@ -32760,9 +32760,9 @@
         "bh_sharpe": 0.49,
         "pct_invested": 0.645,
         "n_trades": 83,
-        "pe": 21.18096,
+        "pe": 21.18866,
         "pb": 6.071053,
-        "div_yield": 34.0,
+        "div_yield": 36.0,
         "pct_from_high": -26.8,
         "category": "turnaround"
       },
@@ -32770,7 +32770,7 @@
         "ticker": "AVGO",
         "name": "Broadcom Inc.",
         "signal": "LONG",
-        "strategy": "Momentum",
+        "strategy": "RSI",
         "signal_margin": 0.281,
         "sharpe": 1.41,
         "bh_sharpe": 0.98,
@@ -32778,7 +32778,7 @@
         "n_trades": 85,
         "pe": 59.875416,
         "pb": 19.557787,
-        "div_yield": 70.0,
+        "div_yield": 72.0,
         "pct_from_high": -27.2,
         "category": "turnaround"
       },
@@ -32795,7 +32795,7 @@
         "pe": 25.048388,
         "pb": 10.508864,
         "div_yield": null,
-        "pct_from_high": -40.4,
+        "pct_from_high": -40.0,
         "category": "turnaround"
       },
       {
@@ -32824,9 +32824,9 @@
         "bh_sharpe": 0.6,
         "pct_invested": 0.602,
         "n_trades": 103,
-        "pe": 24.060036,
+        "pe": 24.018835,
         "pb": 10.756902,
-        "div_yield": 1.4,
+        "div_yield": 1.43,
         "pct_from_high": -59.4,
         "category": "turnaround"
       },
@@ -32842,7 +32842,7 @@
         "n_trades": 94,
         "pe": 23.257294,
         "pb": 7.000914,
-        "div_yield": null,
+        "div_yield": 93.0,
         "pct_from_high": -29.7,
         "category": "turnaround"
       },
@@ -32856,9 +32856,9 @@
         "bh_sharpe": 0.28,
         "pct_invested": 0.577,
         "n_trades": 82,
-        "pe": 19.247972,
+        "pe": 19.225695,
         "pb": 3.9738286,
-        "div_yield": 1.08,
+        "div_yield": 1.06,
         "pct_from_high": -40.0,
         "category": "turnaround"
       },
@@ -33527,7 +33527,7 @@
       {
         "date": "2023-10-30",
         "switch": 2.0412,
-        "bh": 0.8571
+        "bh": 0.857
       },
       {
         "date": "2023-11-07",
@@ -33861,7 +33861,7 @@
       },
       {
         "date": "2025-05-14",
-        "switch": 4.2556,
+        "switch": 4.2555,
         "bh": 1.6028
       },
       {
@@ -34006,7 +34006,7 @@
       },
       {
         "date": "2026-01-13",
-        "switch": 6.5362,
+        "switch": 6.5361,
         "bh": 2.2666
       },
       {
