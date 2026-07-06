@@ -887,7 +887,8 @@ def _build_alpha_boost(categories: dict, mobile_data: dict,
         aligned_bh[key] = aligned_bh[key].reindex(ref_idx, fill_value=0.0)
 
     # Build leveraged mix returns (deduct margin cost on borrowed capital)
-    margin_rate = 0.095  # 9.5% annual margin cost (Alpaca)
+    # Alpaca tiers: <$25k → 11%, $25k–$100k → 9.75%, >$100k → 8.75%
+    margin_rate = 0.11  # 11% annual margin cost (Alpaca, portfolio < $25k)
     daily_margin_cost = (leverage - 1) * margin_rate / 252
     mix_sw = sum(aligned_sw[k] * best_weights[k] for k in best_weights) * leverage - daily_margin_cost
     mix_bh = sum(aligned_bh[k] * best_weights[k] for k in best_weights) * leverage - daily_margin_cost
