@@ -9,5 +9,162 @@
     "positions": {},
     "targets": {},
     "orders": []
+  },
+  {
+    "date": "2026-07-16 09:33 UTC",
+    "equity": 4000.0,
+    "cash": 4000.0,
+    "invested": 0.0,
+    "pct_invested": 0.0,
+    "n_positions": 0,
+    "positions": {},
+    "targets": {
+      "AAPL": {
+        "dollars": 160.0,
+        "reason": "swarm AAPL LONG"
+      },
+      "BRK.B": {
+        "dollars": 160.0,
+        "reason": "swarm BRK-B LONG"
+      },
+      "LLY": {
+        "dollars": 160.0,
+        "reason": "swarm LLY LONG"
+      },
+      "VZ": {
+        "dollars": 180.0,
+        "reason": "value VZ LONG"
+      },
+      "USB": {
+        "dollars": 180.0,
+        "reason": "value USB LONG"
+      },
+      "BAC": {
+        "dollars": 180.0,
+        "reason": "value BAC LONG"
+      },
+      "DUK": {
+        "dollars": 180.0,
+        "reason": "value DUK LONG"
+      },
+      "CI": {
+        "dollars": 180.0,
+        "reason": "value CI LONG"
+      },
+      "UPS": {
+        "dollars": 180.0,
+        "reason": "value UPS LONG"
+      },
+      "NOW": {
+        "dollars": 60.0,
+        "reason": "turnaround NOW LONG"
+      },
+      "ADBE": {
+        "dollars": 60.0,
+        "reason": "turnaround ADBE LONG"
+      },
+      "ORCL": {
+        "dollars": 60.0,
+        "reason": "turnaround ORCL LONG"
+      },
+      "UNH": {
+        "dollars": 60.0,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AAPL",
+        "side": "buy",
+        "qty": 0.489,
+        "value": 160.12,
+        "status": "accepted"
+      },
+      {
+        "symbol": "ADBE",
+        "side": "buy",
+        "qty": 0.267,
+        "value": 59.94,
+        "status": "accepted"
+      },
+      {
+        "symbol": "BAC",
+        "side": "buy",
+        "qty": 2.921,
+        "value": 180.01,
+        "status": "accepted"
+      },
+      {
+        "symbol": "BRK.B",
+        "side": "buy",
+        "qty": 0.328,
+        "value": 160.2,
+        "status": "accepted"
+      },
+      {
+        "symbol": "CI",
+        "side": "buy",
+        "qty": 0.605,
+        "value": 180.14,
+        "status": "accepted"
+      },
+      {
+        "symbol": "DUK",
+        "side": "buy",
+        "qty": 1.448,
+        "value": 179.94,
+        "status": "accepted"
+      },
+      {
+        "symbol": "LLY",
+        "side": "buy",
+        "qty": 0.138,
+        "value": 159.6,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NOW",
+        "side": "buy",
+        "qty": 0.573,
+        "value": 60.0,
+        "status": "accepted"
+      },
+      {
+        "symbol": "ORCL",
+        "side": "buy",
+        "qty": 0.453,
+        "value": 60.01,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UNH",
+        "side": "buy",
+        "qty": 0.143,
+        "value": 59.81,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UPS",
+        "side": "buy",
+        "qty": 1.594,
+        "value": 180.01,
+        "status": "accepted"
+      },
+      {
+        "symbol": "USB",
+        "side": "buy",
+        "qty": 2.855,
+        "value": 179.98,
+        "status": "accepted"
+      },
+      {
+        "symbol": "VZ",
+        "side": "buy",
+        "qty": 4.203,
+        "value": 179.99,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
   }
 ]
