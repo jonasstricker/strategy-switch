@@ -1,0 +1,13 @@
+[
+  {
+    "date": "2026-07-16 00:00 UTC",
+    "equity": 4000.0,
+    "cash": 4000.0,
+    "invested": 0.0,
+    "pct_invested": 0.0,
+    "n_positions": 0,
+    "positions": {},
+    "targets": {},
+    "orders": []
+  }
+]

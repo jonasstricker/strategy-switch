@@ -22,7 +22,8 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 
-TRADE_LOG = Path(__file__).parent / "trade_log.json"
+TRADE_LOG_PAPER = Path(__file__).parent / "trade_log.json"
+TRADE_LOG_LIVE   = Path(__file__).parent / "trade_log_live.json"
 FAILED_ORDERS_FILE = Path(__file__).parent / "failed_orders.json"
 MAX_RETRIES = 3
 RETRY_DELAY_SEC = 10
@@ -281,13 +282,15 @@ def compute_orders(targets: dict, current_positions: dict,
 
 def run(execute: bool = False, live: bool = False, signals_path: Path = None):
     """Main trading logic."""
-    key = os.environ.get("ALPACA_KEY_ID", "")
-    secret = os.environ.get("ALPACA_SECRET_KEY", "")
+    if live:
+        key    = os.environ.get("ALPACA_LIVE_KEY_ID")    or os.environ.get("ALPACA_KEY_ID", "")
+        secret = os.environ.get("ALPACA_LIVE_SECRET_KEY") or os.environ.get("ALPACA_SECRET_KEY", "")
+    else:
+        key    = os.environ.get("ALPACA_KEY_ID", "")
+        secret = os.environ.get("ALPACA_SECRET_KEY", "")
 
     if not key or not secret:
-        log.error("❌ ALPACA_KEY_ID und ALPACA_SECRET_KEY müssen gesetzt sein!")
-        log.error("   Lokal:   set ALPACA_KEY_ID=... && set ALPACA_SECRET_KEY=...")
-        log.error("   GitHub:  Settings → Secrets → Actions → New Secret")
+        log.error("❌ API-Keys fehlen! Live: ALPACA_LIVE_KEY_ID/ALPACA_LIVE_SECRET_KEY, Paper: ALPACA_KEY_ID/ALPACA_SECRET_KEY")
         return False
 
     client = AlpacaClient(key, secret, live=live)
@@ -365,7 +368,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
     if not targets and current:
         log.warning("⚠️  Keine Targets berechnet aber Positionen vorhanden — "
                      "überspringe Trading um versehentliche Liquidation zu vermeiden!")
-        _save_trade_log(equity, cash, current, prices, targets, [], execute)
+        _save_trade_log(equity, cash, current, prices, targets, [], execute, live)
         return True
 
     for sym in targets:
@@ -384,7 +387,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
 
     if not orders:
         print("\n✅ Keine Orders nötig — Portfolio ist aktuell.")
-        _save_trade_log(equity, cash, current, prices, targets, [], execute)
+        _save_trade_log(equity, cash, current, prices, targets, [], execute, live)
         return True
 
     # Execute or dry-run
@@ -433,7 +436,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
         print(f"  Für echte Orders: --execute (oder TRADING_ENABLED=1)")
 
     # ── Save daily trade log ──
-    _save_trade_log(equity, cash, current, prices, targets, executed_orders, execute)
+    _save_trade_log(equity, cash, current, prices, targets, executed_orders, execute, live)
 
     return True
 
@@ -571,8 +574,8 @@ def _save_failed_orders(failed_orders: list, targets: dict):
     log.info(f"Failed orders gespeichert: {FAILED_ORDERS_FILE}")
 
 
-def _save_trade_log(equity, cash, positions, prices, targets, orders, executed):
-    """Append daily entry to trade_log.json for performance tracking."""
+def _save_trade_log(equity, cash, positions, prices, targets, orders, executed, live: bool = False):
+    """Append daily entry to trade_log.json (paper) or trade_log_live.json (live)."""
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     # Build position snapshot
@@ -604,19 +607,20 @@ def _save_trade_log(equity, cash, positions, prices, targets, orders, executed):
 
     # Load existing log
     log_data = []
-    if TRADE_LOG.exists():
+    trade_log_path = TRADE_LOG_LIVE if live else TRADE_LOG_PAPER
+    if trade_log_path.exists():
         try:
-            with open(TRADE_LOG, "r") as f:
+            with open(trade_log_path, "r") as f:
                 log_data = json.load(f)
         except (json.JSONDecodeError, IOError):
             log_data = []
 
     log_data.append(entry)
 
-    with open(TRADE_LOG, "w") as f:
+    with open(trade_log_path, "w") as f:
         json.dump(log_data, f, indent=2, ensure_ascii=False)
 
-    log.info(f"Trade-Log gespeichert: {TRADE_LOG} ({len(log_data)} Einträge)")
+    log.info(f"Trade-Log gespeichert: {trade_log_path} ({len(log_data)} Einträge)")
 
 
 def main():
