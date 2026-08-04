@@ -33,6 +33,25 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 
 SIGNALS_FILE = Path(__file__).parent.parent / "docs" / "data" / "mobile_signals.json"
 
+
+def _load_dotenv(path: Path = None):
+    """Minimal .env loader (keine externe Abhaengigkeit noetig). Lokal only —
+    in GitHub Actions kommen die Werte bereits aus den Secrets als Env-Vars."""
+    path = path or (Path(__file__).parent.parent / ".env")
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, _, v = line.partition("=")
+        k, v = k.strip(), v.strip().strip('"').strip("'")
+        if v:
+            os.environ.setdefault(k, v)
+
+
+_load_dotenv()
+
 # ── Alpaca API endpoints ─────────────────────────────────────────────────────
 PAPER_URL = "https://paper-api.alpaca.markets"
 LIVE_URL  = "https://api.alpaca.markets"

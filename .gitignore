@@ -12,6 +12,9 @@ __pycache__/
 email_config.json
 polygon_config.json
 readme.txt
+.env
+.env.local
+.env.*.local
 
 # Local-only files
 cloudflared.exe
