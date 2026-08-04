@@ -1373,6 +1373,89 @@
     "executed": true
   },
   {
+    "date": "2026-07-27 20:53 UTC (nachgetragen)",
+    "equity": 4046.71,
+    "cash": 2172.25,
+    "invested": 1874.46,
+    "pct_invested": 46.3,
+    "n_positions": 14,
+    "positions": {
+      "AAPL": {
+        "qty": 0.483,
+        "price": 304.64,
+        "value": 147.14
+      },
+      "ADBE": {
+        "qty": 0.257,
+        "price": 251.99,
+        "value": 64.76
+      },
+      "BAC": {
+        "qty": 2.945,
+        "price": 62.59,
+        "value": 184.33
+      },
+      "BRK.B": {
+        "qty": 0.327,
+        "price": 513.48,
+        "value": 167.91
+      },
+      "CI": {
+        "qty": 0.634,
+        "price": 280.25,
+        "value": 177.68
+      },
+      "DUK": {
+        "qty": 1.435,
+        "price": 124.55,
+        "value": 178.72
+      },
+      "LLY": {
+        "qty": 0.137,
+        "price": 1124.59,
+        "value": 154.07
+      },
+      "NOW": {
+        "qty": 0.584,
+        "price": 115.01,
+        "value": 67.17
+      },
+      "ORCL": {
+        "qty": 0.486,
+        "price": 143.5,
+        "value": 69.74
+      },
+      "UBER": {
+        "qty": 0.846,
+        "price": 71.98,
+        "value": 60.9
+      },
+      "UNH": {
+        "qty": 0.143,
+        "price": 415.89,
+        "value": 59.47
+      },
+      "UPS": {
+        "qty": 1.555,
+        "price": 106.96,
+        "value": 166.32
+      },
+      "USB": {
+        "qty": 2.827,
+        "price": 63.94,
+        "value": 180.76
+      },
+      "VZ": {
+        "qty": 4.127,
+        "price": 47.37,
+        "value": 195.5
+      }
+    },
+    "targets": {},
+    "orders": [],
+    "note": "Nachgetragen: git push scheiterte am 27.07 wegen Race-Condition; Order wurde trotzdem korrekt ausgefuehrt."
+  },
+  {
     "date": "2026-07-28 20:48 UTC",
     "equity": 4081.65,
     "cash": 2168.85,
