@@ -9117,5 +9117,195 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-08-10 20:22 UTC",
+    "equity": 101704.84,
+    "cash": 54393.13,
+    "invested": 47311.71,
+    "pct_invested": 46.5,
+    "n_positions": 14,
+    "positions": {
+      "AAPL": {
+        "qty": 12.976,
+        "price": 307.5,
+        "value": 3990.18
+      },
+      "ADBE": {
+        "qty": 5.879,
+        "price": 272.69,
+        "value": 1603.16
+      },
+      "BAC": {
+        "qty": 71.657,
+        "price": 63.86,
+        "value": 4576.02
+      },
+      "BRK.B": {
+        "qty": 7.722,
+        "price": 529.42,
+        "value": 4088.18
+      },
+      "CI": {
+        "qty": 16.166,
+        "price": 278.4,
+        "value": 4500.61
+      },
+      "DUK": {
+        "qty": 36.471,
+        "price": 121.5,
+        "value": 4431.23
+      },
+      "LLY": {
+        "qty": 3.396,
+        "price": 1229.79,
+        "value": 4176.37
+      },
+      "NOW": {
+        "qty": 12.205,
+        "price": 126.83,
+        "value": 1547.96
+      },
+      "ORCL": {
+        "qty": 10.624,
+        "price": 150.4,
+        "value": 1597.85
+      },
+      "UBER": {
+        "qty": 20.35,
+        "price": 77.98,
+        "value": 1586.91
+      },
+      "UNH": {
+        "qty": 3.714,
+        "price": 408.7,
+        "value": 1517.91
+      },
+      "UPS": {
+        "qty": 43.937,
+        "price": 104.57,
+        "value": 4594.49
+      },
+      "USB": {
+        "qty": 70.785,
+        "price": 64.19,
+        "value": 4543.69
+      },
+      "VZ": {
+        "qty": 96.899,
+        "price": 47.03,
+        "value": 4557.16
+      }
+    },
+    "targets": {
+      "AAPL": {
+        "dollars": 4068.19,
+        "reason": "swarm AAPL LONG"
+      },
+      "BRK.B": {
+        "dollars": 4068.19,
+        "reason": "swarm BRK-B LONG"
+      },
+      "LLY": {
+        "dollars": 4068.19,
+        "reason": "swarm LLY LONG"
+      },
+      "VZ": {
+        "dollars": 4576.72,
+        "reason": "value VZ LONG"
+      },
+      "USB": {
+        "dollars": 4576.72,
+        "reason": "value USB LONG"
+      },
+      "BAC": {
+        "dollars": 4576.72,
+        "reason": "value BAC LONG"
+      },
+      "CI": {
+        "dollars": 4576.72,
+        "reason": "value CI LONG"
+      },
+      "DUK": {
+        "dollars": 4576.72,
+        "reason": "value DUK LONG"
+      },
+      "UPS": {
+        "dollars": 4576.72,
+        "reason": "value UPS LONG"
+      },
+      "NOW": {
+        "dollars": 1525.57,
+        "reason": "turnaround NOW LONG"
+      },
+      "ADBE": {
+        "dollars": 1525.57,
+        "reason": "turnaround ADBE LONG"
+      },
+      "ORCL": {
+        "dollars": 1525.57,
+        "reason": "turnaround ORCL LONG"
+      },
+      "UBER": {
+        "dollars": 1525.57,
+        "reason": "turnaround UBER LONG"
+      },
+      "UNH": {
+        "dollars": 1525.57,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AAPL",
+        "side": "buy",
+        "qty": 0.254,
+        "value": 78.11,
+        "status": "accepted"
+      },
+      {
+        "symbol": "ADBE",
+        "side": "sell",
+        "qty": 0.285,
+        "value": 77.72,
+        "status": "accepted"
+      },
+      {
+        "symbol": "CI",
+        "side": "buy",
+        "qty": 0.273,
+        "value": 76.0,
+        "status": "accepted"
+      },
+      {
+        "symbol": "DUK",
+        "side": "buy",
+        "qty": 1.197,
+        "value": 145.44,
+        "status": "accepted"
+      },
+      {
+        "symbol": "LLY",
+        "side": "sell",
+        "qty": 0.088,
+        "value": 108.22,
+        "status": "accepted"
+      },
+      {
+        "symbol": "ORCL",
+        "side": "sell",
+        "qty": 0.481,
+        "value": 72.34,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UBER",
+        "side": "sell",
+        "qty": 0.787,
+        "value": 61.37,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
   }
 ]
