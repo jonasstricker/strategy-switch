@@ -9307,5 +9307,230 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-08-11 20:24 UTC",
+    "equity": 101451.07,
+    "cash": 54412.55,
+    "invested": 47038.52,
+    "pct_invested": 46.4,
+    "n_positions": 14,
+    "positions": {
+      "AAPL": {
+        "qty": 13.23,
+        "price": 305.08,
+        "value": 4036.27
+      },
+      "ADBE": {
+        "qty": 5.594,
+        "price": 263.0,
+        "value": 1471.22
+      },
+      "BAC": {
+        "qty": 71.657,
+        "price": 64.0,
+        "value": 4586.05
+      },
+      "BRK.B": {
+        "qty": 7.722,
+        "price": 516.71,
+        "value": 3990.04
+      },
+      "CI": {
+        "qty": 16.439,
+        "price": 273.87,
+        "value": 4502.15
+      },
+      "DUK": {
+        "qty": 37.668,
+        "price": 123.19,
+        "value": 4640.32
+      },
+      "LLY": {
+        "qty": 3.308,
+        "price": 1213.5,
+        "value": 4014.26
+      },
+      "NOW": {
+        "qty": 12.205,
+        "price": 127.11,
+        "value": 1551.41
+      },
+      "ORCL": {
+        "qty": 10.143,
+        "price": 146.3,
+        "value": 1483.92
+      },
+      "UBER": {
+        "qty": 19.563,
+        "price": 78.39,
+        "value": 1533.56
+      },
+      "UNH": {
+        "qty": 3.714,
+        "price": 402.26,
+        "value": 1493.99
+      },
+      "UPS": {
+        "qty": 43.937,
+        "price": 104.4,
+        "value": 4587.02
+      },
+      "USB": {
+        "qty": 70.785,
+        "price": 64.59,
+        "value": 4572.0
+      },
+      "VZ": {
+        "qty": 96.899,
+        "price": 47.23,
+        "value": 4576.3
+      }
+    },
+    "targets": {
+      "AAPL": {
+        "dollars": 4058.04,
+        "reason": "swarm AAPL LONG"
+      },
+      "BRK.B": {
+        "dollars": 4058.04,
+        "reason": "swarm BRK-B LONG"
+      },
+      "LLY": {
+        "dollars": 4058.04,
+        "reason": "swarm LLY LONG"
+      },
+      "VZ": {
+        "dollars": 4058.04,
+        "reason": "value VZ LONG"
+      },
+      "USB": {
+        "dollars": 4058.04,
+        "reason": "value USB LONG"
+      },
+      "BAC": {
+        "dollars": 4058.04,
+        "reason": "value BAC LONG"
+      },
+      "CI": {
+        "dollars": 4058.04,
+        "reason": "value CI LONG"
+      },
+      "DUK": {
+        "dollars": 4058.04,
+        "reason": "value DUK LONG"
+      },
+      "UPS": {
+        "dollars": 4058.04,
+        "reason": "value UPS LONG"
+      },
+      "NOW": {
+        "dollars": 2029.02,
+        "reason": "turnaround NOW LONG"
+      },
+      "ADBE": {
+        "dollars": 2029.02,
+        "reason": "turnaround ADBE LONG"
+      },
+      "ORCL": {
+        "dollars": 2029.02,
+        "reason": "turnaround ORCL LONG"
+      },
+      "UBER": {
+        "dollars": 2029.02,
+        "reason": "turnaround UBER LONG"
+      },
+      "UNH": {
+        "dollars": 2029.02,
+        "reason": "turnaround UNH LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "ADBE",
+        "side": "buy",
+        "qty": 2.121,
+        "value": 557.82,
+        "status": "accepted"
+      },
+      {
+        "symbol": "BAC",
+        "side": "sell",
+        "qty": 8.25,
+        "value": 528.0,
+        "status": "accepted"
+      },
+      {
+        "symbol": "BRK.B",
+        "side": "buy",
+        "qty": 0.132,
+        "value": 68.21,
+        "status": "accepted"
+      },
+      {
+        "symbol": "CI",
+        "side": "sell",
+        "qty": 1.622,
+        "value": 444.22,
+        "status": "accepted"
+      },
+      {
+        "symbol": "DUK",
+        "side": "sell",
+        "qty": 4.727,
+        "value": 582.32,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NOW",
+        "side": "buy",
+        "qty": 3.757,
+        "value": 477.56,
+        "status": "accepted"
+      },
+      {
+        "symbol": "ORCL",
+        "side": "buy",
+        "qty": 3.726,
+        "value": 545.11,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UBER",
+        "side": "buy",
+        "qty": 6.32,
+        "value": 495.43,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UNH",
+        "side": "buy",
+        "qty": 1.33,
+        "value": 535.01,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UPS",
+        "side": "sell",
+        "qty": 5.067,
+        "value": 528.99,
+        "status": "accepted"
+      },
+      {
+        "symbol": "USB",
+        "side": "sell",
+        "qty": 7.957,
+        "value": 513.94,
+        "status": "accepted"
+      },
+      {
+        "symbol": "VZ",
+        "side": "sell",
+        "qty": 10.974,
+        "value": 518.27,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
   }
 ]
