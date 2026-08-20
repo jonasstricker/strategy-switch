@@ -430,49 +430,11 @@ def _extend_returns_live(result: dict) -> tuple:
     sw_ret = sw_ret[~sw_ret.index.duplicated(keep="first")]
     bh_ret = bh_ret[~bh_ret.index.duplicated(keep="first")]
 
-    # ── Validation-period override ────────────────────────────────────────
-    # Dates >= validation_start are ALWAYS recomputed with the extension
-    # formula (current signals, equal-weight) so the comparison chart
-    # stays stable and doesn't shift when a new WF OOS window closes.
-    trade_log_path = ROOT / "trading" / "trade_log.json"
-    validation_start = None
-    try:
-        tl = json.loads(trade_log_path.read_text())
-        if tl:
-            validation_start = pd.Timestamp(tl[0]["date"][:10])
-    except Exception:
-        pass
-
-    if validation_start is not None:
-        val_dates = sw_ret.index[sw_ret.index >= validation_start]
-        if len(val_dates) > 0:
-            # Build per-stock daily returns from one day before validation start
-            val_close: dict[str, pd.Series] = {}
-            for t, sr in stock_results.items():
-                close = sr.get("close")
-                if close is None:
-                    continue
-                base_candidates = close.index[close.index < validation_start]
-                if len(base_candidates) == 0:
-                    continue
-                base_date = base_candidates[-1]
-                close_slice = close.loc[close.index >= base_date]
-                if len(close_slice) < 2:
-                    continue
-                val_close[t] = close_slice.pct_change()
-
-            n_val = len(val_close)
-            if n_val > 0:
-                val_sw = pd.Series(0.0, index=val_dates)
-                val_bh = pd.Series(0.0, index=val_dates)
-                for t, daily in val_close.items():
-                    d = daily.reindex(val_dates, fill_value=0.0)
-                    val_bh += d / n_val
-                    if stock_results[t]["signal"] == "LONG":
-                        val_sw += d / n_val
-                sw_ret.loc[val_dates] = val_sw.values
-                bh_ret.loc[val_dates] = val_bh.values
-    # ─────────────────────────────────────────────────────────────────────
+    # NOTE: The Alpaca-vs-Switch comparison uses a separate, look-ahead-free
+    # curve built in _build_validation_equity() from the real historical
+    # signals in the trade-log. We intentionally do NOT retroactively rewrite
+    # the validation-period returns with today's signals here (that was the
+    # source of the old hindsight bias).
 
     sw_eq = _equity(sw_ret)
     bh_eq = _equity(bh_ret)
@@ -681,6 +643,101 @@ def _build_category_json(result: dict, category: str,
     }
 
 
+def _build_validation_equity(trade_log_path: Path) -> list | None:
+    """
+    Build a LOOK-AHEAD-FREE validation comparison curve.
+
+    Uses the ACTUAL historical signals (the `targets` recorded in the paper
+    trade-log on each trading day) combined with yfinance close prices.
+    This is the honest comparison against the Alpaca paper account:
+    both use the exact same signals that were live on each day, so the only
+    remaining difference is execution (MOC fills, slippage, after-hours,
+    fractional rounding).
+
+    Returns a list of {date, switch, bh} dicts, or None on failure.
+    """
+    try:
+        tl = json.loads(trade_log_path.read_text())
+    except Exception:
+        return None
+    if len(tl) < 2:
+        return None
+
+    # Daily target weights (fraction of total equity) per trading day
+    weight_by_date: dict[str, dict[str, float]] = {}
+    for e in tl:
+        tgts = e.get("targets", {})
+        eq = e.get("equity", 0)
+        if not tgts or not eq:
+            continue
+        date = e["date"][:10]
+        weights = {}
+        for sym, t in tgts.items():
+            dollars = t.get("dollars", 0)
+            if dollars > 0:
+                yf_sym = sym.replace(".", "-")   # BRK.B -> BRK-B for yfinance
+                weights[yf_sym] = dollars / eq
+        if weights:
+            weight_by_date[date] = weights
+
+    if not weight_by_date:
+        return None
+
+    all_stocks = sorted({s for w in weight_by_date.values() for s in w})
+    validation_start = pd.Timestamp(min(weight_by_date.keys()))
+
+    try:
+        data = yf.download(
+            all_stocks,
+            start=(validation_start - pd.Timedelta(days=6)).strftime("%Y-%m-%d"),
+            auto_adjust=True, progress=False,
+        )["Close"]
+    except Exception:
+        return None
+    if isinstance(data, pd.Series):
+        data = data.to_frame()
+    returns = data.pct_change()
+
+    trade_dates = sorted(weight_by_date.keys())
+    all_dates = returns.index[returns.index >= validation_start]
+    if len(all_dates) < 2:
+        return None
+
+    sw_ret = pd.Series(0.0, index=all_dates)
+    bh_ret = pd.Series(0.0, index=all_dates)
+
+    for d in all_dates:
+        d_str = d.strftime("%Y-%m-%d")
+        # Positions from the last trade day STRICTLY before d generate today's
+        # return — this is what removes the look-ahead bias.
+        applicable = None
+        for td in reversed(trade_dates):
+            if td < d_str:
+                applicable = weight_by_date[td]
+                break
+        if applicable is None:
+            continue
+        r = 0.0
+        for sym, w in applicable.items():
+            if sym in returns.columns:
+                sr = returns.loc[d, sym]
+                if pd.notna(sr):
+                    r += w * sr
+        sw_ret.loc[d] = r
+        bh = returns.loc[d, all_stocks].mean()
+        bh_ret.loc[d] = bh if pd.notna(bh) else 0.0
+
+    sw_eq = (1 + sw_ret).cumprod()
+    bh_eq = (1 + bh_ret).cumprod()
+
+    return [
+        {"date": d.strftime("%Y-%m-%d"),
+         "switch": round(float(sw_eq.loc[d]), 4),
+         "bh": round(float(bh_eq.loc[d]), 4)}
+        for d in all_dates
+    ]
+
+
 def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
     """
     Combine Swarm, Value, Turnaround into optimal Alpha-Mix portfolio.
@@ -742,60 +799,10 @@ def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
     if best_weights is None:
         return None
 
-    # ── Persist today's weight decision (for fair validation-period comparison) ──
-    # best_weights is chosen via full-hindsight grid search each night, which would
-    # otherwise retroactively "improve" the whole historical mix curve every time
-    # the optimizer picks new weights. To keep the Alpaca-validation comparison
-    # honest, we freeze the ACTUAL weights used on each day going forward.
-    weights_history_path = ROOT / "wf_backtest" / "weights_history.json"
-    today_str = pd.Timestamp.now().strftime("%Y-%m-%d")
-    weights_history = {}
-    try:
-        if weights_history_path.exists():
-            weights_history = json.loads(weights_history_path.read_text())
-    except Exception:
-        weights_history = {}
-    weights_history[today_str] = {k: round(v, 4) for k, v in best_weights.items()}
-    try:
-        weights_history_path.write_text(json.dumps(weights_history, indent=2))
-    except Exception:
-        pass
-
-    # Build the optimal mix returns
-    trade_log_path = ROOT / "trading" / "trade_log.json"
-    validation_start = None
-    try:
-        tl = json.loads(trade_log_path.read_text())
-        if tl:
-            validation_start = pd.Timestamp(tl[0]["date"][:10])
-    except Exception:
-        validation_start = None
-
-    if validation_start is not None and weights_history:
-        # Build a per-date weight matrix: default = today's best_weights,
-        # but for validation-period dates, use the weights that were ACTUALLY
-        # recorded on that specific day (if available) — no retroactive change.
-        hist_df = pd.DataFrame(weights_history).T
-        hist_df.index = pd.to_datetime(hist_df.index)
-        hist_df = hist_df.sort_index()
-
-        weight_matrix = pd.DataFrame(
-            {k: best_weights[k] for k in best_weights}, index=ref_idx
-        )
-        val_mask = ref_idx >= validation_start
-        for k in best_weights:
-            if k in hist_df.columns:
-                # Forward-fill historical weights onto validation-period dates
-                daily_w = hist_df[k].reindex(ref_idx, method="ffill")
-                weight_matrix.loc[val_mask, k] = daily_w.loc[val_mask].fillna(best_weights[k])
-
-        sw_df = pd.DataFrame(aligned_sw)
-        bh_df = pd.DataFrame(aligned_bh)
-        mix_sw = (sw_df * weight_matrix).sum(axis=1)
-        mix_bh = (bh_df * weight_matrix).sum(axis=1)
-    else:
-        mix_sw = sum(aligned_sw[k] * best_weights[k] for k in best_weights)
-        mix_bh = sum(aligned_bh[k] * best_weights[k] for k in best_weights)
+    # Build the optimal mix returns (single weight set — the honest
+    # Alpaca comparison is handled separately by _build_validation_equity()).
+    mix_sw = sum(aligned_sw[k] * best_weights[k] for k in best_weights)
+    mix_bh = sum(aligned_bh[k] * best_weights[k] for k in best_weights)
 
     mix_sw_eq = _equity(mix_sw)
     mix_bh_eq = _equity(mix_bh)
@@ -836,67 +843,6 @@ def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
 
     # Equity curve (downsampled, last 90 days daily)
     equity = _downsample_equity(mix_sw_eq, mix_bh_eq)
-
-    # ── Validation bias-correction (freeze delta=0 at first computation) ──
-    # The accumulated historical hindsight-bias (from before the per-day
-    # weight freeze above was introduced) is corrected ONCE with a frozen
-    # ADDITIVE percentage-point offset, so Alpaca-vs-Switch delta resets to
-    # 0 on the day this is first computed. From then on, NEW (real) drift
-    # is visible. NOTE: a multiplicative rescale would NOT change the
-    # cumulative return ratio (both endpoints scale equally) — the
-    # correction must be additive on the return, i.e. on the equity level
-    # relative to the validation-start baseline.
-    validation_equity = equity
-    bias_path = ROOT / "wf_backtest" / "validation_bias.json"
-    if validation_start is not None:
-        try:
-            tl_paper = json.loads((ROOT / "trading" / "trade_log.json").read_text())
-        except Exception:
-            tl_paper = []
-
-        bias_pct = None
-        if bias_path.exists():
-            try:
-                bias_pct = json.loads(bias_path.read_text()).get("bias_pct")
-            except Exception:
-                bias_pct = None
-
-        if bias_pct is None and len(tl_paper) >= 2:
-            try:
-                a0 = float(tl_paper[0]["equity"])
-                at = float(tl_paper[-1]["equity"])
-                val_dates = [d for d in mix_sw_eq.index if d >= validation_start]
-                if val_dates:
-                    s0 = float(mix_sw_eq.loc[val_dates[0]])
-                    st = float(mix_sw_eq.loc[val_dates[-1]])
-                    if s0 > 0 and a0 > 0 and st > 0:
-                        alpaca_ret_pct = (at / a0 - 1) * 100
-                        switch_ret_pct = (st / s0 - 1) * 100
-                        bias_pct = alpaca_ret_pct - switch_ret_pct
-                        bias_path.write_text(json.dumps({
-                            "computed_date": pd.Timestamp.now().strftime("%Y-%m-%d"),
-                            "bias_pct": bias_pct,
-                        }, indent=2))
-            except Exception:
-                bias_pct = None
-
-        if bias_pct is not None:
-            val_dates = [d for d in mix_sw_eq.index if d >= validation_start]
-            s0 = float(mix_sw_eq.loc[val_dates[0]]) if val_dates else None
-            if s0:
-                # IMPORTANT: only shift points AFTER validation_start — the
-                # anchor point itself (S0) must stay unshifted, otherwise
-                # the shift cancels out of the return ratio entirely
-                # (shifting both numerator and denominator by the same
-                # absolute amount does not reproduce old_ratio + bias_frac).
-                shift = s0 * bias_pct / 100.0
-                validation_start_str = validation_start.strftime("%Y-%m-%d")
-                validation_equity = []
-                for e in equity:
-                    e2 = dict(e)
-                    if e["date"] > validation_start_str:
-                        e2["switch"] = round(e["switch"] + shift, 4)
-                    validation_equity.append(e2)
 
     # Combine trades from all categories
     all_trades = []
@@ -945,7 +891,9 @@ def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
         "pct_invested": round(float(pct_invested), 4),
         "n_trades": n_trades,
         "equity": equity,
-        "validation_equity": validation_equity,
+        # Fallback; the honest look-ahead-free curve is injected in main()
+        # via _build_validation_equity(). Falls back to equity if that fails.
+        "validation_equity": equity,
         "months_switch": months_switch,
         "months_bh": months_bh,
         "yearly_returns": yearly,
@@ -1395,6 +1343,15 @@ def main():
                 mobile_data["alpha_mix"] = alpha_mix
                 log.info(f"  Alpha-Mix: Weights={alpha_mix['weights']}, "
                          f"Sharpe={alpha_mix['sharpe_switch']:.2f}")
+
+                # Look-ahead-free validation curve (real historical signals)
+                try:
+                    val_curve = _build_validation_equity(ROOT / "trading" / "trade_log.json")
+                    if val_curve:
+                        mobile_data["alpha_mix"]["validation_equity"] = val_curve
+                        log.info(f"  Validierungskurve: {len(val_curve)} Punkte (look-ahead-frei)")
+                except Exception as e:
+                    log.warning(f"  Validierungskurve übersprungen: {e}")
 
                 # Alpha-Boost: 2x leveraged version
                 alpha_boost = _build_alpha_boost(raw_cats, mobile_data, alpha_mix, leverage=2.0)
