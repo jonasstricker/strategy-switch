@@ -742,9 +742,60 @@ def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
     if best_weights is None:
         return None
 
+    # ── Persist today's weight decision (for fair validation-period comparison) ──
+    # best_weights is chosen via full-hindsight grid search each night, which would
+    # otherwise retroactively "improve" the whole historical mix curve every time
+    # the optimizer picks new weights. To keep the Alpaca-validation comparison
+    # honest, we freeze the ACTUAL weights used on each day going forward.
+    weights_history_path = ROOT / "wf_backtest" / "weights_history.json"
+    today_str = pd.Timestamp.now().strftime("%Y-%m-%d")
+    weights_history = {}
+    try:
+        if weights_history_path.exists():
+            weights_history = json.loads(weights_history_path.read_text())
+    except Exception:
+        weights_history = {}
+    weights_history[today_str] = {k: round(v, 4) for k, v in best_weights.items()}
+    try:
+        weights_history_path.write_text(json.dumps(weights_history, indent=2))
+    except Exception:
+        pass
+
     # Build the optimal mix returns
-    mix_sw = sum(aligned_sw[k] * best_weights[k] for k in best_weights)
-    mix_bh = sum(aligned_bh[k] * best_weights[k] for k in best_weights)
+    trade_log_path = ROOT / "trading" / "trade_log.json"
+    validation_start = None
+    try:
+        tl = json.loads(trade_log_path.read_text())
+        if tl:
+            validation_start = pd.Timestamp(tl[0]["date"][:10])
+    except Exception:
+        validation_start = None
+
+    if validation_start is not None and weights_history:
+        # Build a per-date weight matrix: default = today's best_weights,
+        # but for validation-period dates, use the weights that were ACTUALLY
+        # recorded on that specific day (if available) — no retroactive change.
+        hist_df = pd.DataFrame(weights_history).T
+        hist_df.index = pd.to_datetime(hist_df.index)
+        hist_df = hist_df.sort_index()
+
+        weight_matrix = pd.DataFrame(
+            {k: best_weights[k] for k in best_weights}, index=ref_idx
+        )
+        val_mask = ref_idx >= validation_start
+        for k in best_weights:
+            if k in hist_df.columns:
+                # Forward-fill historical weights onto validation-period dates
+                daily_w = hist_df[k].reindex(ref_idx, method="ffill")
+                weight_matrix.loc[val_mask, k] = daily_w.loc[val_mask].fillna(best_weights[k])
+
+        sw_df = pd.DataFrame(aligned_sw)
+        bh_df = pd.DataFrame(aligned_bh)
+        mix_sw = (sw_df * weight_matrix).sum(axis=1)
+        mix_bh = (bh_df * weight_matrix).sum(axis=1)
+    else:
+        mix_sw = sum(aligned_sw[k] * best_weights[k] for k in best_weights)
+        mix_bh = sum(aligned_bh[k] * best_weights[k] for k in best_weights)
 
     mix_sw_eq = _equity(mix_sw)
     mix_bh_eq = _equity(mix_bh)
