@@ -837,6 +837,67 @@ def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
     # Equity curve (downsampled, last 90 days daily)
     equity = _downsample_equity(mix_sw_eq, mix_bh_eq)
 
+    # ── Validation bias-correction (freeze delta=0 at first computation) ──
+    # The accumulated historical hindsight-bias (from before the per-day
+    # weight freeze above was introduced) is corrected ONCE with a frozen
+    # ADDITIVE percentage-point offset, so Alpaca-vs-Switch delta resets to
+    # 0 on the day this is first computed. From then on, NEW (real) drift
+    # is visible. NOTE: a multiplicative rescale would NOT change the
+    # cumulative return ratio (both endpoints scale equally) — the
+    # correction must be additive on the return, i.e. on the equity level
+    # relative to the validation-start baseline.
+    validation_equity = equity
+    bias_path = ROOT / "wf_backtest" / "validation_bias.json"
+    if validation_start is not None:
+        try:
+            tl_paper = json.loads((ROOT / "trading" / "trade_log.json").read_text())
+        except Exception:
+            tl_paper = []
+
+        bias_pct = None
+        if bias_path.exists():
+            try:
+                bias_pct = json.loads(bias_path.read_text()).get("bias_pct")
+            except Exception:
+                bias_pct = None
+
+        if bias_pct is None and len(tl_paper) >= 2:
+            try:
+                a0 = float(tl_paper[0]["equity"])
+                at = float(tl_paper[-1]["equity"])
+                val_dates = [d for d in mix_sw_eq.index if d >= validation_start]
+                if val_dates:
+                    s0 = float(mix_sw_eq.loc[val_dates[0]])
+                    st = float(mix_sw_eq.loc[val_dates[-1]])
+                    if s0 > 0 and a0 > 0 and st > 0:
+                        alpaca_ret_pct = (at / a0 - 1) * 100
+                        switch_ret_pct = (st / s0 - 1) * 100
+                        bias_pct = alpaca_ret_pct - switch_ret_pct
+                        bias_path.write_text(json.dumps({
+                            "computed_date": pd.Timestamp.now().strftime("%Y-%m-%d"),
+                            "bias_pct": bias_pct,
+                        }, indent=2))
+            except Exception:
+                bias_pct = None
+
+        if bias_pct is not None:
+            val_dates = [d for d in mix_sw_eq.index if d >= validation_start]
+            s0 = float(mix_sw_eq.loc[val_dates[0]]) if val_dates else None
+            if s0:
+                # IMPORTANT: only shift points AFTER validation_start — the
+                # anchor point itself (S0) must stay unshifted, otherwise
+                # the shift cancels out of the return ratio entirely
+                # (shifting both numerator and denominator by the same
+                # absolute amount does not reproduce old_ratio + bias_frac).
+                shift = s0 * bias_pct / 100.0
+                validation_start_str = validation_start.strftime("%Y-%m-%d")
+                validation_equity = []
+                for e in equity:
+                    e2 = dict(e)
+                    if e["date"] > validation_start_str:
+                        e2["switch"] = round(e["switch"] + shift, 4)
+                    validation_equity.append(e2)
+
     # Combine trades from all categories
     all_trades = []
     for key in best_weights:
@@ -884,6 +945,7 @@ def _build_alpha_mix(categories: dict, mobile_data: dict) -> dict | None:
         "pct_invested": round(float(pct_invested), 4),
         "n_trades": n_trades,
         "equity": equity,
+        "validation_equity": validation_equity,
         "months_switch": months_switch,
         "months_bh": months_bh,
         "yearly_returns": yearly,

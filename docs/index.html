@@ -711,15 +711,16 @@
       // Compute switching return over same period
       const startDate = tradeLog[0].date.split(' ')[0];
       const endDate = lastEntry.date.split(' ')[0];
+      const valEquity = cat.validation_equity || cat.equity;
       let switchReturn = null;
-      if (cat.equity && cat.equity.length > 1) {
+      if (valEquity && valEquity.length > 1) {
         let startIdx = -1, endIdx = -1;
-        for (let i = 0; i < cat.equity.length; i++) {
-          if (startIdx < 0 && cat.equity[i].date >= startDate) startIdx = i;
-          if (cat.equity[i].date <= endDate) endIdx = i;
+        for (let i = 0; i < valEquity.length; i++) {
+          if (startIdx < 0 && valEquity[i].date >= startDate) startIdx = i;
+          if (valEquity[i].date <= endDate) endIdx = i;
         }
         if (startIdx >= 0 && endIdx > startIdx) {
-          switchReturn = ((cat.equity[endIdx].switch / cat.equity[startIdx].switch) - 1) * 100;
+          switchReturn = ((valEquity[endIdx].switch / valEquity[startIdx].switch) - 1) * 100;
         }
       }
 
@@ -844,7 +845,8 @@
     function drawValidationChart(id, cat, log) {
       const canvas = document.getElementById(id);
       if (!canvas || !log || !log.length) return;
-      if (!cat.equity || !cat.equity.length) return;
+      const valEquity = cat.validation_equity || cat.equity;
+      if (!valEquity || !valEquity.length) return;
 
       const startEq = log[0].equity;
       const alpacaPoints = log.map(e => ({
@@ -855,12 +857,12 @@
       const firstDate = alpacaPoints[0].date;
       const lastDate = alpacaPoints[alpacaPoints.length - 1].date;
       let startIdx = -1;
-      for (let i = 0; i < cat.equity.length; i++) {
-        if (cat.equity[i].date >= firstDate) { startIdx = i; break; }
+      for (let i = 0; i < valEquity.length; i++) {
+        if (valEquity[i].date >= firstDate) { startIdx = i; break; }
       }
-      if (startIdx < 0) startIdx = cat.equity.length - 1;
-      const baseSwitch = cat.equity[startIdx].switch;
-      const switchPoints = cat.equity.filter(d => d.date >= firstDate && d.date <= lastDate)
+      if (startIdx < 0) startIdx = valEquity.length - 1;
+      const baseSwitch = valEquity[startIdx].switch;
+      const switchPoints = valEquity.filter(d => d.date >= firstDate && d.date <= lastDate)
         .map(d => ({ date: d.date, value: d.switch / baseSwitch }));
 
       const allDates = new Set();

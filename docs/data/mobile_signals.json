@@ -1,12 +1,12 @@
 {
-  "updated": "20.08.2026 13:19",
+  "updated": "20.08.2026 16:29",
   "etfs": [
     {
       "ticker": "SXR8.DE",
       "name": "S&P100_EU",
       "signal": "LONG",
       "strategy": "MA",
-      "price": 710.42,
+      "price": 709.36,
       "last_date": "17.08.2026",
       "sharpe_switch": 1.3,
       "sharpe_bh": 0.8,
@@ -2966,7 +2966,7 @@
       "name": "MSCI World",
       "signal": "LONG",
       "strategy": "RSI",
-      "price": 209.22,
+      "price": 208.55,
       "last_date": "28.07.2026",
       "sharpe_switch": 1.32,
       "sharpe_bh": 0.62,
@@ -4185,7 +4185,7 @@
         },
         {
           "date": "2018-02-23",
-          "switch": 1.3613,
+          "switch": 1.3612,
           "bh": 1.3805,
           "cash": false
         },
@@ -4528,7 +4528,7 @@
         {
           "date": "2020-08-20",
           "switch": 2.1043,
-          "bh": 1.6289,
+          "bh": 1.629,
           "cash": false
         },
         {
@@ -4593,7 +4593,7 @@
         },
         {
           "date": "2021-02-12",
-          "switch": 2.4309,
+          "switch": 2.4308,
           "bh": 1.9306,
           "cash": false
         },
@@ -4641,7 +4641,7 @@
         },
         {
           "date": "2021-06-21",
-          "switch": 2.5952,
+          "switch": 2.5951,
           "bh": 2.0611,
           "cash": false
         },
@@ -4713,7 +4713,7 @@
         },
         {
           "date": "2021-12-28",
-          "switch": 2.9084,
+          "switch": 2.9083,
           "bh": 2.2505,
           "cash": false
         },
@@ -5103,7 +5103,7 @@
         },
         {
           "date": "2024-10-31",
-          "switch": 4.2775,
+          "switch": 4.2774,
           "bh": 2.6577,
           "cash": false
         },
@@ -5121,7 +5121,7 @@
         },
         {
           "date": "2024-12-18",
-          "switch": 4.3531,
+          "switch": 4.353,
           "bh": 2.7047,
           "cash": false
         },
@@ -5313,7 +5313,7 @@
         },
         {
           "date": "2026-05-18",
-          "switch": 5.1727,
+          "switch": 5.1726,
           "bh": 3.541,
           "cash": false
         },
@@ -5779,7 +5779,7 @@
         {
           "Datum": "12.08.2024",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie MA aktiv",
+          "Grund": "Strategie RSI aktiv",
           "Kurs": "$140.72",
           "Rendite": null
         },
@@ -5896,7 +5896,7 @@
       "name": "Emerging Markets",
       "signal": "LONG",
       "strategy": "Double_MA",
-      "price": 66.11,
+      "price": 66.42,
       "last_date": "18.08.2026",
       "sharpe_switch": 0.78,
       "sharpe_bh": 0.24,
@@ -6846,7 +6846,7 @@
         {
           "date": "2008-12-19",
           "switch": 1.2552,
-          "bh": 0.6885,
+          "bh": 0.6886,
           "cash": true
         },
         {
@@ -6905,7 +6905,7 @@
         },
         {
           "date": "2009-09-23",
-          "switch": 1.8566,
+          "switch": 1.8565,
           "bh": 1.0706,
           "cash": false
         },
@@ -7139,7 +7139,7 @@
         },
         {
           "date": "2012-08-30",
-          "switch": 2.1826,
+          "switch": 2.1825,
           "bh": 1.1371,
           "cash": false
         },
@@ -7157,7 +7157,7 @@
         },
         {
           "date": "2012-11-23",
-          "switch": 2.3453,
+          "switch": 2.3452,
           "bh": 1.2166,
           "cash": false
         },
@@ -7397,13 +7397,13 @@
         },
         {
           "date": "2015-12-01",
-          "switch": 2.9063,
+          "switch": 2.9062,
           "bh": 1.0607,
           "cash": true
         },
         {
           "date": "2015-12-29",
-          "switch": 2.9063,
+          "switch": 2.9062,
           "bh": 1.0316,
           "cash": true
         },
@@ -7835,7 +7835,7 @@
         },
         {
           "date": "2021-06-07",
-          "switch": 7.5173,
+          "switch": 7.5174,
           "bh": 1.9463,
           "cash": false
         },
@@ -7998,7 +7998,7 @@
         {
           "date": "2023-06-21",
           "switch": 7.623,
-          "bh": 1.4658,
+          "bh": 1.4659,
           "cash": false
         },
         {
@@ -9068,7 +9068,7 @@
       "name": "FTSE Europe",
       "signal": "CASH",
       "strategy": "Cash",
-      "price": 92.23,
+      "price": 91.96,
       "last_date": "24.07.2026",
       "sharpe_switch": 0.93,
       "sharpe_bh": 0.25,
@@ -10083,7 +10083,7 @@
         },
         {
           "date": "2010-11-02",
-          "switch": 1.5079,
+          "switch": 1.508,
           "bh": 0.8559,
           "cash": false
         },
@@ -10227,7 +10227,7 @@
         },
         {
           "date": "2012-07-20",
-          "switch": 1.6166,
+          "switch": 1.6167,
           "bh": 0.7598,
           "cash": false
         },
@@ -10263,7 +10263,7 @@
         },
         {
           "date": "2012-12-26",
-          "switch": 1.8543,
+          "switch": 1.8544,
           "bh": 0.9024,
           "cash": false
         },
@@ -10395,7 +10395,7 @@
         },
         {
           "date": "2014-07-24",
-          "switch": 2.4649,
+          "switch": 2.465,
           "bh": 1.1798,
           "cash": false
         },
@@ -10719,7 +10719,7 @@
         },
         {
           "date": "2018-06-04",
-          "switch": 3.6349,
+          "switch": 3.635,
           "bh": 1.2993,
           "cash": false
         },
@@ -10887,7 +10887,7 @@
         },
         {
           "date": "2020-06-04",
-          "switch": 4.507,
+          "switch": 4.5071,
           "bh": 1.2345,
           "cash": false
         },
@@ -11001,7 +11001,7 @@
         },
         {
           "date": "2021-10-12",
-          "switch": 6.1999,
+          "switch": 6.2,
           "bh": 1.6463,
           "cash": true
         },
@@ -11127,7 +11127,7 @@
         },
         {
           "date": "2023-04-14",
-          "switch": 7.6084,
+          "switch": 7.6085,
           "bh": 1.65,
           "cash": false
         },
@@ -11169,13 +11169,13 @@
         },
         {
           "date": "2023-10-13",
-          "switch": 7.3605,
+          "switch": 7.3606,
           "bh": 1.5406,
           "cash": true
         },
         {
           "date": "2023-11-08",
-          "switch": 7.3605,
+          "switch": 7.3606,
           "bh": 1.5535,
           "cash": true
         },
@@ -11205,7 +11205,7 @@
         },
         {
           "date": "2024-03-20",
-          "switch": 8.1086,
+          "switch": 8.1087,
           "bh": 1.8211,
           "cash": false
         },
@@ -11259,7 +11259,7 @@
         },
         {
           "date": "2024-11-08",
-          "switch": 8.4261,
+          "switch": 8.4262,
           "bh": 1.8327,
           "cash": true
         },
@@ -11283,13 +11283,13 @@
         },
         {
           "date": "2025-02-26",
-          "switch": 8.7652,
+          "switch": 8.7653,
           "bh": 1.9745,
           "cash": false
         },
         {
           "date": "2025-03-24",
-          "switch": 8.9164,
+          "switch": 8.9165,
           "bh": 2.0085,
           "cash": false
         },
@@ -11343,13 +11343,13 @@
         },
         {
           "date": "2025-11-12",
-          "switch": 9.7174,
+          "switch": 9.7175,
           "bh": 2.3437,
           "cash": false
         },
         {
           "date": "2025-12-09",
-          "switch": 9.7778,
+          "switch": 9.7779,
           "bh": 2.3249,
           "cash": false
         },
@@ -11397,13 +11397,13 @@
         },
         {
           "date": "2026-07-09",
-          "switch": 11.0138,
+          "switch": 11.0139,
           "bh": 2.5891,
           "cash": false
         },
         {
           "date": "2026-07-24",
-          "switch": 11.0329,
+          "switch": 11.033,
           "bh": 2.5891,
           "cash": true
         }
@@ -12045,7 +12045,7 @@
         {
           "Datum": "19.08.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$65.37",
           "Rendite": null
         },
@@ -12059,7 +12059,7 @@
         {
           "Datum": "12.09.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$65.12",
           "Rendite": null
         },
@@ -12073,7 +12073,7 @@
         {
           "Datum": "17.10.2024",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$65.01",
           "Rendite": null
         },
@@ -12115,7 +12115,7 @@
         {
           "Datum": "25.11.2025",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Momentum aktiv",
+          "Grund": "Strategie Double_MA aktiv",
           "Kurs": "$78.06",
           "Rendite": null
         },
@@ -12201,7 +12201,7 @@
         "ticker": "AAPL",
         "name": "Apple",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "Momentum",
         "signal_margin": 0.94,
         "sharpe": 1.8,
         "bh_sharpe": 0.86,
@@ -18340,8 +18340,8 @@
         "bh_sharpe": 0.23,
         "pct_invested": 0.513,
         "n_trades": 137,
-        "pe": 12.65641,
-        "pb": 1.9734528,
+        "pe": 12.8515625,
+        "pb": 1.973053,
         "div_yield": 5.73,
         "pct_from_high": -4.5
       },
@@ -18349,16 +18349,16 @@
         "ticker": "T",
         "name": "AT&T Inc.",
         "signal": "LONG",
-        "strategy": "RSI",
+        "strategy": "Momentum",
         "signal_margin": 1.916,
         "sharpe": 1.01,
         "bh_sharpe": 0.27,
         "pct_invested": 0.597,
         "n_trades": 103,
-        "pe": 8.290429,
-        "pb": 1.5645243,
+        "pe": 8.301914,
+        "pb": 1.5666916,
         "div_yield": 4.42,
-        "pct_from_high": -15.7
+        "pct_from_high": -15.6
       },
       {
         "ticker": "USB",
@@ -18370,10 +18370,10 @@
         "bh_sharpe": 0.28,
         "pct_invested": 0.588,
         "n_trades": 117,
-        "pe": 12.925925,
-        "pb": 1.6144536,
+        "pe": 12.534929,
+        "pb": 1.6139395,
         "div_yield": 3.31,
-        "pct_from_high": -4.9
+        "pct_from_high": -5.0
       },
       {
         "ticker": "PFE",
@@ -18385,10 +18385,10 @@
         "bh_sharpe": 0.11,
         "pct_invested": 0.531,
         "n_trades": 105,
-        "pe": 35.746834,
-        "pb": 1.8894687,
+        "pe": 36.519737,
+        "pb": 1.8570186,
         "div_yield": 6.09,
-        "pct_from_high": -1.8
+        "pct_from_high": -3.5
       },
       {
         "ticker": "COP",
@@ -18400,10 +18400,10 @@
         "bh_sharpe": 0.46,
         "pct_invested": 0.549,
         "n_trades": 111,
-        "pe": 17.159,
-        "pb": 2.4005,
+        "pe": 17.86508,
+        "pb": 2.4828575,
         "div_yield": 2.57,
-        "pct_from_high": -3.9
+        "pct_from_high": -0.6
       },
       {
         "ticker": "BAC",
@@ -18415,10 +18415,10 @@
         "bh_sharpe": 0.45,
         "pct_invested": 0.649,
         "n_trades": 83,
-        "pe": 14.828637,
-        "pb": 1.6056632,
+        "pe": 14.54328,
+        "pb": 1.6006405,
         "div_yield": 2.03,
-        "pct_from_high": -3.2
+        "pct_from_high": -3.5
       },
       {
         "ticker": "CI",
@@ -18430,10 +18430,10 @@
         "bh_sharpe": 0.25,
         "pct_invested": 0.558,
         "n_trades": 110,
-        "pe": 11.522011,
-        "pb": 1.7166493,
+        "pe": 11.482637,
+        "pb": 1.7185982,
         "div_yield": 2.25,
-        "pct_from_high": -12.1
+        "pct_from_high": -12.0
       },
       {
         "ticker": "DUK",
@@ -18445,25 +18445,25 @@
         "bh_sharpe": 0.42,
         "pct_invested": 0.586,
         "n_trades": 120,
-        "pe": 18.670694,
-        "pb": 1.7927073,
+        "pe": 18.653324,
+        "pb": 1.7910393,
         "div_yield": 3.51,
-        "pct_from_high": -8.1
+        "pct_from_high": -8.2
       },
       {
         "ticker": "UPS",
         "name": "United Parcel Service, Inc.",
         "signal": "LONG",
-        "strategy": "Double_MA",
+        "strategy": "Momentum",
         "signal_margin": -0.333,
         "sharpe": 0.94,
         "bh_sharpe": 0.14,
         "pct_invested": 0.543,
         "n_trades": 97,
-        "pe": 18.942911,
-        "pb": 5.8096585,
+        "pe": 19.020447,
+        "pb": 5.779723,
         "div_yield": 6.38,
-        "pct_from_high": -16.0
+        "pct_from_high": -16.4
       },
       {
         "ticker": "XOM",
@@ -18475,10 +18475,10 @@
         "bh_sharpe": 0.47,
         "pct_invested": 0.583,
         "n_trades": 113,
-        "pe": 21.315653,
-        "pb": 2.6120799,
+        "pe": 21.709574,
+        "pb": 2.660352,
         "div_yield": 2.5,
-        "pct_from_high": -6.6
+        "pct_from_high": -4.8
       }
     ],
     "n_long": 8,
@@ -24248,10 +24248,10 @@
         "bh_sharpe": 0.59,
         "pct_invested": 0.638,
         "n_trades": 95,
-        "pe": 74.823524,
-        "pb": 10.507186,
+        "pe": 75.71177,
+        "pb": 10.631919,
         "div_yield": null,
-        "pct_from_high": -34.7
+        "pct_from_high": -33.9
       },
       {
         "ticker": "META",
@@ -24263,8 +24263,8 @@
         "bh_sharpe": 0.49,
         "pct_invested": 0.64,
         "n_trades": 84,
-        "pe": 20.488932,
-        "pb": 5.326083,
+        "pe": 20.577991,
+        "pb": 5.3271546,
         "div_yield": 38.0,
         "pct_from_high": -31.0
       },
@@ -24278,10 +24278,10 @@
         "bh_sharpe": 0.99,
         "pct_invested": 0.728,
         "n_trades": 87,
-        "pe": 63.260036,
-        "pb": 19.667933,
+        "pe": 60.840534,
+        "pb": 19.873034,
         "div_yield": 72.0,
-        "pct_from_high": -26.8
+        "pct_from_high": -26.0
       },
       {
         "ticker": "NFLX",
@@ -24293,10 +24293,10 @@
         "bh_sharpe": 0.54,
         "pct_invested": 0.64,
         "n_trades": 99,
-        "pe": 24.457317,
-        "pb": 11.07858,
+        "pe": 25.13522,
+        "pb": 11.03853,
         "div_yield": null,
-        "pct_from_high": -36.7
+        "pct_from_high": -36.9
       },
       {
         "ticker": "ADBE",
@@ -24308,10 +24308,10 @@
         "bh_sharpe": 0.26,
         "pct_invested": 0.553,
         "n_trades": 107,
-        "pe": 15.061913,
-        "pb": 9.438806,
+        "pe": 15.480274,
+        "pb": 9.379222,
         "div_yield": null,
-        "pct_from_high": -26.5
+        "pct_from_high": -27.0
       },
       {
         "ticker": "ORCL",
@@ -24323,10 +24323,10 @@
         "bh_sharpe": 0.54,
         "pct_invested": 0.605,
         "n_trades": 105,
-        "pe": 24.499147,
-        "pb": 11.028374,
+        "pe": 24.477663,
+        "pb": 10.924848,
         "div_yield": 1.39,
-        "pct_from_high": -58.4
+        "pct_from_high": -58.8
       },
       {
         "ticker": "MSFT",
@@ -24338,10 +24338,10 @@
         "bh_sharpe": 0.81,
         "pct_invested": 0.645,
         "n_trades": 95,
-        "pe": 26.816723,
-        "pb": 8.130781,
+        "pe": 26.837492,
+        "pb": 8.096529,
         "div_yield": 75.0,
-        "pct_from_high": -12.5
+        "pct_from_high": -12.9
       },
       {
         "ticker": "CRM",
@@ -24353,8 +24353,8 @@
         "bh_sharpe": 0.34,
         "pct_invested": 0.575,
         "n_trades": 87,
-        "pe": 22.722162,
-        "pb": 4.930265,
+        "pe": 22.719957,
+        "pb": 4.9297867,
         "div_yield": 85.0,
         "pct_from_high": -23.4
       },
@@ -24368,10 +24368,10 @@
         "bh_sharpe": 0.38,
         "pct_invested": 0.54,
         "n_trades": 52,
-        "pe": 16.360588,
-        "pb": 5.82823,
+        "pe": 16.41824,
+        "pb": 5.8487678,
         "div_yield": null,
-        "pct_from_high": -23.5
+        "pct_from_high": -23.2
       },
       {
         "ticker": "UNH",
@@ -24383,10 +24383,10 @@
         "bh_sharpe": 0.36,
         "pct_invested": 0.615,
         "n_trades": 122,
-        "pe": 25.007078,
-        "pb": 3.5724068,
+        "pe": 25.119047,
+        "pb": 3.5884025,
         "div_yield": 2.39,
-        "pct_from_high": -15.8
+        "pct_from_high": -15.4
       }
     ],
     "n_long": 7,
@@ -30166,7 +30166,7 @@
         "ticker": "AAPL",
         "name": "Apple",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "Momentum",
         "signal_margin": 0.94,
         "sharpe": 1.8,
         "bh_sharpe": 0.86,
@@ -30316,8 +30316,8 @@
         "bh_sharpe": 0.23,
         "pct_invested": 0.513,
         "n_trades": 137,
-        "pe": 12.65641,
-        "pb": 1.9734528,
+        "pe": 12.8515625,
+        "pb": 1.973053,
         "div_yield": 5.73,
         "pct_from_high": -4.5,
         "category": "value"
@@ -30326,16 +30326,16 @@
         "ticker": "T",
         "name": "AT&T Inc.",
         "signal": "LONG",
-        "strategy": "RSI",
+        "strategy": "Momentum",
         "signal_margin": 1.916,
         "sharpe": 1.01,
         "bh_sharpe": 0.27,
         "pct_invested": 0.597,
         "n_trades": 103,
-        "pe": 8.290429,
-        "pb": 1.5645243,
+        "pe": 8.301914,
+        "pb": 1.5666916,
         "div_yield": 4.42,
-        "pct_from_high": -15.7,
+        "pct_from_high": -15.6,
         "category": "value"
       },
       {
@@ -30348,10 +30348,10 @@
         "bh_sharpe": 0.28,
         "pct_invested": 0.588,
         "n_trades": 117,
-        "pe": 12.925925,
-        "pb": 1.6144536,
+        "pe": 12.534929,
+        "pb": 1.6139395,
         "div_yield": 3.31,
-        "pct_from_high": -4.9,
+        "pct_from_high": -5.0,
         "category": "value"
       },
       {
@@ -30364,10 +30364,10 @@
         "bh_sharpe": 0.11,
         "pct_invested": 0.531,
         "n_trades": 105,
-        "pe": 35.746834,
-        "pb": 1.8894687,
+        "pe": 36.519737,
+        "pb": 1.8570186,
         "div_yield": 6.09,
-        "pct_from_high": -1.8,
+        "pct_from_high": -3.5,
         "category": "value"
       },
       {
@@ -30380,10 +30380,10 @@
         "bh_sharpe": 0.46,
         "pct_invested": 0.549,
         "n_trades": 111,
-        "pe": 17.159,
-        "pb": 2.4005,
+        "pe": 17.86508,
+        "pb": 2.4828575,
         "div_yield": 2.57,
-        "pct_from_high": -3.9,
+        "pct_from_high": -0.6,
         "category": "value"
       },
       {
@@ -30396,10 +30396,10 @@
         "bh_sharpe": 0.45,
         "pct_invested": 0.649,
         "n_trades": 83,
-        "pe": 14.828637,
-        "pb": 1.6056632,
+        "pe": 14.54328,
+        "pb": 1.6006405,
         "div_yield": 2.03,
-        "pct_from_high": -3.2,
+        "pct_from_high": -3.5,
         "category": "value"
       },
       {
@@ -30412,10 +30412,10 @@
         "bh_sharpe": 0.25,
         "pct_invested": 0.558,
         "n_trades": 110,
-        "pe": 11.522011,
-        "pb": 1.7166493,
+        "pe": 11.482637,
+        "pb": 1.7185982,
         "div_yield": 2.25,
-        "pct_from_high": -12.1,
+        "pct_from_high": -12.0,
         "category": "value"
       },
       {
@@ -30428,26 +30428,26 @@
         "bh_sharpe": 0.42,
         "pct_invested": 0.586,
         "n_trades": 120,
-        "pe": 18.670694,
-        "pb": 1.7927073,
+        "pe": 18.653324,
+        "pb": 1.7910393,
         "div_yield": 3.51,
-        "pct_from_high": -8.1,
+        "pct_from_high": -8.2,
         "category": "value"
       },
       {
         "ticker": "UPS",
         "name": "United Parcel Service, Inc.",
         "signal": "LONG",
-        "strategy": "Double_MA",
+        "strategy": "Momentum",
         "signal_margin": -0.333,
         "sharpe": 0.94,
         "bh_sharpe": 0.14,
         "pct_invested": 0.543,
         "n_trades": 97,
-        "pe": 18.942911,
-        "pb": 5.8096585,
+        "pe": 19.020447,
+        "pb": 5.779723,
         "div_yield": 6.38,
-        "pct_from_high": -16.0,
+        "pct_from_high": -16.4,
         "category": "value"
       },
       {
@@ -30460,10 +30460,10 @@
         "bh_sharpe": 0.47,
         "pct_invested": 0.583,
         "n_trades": 113,
-        "pe": 21.315653,
-        "pb": 2.6120799,
+        "pe": 21.709574,
+        "pb": 2.660352,
         "div_yield": 2.5,
-        "pct_from_high": -6.6,
+        "pct_from_high": -4.8,
         "category": "value"
       },
       {
@@ -30476,10 +30476,10 @@
         "bh_sharpe": 0.59,
         "pct_invested": 0.638,
         "n_trades": 95,
-        "pe": 74.823524,
-        "pb": 10.507186,
+        "pe": 75.71177,
+        "pb": 10.631919,
         "div_yield": null,
-        "pct_from_high": -34.7,
+        "pct_from_high": -33.9,
         "category": "turnaround"
       },
       {
@@ -30492,8 +30492,8 @@
         "bh_sharpe": 0.49,
         "pct_invested": 0.64,
         "n_trades": 84,
-        "pe": 20.488932,
-        "pb": 5.326083,
+        "pe": 20.577991,
+        "pb": 5.3271546,
         "div_yield": 38.0,
         "pct_from_high": -31.0,
         "category": "turnaround"
@@ -30508,10 +30508,10 @@
         "bh_sharpe": 0.99,
         "pct_invested": 0.728,
         "n_trades": 87,
-        "pe": 63.260036,
-        "pb": 19.667933,
+        "pe": 60.840534,
+        "pb": 19.873034,
         "div_yield": 72.0,
-        "pct_from_high": -26.8,
+        "pct_from_high": -26.0,
         "category": "turnaround"
       },
       {
@@ -30524,10 +30524,10 @@
         "bh_sharpe": 0.54,
         "pct_invested": 0.64,
         "n_trades": 99,
-        "pe": 24.457317,
-        "pb": 11.07858,
+        "pe": 25.13522,
+        "pb": 11.03853,
         "div_yield": null,
-        "pct_from_high": -36.7,
+        "pct_from_high": -36.9,
         "category": "turnaround"
       },
       {
@@ -30540,10 +30540,10 @@
         "bh_sharpe": 0.26,
         "pct_invested": 0.553,
         "n_trades": 107,
-        "pe": 15.061913,
-        "pb": 9.438806,
+        "pe": 15.480274,
+        "pb": 9.379222,
         "div_yield": null,
-        "pct_from_high": -26.5,
+        "pct_from_high": -27.0,
         "category": "turnaround"
       },
       {
@@ -30556,10 +30556,10 @@
         "bh_sharpe": 0.54,
         "pct_invested": 0.605,
         "n_trades": 105,
-        "pe": 24.499147,
-        "pb": 11.028374,
+        "pe": 24.477663,
+        "pb": 10.924848,
         "div_yield": 1.39,
-        "pct_from_high": -58.4,
+        "pct_from_high": -58.8,
         "category": "turnaround"
       },
       {
@@ -30572,10 +30572,10 @@
         "bh_sharpe": 0.81,
         "pct_invested": 0.645,
         "n_trades": 95,
-        "pe": 26.816723,
-        "pb": 8.130781,
+        "pe": 26.837492,
+        "pb": 8.096529,
         "div_yield": 75.0,
-        "pct_from_high": -12.5,
+        "pct_from_high": -12.9,
         "category": "turnaround"
       },
       {
@@ -30588,8 +30588,8 @@
         "bh_sharpe": 0.34,
         "pct_invested": 0.575,
         "n_trades": 87,
-        "pe": 22.722162,
-        "pb": 4.930265,
+        "pe": 22.719957,
+        "pb": 4.9297867,
         "div_yield": 85.0,
         "pct_from_high": -23.4,
         "category": "turnaround"
@@ -30604,10 +30604,10 @@
         "bh_sharpe": 0.38,
         "pct_invested": 0.54,
         "n_trades": 52,
-        "pe": 16.360588,
-        "pb": 5.82823,
+        "pe": 16.41824,
+        "pb": 5.8487678,
         "div_yield": null,
-        "pct_from_high": -23.5,
+        "pct_from_high": -23.2,
         "category": "turnaround"
       },
       {
@@ -30620,10 +30620,10 @@
         "bh_sharpe": 0.36,
         "pct_invested": 0.615,
         "n_trades": 122,
-        "pe": 25.007078,
-        "pb": 3.5724068,
+        "pe": 25.119047,
+        "pb": 3.5884025,
         "div_yield": 2.39,
-        "pct_from_high": -15.8,
+        "pct_from_high": -15.4,
         "category": "turnaround"
       }
     ],
@@ -32142,6 +32142,1498 @@
         "bh": 2.2859
       }
     ],
+    "validation_equity": [
+      {
+        "date": "2021-01-15",
+        "switch": 0.9912,
+        "bh": 0.9901
+      },
+      {
+        "date": "2021-01-25",
+        "switch": 0.9996,
+        "bh": 1.0036
+      },
+      {
+        "date": "2021-02-02",
+        "switch": 0.9992,
+        "bh": 0.9973
+      },
+      {
+        "date": "2021-02-10",
+        "switch": 1.0274,
+        "bh": 1.0294
+      },
+      {
+        "date": "2021-02-18",
+        "switch": 1.0307,
+        "bh": 1.0333
+      },
+      {
+        "date": "2021-02-26",
+        "switch": 1.031,
+        "bh": 1.0273
+      },
+      {
+        "date": "2021-03-08",
+        "switch": 1.0702,
+        "bh": 1.0685
+      },
+      {
+        "date": "2021-03-16",
+        "switch": 1.0862,
+        "bh": 1.0893
+      },
+      {
+        "date": "2021-03-24",
+        "switch": 1.0661,
+        "bh": 1.0674
+      },
+      {
+        "date": "2021-04-01",
+        "switch": 1.0905,
+        "bh": 1.1015
+      },
+      {
+        "date": "2021-04-09",
+        "switch": 1.1099,
+        "bh": 1.125
+      },
+      {
+        "date": "2021-04-19",
+        "switch": 1.1117,
+        "bh": 1.1278
+      },
+      {
+        "date": "2021-04-27",
+        "switch": 1.1143,
+        "bh": 1.1297
+      },
+      {
+        "date": "2021-05-05",
+        "switch": 1.1255,
+        "bh": 1.1385
+      },
+      {
+        "date": "2021-05-13",
+        "switch": 1.1328,
+        "bh": 1.1347
+      },
+      {
+        "date": "2021-05-21",
+        "switch": 1.1367,
+        "bh": 1.1418
+      },
+      {
+        "date": "2021-05-31",
+        "switch": 1.1468,
+        "bh": 1.1518
+      },
+      {
+        "date": "2021-06-08",
+        "switch": 1.153,
+        "bh": 1.1648
+      },
+      {
+        "date": "2021-06-16",
+        "switch": 1.1437,
+        "bh": 1.1526
+      },
+      {
+        "date": "2021-06-24",
+        "switch": 1.1507,
+        "bh": 1.1539
+      },
+      {
+        "date": "2021-07-02",
+        "switch": 1.161,
+        "bh": 1.1716
+      },
+      {
+        "date": "2021-07-12",
+        "switch": 1.1577,
+        "bh": 1.1737
+      },
+      {
+        "date": "2021-07-20",
+        "switch": 1.156,
+        "bh": 1.155
+      },
+      {
+        "date": "2021-07-28",
+        "switch": 1.1701,
+        "bh": 1.1713
+      },
+      {
+        "date": "2021-08-05",
+        "switch": 1.1683,
+        "bh": 1.1695
+      },
+      {
+        "date": "2021-08-13",
+        "switch": 1.1765,
+        "bh": 1.1842
+      },
+      {
+        "date": "2021-08-23",
+        "switch": 1.1783,
+        "bh": 1.1765
+      },
+      {
+        "date": "2021-08-31",
+        "switch": 1.1823,
+        "bh": 1.181
+      },
+      {
+        "date": "2021-09-08",
+        "switch": 1.1772,
+        "bh": 1.1729
+      },
+      {
+        "date": "2021-09-16",
+        "switch": 1.1751,
+        "bh": 1.1689
+      },
+      {
+        "date": "2021-09-24",
+        "switch": 1.1742,
+        "bh": 1.1737
+      },
+      {
+        "date": "2021-10-04",
+        "switch": 1.1792,
+        "bh": 1.1515
+      },
+      {
+        "date": "2021-10-12",
+        "switch": 1.1875,
+        "bh": 1.1639
+      },
+      {
+        "date": "2021-10-20",
+        "switch": 1.208,
+        "bh": 1.2073
+      },
+      {
+        "date": "2021-10-28",
+        "switch": 1.2116,
+        "bh": 1.1972
+      },
+      {
+        "date": "2021-11-05",
+        "switch": 1.2167,
+        "bh": 1.2131
+      },
+      {
+        "date": "2021-11-15",
+        "switch": 1.2227,
+        "bh": 1.2201
+      },
+      {
+        "date": "2021-11-23",
+        "switch": 1.231,
+        "bh": 1.2123
+      },
+      {
+        "date": "2021-12-01",
+        "switch": 1.2137,
+        "bh": 1.1567
+      },
+      {
+        "date": "2021-12-09",
+        "switch": 1.2336,
+        "bh": 1.2119
+      },
+      {
+        "date": "2021-12-17",
+        "switch": 1.2363,
+        "bh": 1.2063
+      },
+      {
+        "date": "2021-12-27",
+        "switch": 1.2533,
+        "bh": 1.2386
+      },
+      {
+        "date": "2022-01-04",
+        "switch": 1.263,
+        "bh": 1.2602
+      },
+      {
+        "date": "2022-01-12",
+        "switch": 1.2617,
+        "bh": 1.2521
+      },
+      {
+        "date": "2022-01-20",
+        "switch": 1.24,
+        "bh": 1.1828
+      },
+      {
+        "date": "2022-01-28",
+        "switch": 1.2415,
+        "bh": 1.1736
+      },
+      {
+        "date": "2022-02-07",
+        "switch": 1.2541,
+        "bh": 1.1786
+      },
+      {
+        "date": "2022-02-15",
+        "switch": 1.2518,
+        "bh": 1.1665
+      },
+      {
+        "date": "2022-02-23",
+        "switch": 1.2478,
+        "bh": 1.1039
+      },
+      {
+        "date": "2022-03-03",
+        "switch": 1.2609,
+        "bh": 1.1283
+      },
+      {
+        "date": "2022-03-11",
+        "switch": 1.2641,
+        "bh": 1.0862
+      },
+      {
+        "date": "2022-03-21",
+        "switch": 1.2729,
+        "bh": 1.1508
+      },
+      {
+        "date": "2022-03-29",
+        "switch": 1.2985,
+        "bh": 1.1906
+      },
+      {
+        "date": "2022-04-06",
+        "switch": 1.2918,
+        "bh": 1.1426
+      },
+      {
+        "date": "2022-04-14",
+        "switch": 1.2899,
+        "bh": 1.1195
+      },
+      {
+        "date": "2022-04-22",
+        "switch": 1.2813,
+        "bh": 1.0951
+      },
+      {
+        "date": "2022-05-02",
+        "switch": 1.2718,
+        "bh": 1.0682
+      },
+      {
+        "date": "2022-05-10",
+        "switch": 1.2767,
+        "bh": 1.0371
+      },
+      {
+        "date": "2022-05-18",
+        "switch": 1.2771,
+        "bh": 1.0224
+      },
+      {
+        "date": "2022-05-26",
+        "switch": 1.2825,
+        "bh": 1.0615
+      },
+      {
+        "date": "2022-06-03",
+        "switch": 1.2822,
+        "bh": 1.0682
+      },
+      {
+        "date": "2022-06-13",
+        "switch": 1.2742,
+        "bh": 0.9707
+      },
+      {
+        "date": "2022-06-21",
+        "switch": 1.274,
+        "bh": 0.9794
+      },
+      {
+        "date": "2022-06-29",
+        "switch": 1.2742,
+        "bh": 0.9968
+      },
+      {
+        "date": "2022-07-07",
+        "switch": 1.2754,
+        "bh": 1.0106
+      },
+      {
+        "date": "2022-07-15",
+        "switch": 1.2793,
+        "bh": 1.0048
+      },
+      {
+        "date": "2022-07-25",
+        "switch": 1.2799,
+        "bh": 1.0285
+      },
+      {
+        "date": "2022-08-02",
+        "switch": 1.2867,
+        "bh": 1.0488
+      },
+      {
+        "date": "2022-08-10",
+        "switch": 1.3088,
+        "bh": 1.0844
+      },
+      {
+        "date": "2022-08-18",
+        "switch": 1.3313,
+        "bh": 1.1037
+      },
+      {
+        "date": "2022-08-26",
+        "switch": 1.3038,
+        "bh": 1.0532
+      },
+      {
+        "date": "2022-09-05",
+        "switch": 1.2984,
+        "bh": 1.027
+      },
+      {
+        "date": "2022-09-13",
+        "switch": 1.2943,
+        "bh": 1.0274
+      },
+      {
+        "date": "2022-09-21",
+        "switch": 1.2796,
+        "bh": 0.9826
+      },
+      {
+        "date": "2022-09-29",
+        "switch": 1.2783,
+        "bh": 0.9393
+      },
+      {
+        "date": "2022-10-07",
+        "switch": 1.2873,
+        "bh": 0.9364
+      },
+      {
+        "date": "2022-10-17",
+        "switch": 1.2879,
+        "bh": 0.9563
+      },
+      {
+        "date": "2022-10-25",
+        "switch": 1.3054,
+        "bh": 1.0064
+      },
+      {
+        "date": "2022-11-02",
+        "switch": 1.3238,
+        "bh": 0.9762
+      },
+      {
+        "date": "2022-11-10",
+        "switch": 1.3585,
+        "bh": 1.0331
+      },
+      {
+        "date": "2022-11-18",
+        "switch": 1.3625,
+        "bh": 1.0365
+      },
+      {
+        "date": "2022-11-28",
+        "switch": 1.3644,
+        "bh": 1.0339
+      },
+      {
+        "date": "2022-12-06",
+        "switch": 1.3602,
+        "bh": 1.0242
+      },
+      {
+        "date": "2022-12-14",
+        "switch": 1.3735,
+        "bh": 1.0365
+      },
+      {
+        "date": "2022-12-22",
+        "switch": 1.3574,
+        "bh": 0.9882
+      },
+      {
+        "date": "2022-12-30",
+        "switch": 1.3649,
+        "bh": 0.9982
+      },
+      {
+        "date": "2023-01-09",
+        "switch": 1.3912,
+        "bh": 1.0208
+      },
+      {
+        "date": "2023-01-17",
+        "switch": 1.4035,
+        "bh": 1.0397
+      },
+      {
+        "date": "2023-01-25",
+        "switch": 1.414,
+        "bh": 1.0506
+      },
+      {
+        "date": "2023-02-02",
+        "switch": 1.4579,
+        "bh": 1.0973
+      },
+      {
+        "date": "2023-02-10",
+        "switch": 1.4476,
+        "bh": 1.0782
+      },
+      {
+        "date": "2023-02-20",
+        "switch": 1.436,
+        "bh": 1.0669
+      },
+      {
+        "date": "2023-02-28",
+        "switch": 1.4214,
+        "bh": 1.0286
+      },
+      {
+        "date": "2023-03-08",
+        "switch": 1.4179,
+        "bh": 1.0323
+      },
+      {
+        "date": "2023-03-16",
+        "switch": 1.4338,
+        "bh": 1.0187
+      },
+      {
+        "date": "2023-03-24",
+        "switch": 1.4328,
+        "bh": 1.0232
+      },
+      {
+        "date": "2023-04-03",
+        "switch": 1.4551,
+        "bh": 1.0759
+      },
+      {
+        "date": "2023-04-11",
+        "switch": 1.454,
+        "bh": 1.0741
+      },
+      {
+        "date": "2023-04-19",
+        "switch": 1.4557,
+        "bh": 1.0751
+      },
+      {
+        "date": "2023-04-27",
+        "switch": 1.4701,
+        "bh": 1.0671
+      },
+      {
+        "date": "2023-05-05",
+        "switch": 1.4606,
+        "bh": 1.0587
+      },
+      {
+        "date": "2023-05-15",
+        "switch": 1.4725,
+        "bh": 1.0564
+      },
+      {
+        "date": "2023-05-23",
+        "switch": 1.4861,
+        "bh": 1.08
+      },
+      {
+        "date": "2023-05-31",
+        "switch": 1.5187,
+        "bh": 1.0929
+      },
+      {
+        "date": "2023-06-08",
+        "switch": 1.5436,
+        "bh": 1.135
+      },
+      {
+        "date": "2023-06-16",
+        "switch": 1.5882,
+        "bh": 1.1701
+      },
+      {
+        "date": "2023-06-26",
+        "switch": 1.556,
+        "bh": 1.1338
+      },
+      {
+        "date": "2023-07-04",
+        "switch": 1.5963,
+        "bh": 1.1719
+      },
+      {
+        "date": "2023-07-12",
+        "switch": 1.6084,
+        "bh": 1.1747
+      },
+      {
+        "date": "2023-07-20",
+        "switch": 1.625,
+        "bh": 1.1914
+      },
+      {
+        "date": "2023-07-28",
+        "switch": 1.6503,
+        "bh": 1.218
+      },
+      {
+        "date": "2023-08-07",
+        "switch": 1.6468,
+        "bh": 1.2065
+      },
+      {
+        "date": "2023-08-15",
+        "switch": 1.6405,
+        "bh": 1.185
+      },
+      {
+        "date": "2023-08-23",
+        "switch": 1.6483,
+        "bh": 1.1824
+      },
+      {
+        "date": "2023-08-31",
+        "switch": 1.6701,
+        "bh": 1.206
+      },
+      {
+        "date": "2023-09-08",
+        "switch": 1.6916,
+        "bh": 1.2119
+      },
+      {
+        "date": "2023-09-18",
+        "switch": 1.7044,
+        "bh": 1.2149
+      },
+      {
+        "date": "2023-09-26",
+        "switch": 1.6753,
+        "bh": 1.1617
+      },
+      {
+        "date": "2023-10-04",
+        "switch": 1.6775,
+        "bh": 1.1591
+      },
+      {
+        "date": "2023-10-12",
+        "switch": 1.7063,
+        "bh": 1.1872
+      },
+      {
+        "date": "2023-10-20",
+        "switch": 1.6846,
+        "bh": 1.156
+      },
+      {
+        "date": "2023-10-30",
+        "switch": 1.6877,
+        "bh": 1.1387
+      },
+      {
+        "date": "2023-11-07",
+        "switch": 1.7258,
+        "bh": 1.2027
+      },
+      {
+        "date": "2023-11-15",
+        "switch": 1.7493,
+        "bh": 1.2355
+      },
+      {
+        "date": "2023-11-23",
+        "switch": 1.7743,
+        "bh": 1.2547
+      },
+      {
+        "date": "2023-12-01",
+        "switch": 1.7833,
+        "bh": 1.2619
+      },
+      {
+        "date": "2023-12-11",
+        "switch": 1.7953,
+        "bh": 1.2696
+      },
+      {
+        "date": "2023-12-19",
+        "switch": 1.8544,
+        "bh": 1.315
+      },
+      {
+        "date": "2023-12-27",
+        "switch": 1.8731,
+        "bh": 1.3286
+      },
+      {
+        "date": "2024-01-04",
+        "switch": 1.8576,
+        "bh": 1.3079
+      },
+      {
+        "date": "2024-01-12",
+        "switch": 1.8717,
+        "bh": 1.3176
+      },
+      {
+        "date": "2024-01-22",
+        "switch": 1.8784,
+        "bh": 1.3127
+      },
+      {
+        "date": "2024-01-30",
+        "switch": 1.925,
+        "bh": 1.346
+      },
+      {
+        "date": "2024-02-07",
+        "switch": 1.947,
+        "bh": 1.3593
+      },
+      {
+        "date": "2024-02-15",
+        "switch": 1.962,
+        "bh": 1.3745
+      },
+      {
+        "date": "2024-02-23",
+        "switch": 1.9696,
+        "bh": 1.3774
+      },
+      {
+        "date": "2024-03-04",
+        "switch": 1.9728,
+        "bh": 1.3795
+      },
+      {
+        "date": "2024-03-12",
+        "switch": 1.9736,
+        "bh": 1.3794
+      },
+      {
+        "date": "2024-03-20",
+        "switch": 2.0235,
+        "bh": 1.4195
+      },
+      {
+        "date": "2024-03-28",
+        "switch": 2.0502,
+        "bh": 1.439
+      },
+      {
+        "date": "2024-04-05",
+        "switch": 2.0566,
+        "bh": 1.4301
+      },
+      {
+        "date": "2024-04-15",
+        "switch": 1.9987,
+        "bh": 1.3765
+      },
+      {
+        "date": "2024-04-23",
+        "switch": 2.0253,
+        "bh": 1.3904
+      },
+      {
+        "date": "2024-05-01",
+        "switch": 2.0362,
+        "bh": 1.3771
+      },
+      {
+        "date": "2024-05-09",
+        "switch": 2.0708,
+        "bh": 1.4153
+      },
+      {
+        "date": "2024-05-17",
+        "switch": 2.0944,
+        "bh": 1.4367
+      },
+      {
+        "date": "2024-05-27",
+        "switch": 2.082,
+        "bh": 1.4177
+      },
+      {
+        "date": "2024-06-04",
+        "switch": 2.0928,
+        "bh": 1.4226
+      },
+      {
+        "date": "2024-06-12",
+        "switch": 2.0922,
+        "bh": 1.4297
+      },
+      {
+        "date": "2024-06-20",
+        "switch": 2.104,
+        "bh": 1.4403
+      },
+      {
+        "date": "2024-06-28",
+        "switch": 2.1279,
+        "bh": 1.4628
+      },
+      {
+        "date": "2024-07-08",
+        "switch": 2.1947,
+        "bh": 1.5026
+      },
+      {
+        "date": "2024-07-16",
+        "switch": 2.2294,
+        "bh": 1.5405
+      },
+      {
+        "date": "2024-07-24",
+        "switch": 2.1616,
+        "bh": 1.48
+      },
+      {
+        "date": "2024-08-01",
+        "switch": 2.1668,
+        "bh": 1.4646
+      },
+      {
+        "date": "2024-08-09",
+        "switch": 2.171,
+        "bh": 1.4281
+      },
+      {
+        "date": "2024-08-19",
+        "switch": 2.2133,
+        "bh": 1.5072
+      },
+      {
+        "date": "2024-08-27",
+        "switch": 2.2264,
+        "bh": 1.5102
+      },
+      {
+        "date": "2024-09-04",
+        "switch": 2.2254,
+        "bh": 1.4963
+      },
+      {
+        "date": "2024-09-12",
+        "switch": 2.2254,
+        "bh": 1.4961
+      },
+      {
+        "date": "2024-09-20",
+        "switch": 2.2527,
+        "bh": 1.5341
+      },
+      {
+        "date": "2024-09-30",
+        "switch": 2.2796,
+        "bh": 1.5556
+      },
+      {
+        "date": "2024-10-08",
+        "switch": 2.2772,
+        "bh": 1.5608
+      },
+      {
+        "date": "2024-10-16",
+        "switch": 2.3144,
+        "bh": 1.5876
+      },
+      {
+        "date": "2024-10-24",
+        "switch": 2.2979,
+        "bh": 1.5912
+      },
+      {
+        "date": "2024-11-01",
+        "switch": 2.2727,
+        "bh": 1.5616
+      },
+      {
+        "date": "2024-11-11",
+        "switch": 2.4097,
+        "bh": 1.6694
+      },
+      {
+        "date": "2024-11-19",
+        "switch": 2.3996,
+        "bh": 1.6547
+      },
+      {
+        "date": "2024-11-27",
+        "switch": 2.4198,
+        "bh": 1.6819
+      },
+      {
+        "date": "2024-12-05",
+        "switch": 2.4418,
+        "bh": 1.6987
+      },
+      {
+        "date": "2024-12-13",
+        "switch": 2.4937,
+        "bh": 1.7145
+      },
+      {
+        "date": "2024-12-23",
+        "switch": 2.4921,
+        "bh": 1.6761
+      },
+      {
+        "date": "2024-12-31",
+        "switch": 2.47,
+        "bh": 1.6603
+      },
+      {
+        "date": "2025-01-08",
+        "switch": 2.4743,
+        "bh": 1.6702
+      },
+      {
+        "date": "2025-01-16",
+        "switch": 2.4869,
+        "bh": 1.6926
+      },
+      {
+        "date": "2025-01-24",
+        "switch": 2.5321,
+        "bh": 1.7352
+      },
+      {
+        "date": "2025-02-03",
+        "switch": 2.5188,
+        "bh": 1.7142
+      },
+      {
+        "date": "2025-02-11",
+        "switch": 2.5371,
+        "bh": 1.73
+      },
+      {
+        "date": "2025-02-19",
+        "switch": 2.5669,
+        "bh": 1.768
+      },
+      {
+        "date": "2025-02-27",
+        "switch": 2.5392,
+        "bh": 1.6934
+      },
+      {
+        "date": "2025-03-07",
+        "switch": 2.544,
+        "bh": 1.6897
+      },
+      {
+        "date": "2025-03-17",
+        "switch": 2.5428,
+        "bh": 1.6649
+      },
+      {
+        "date": "2025-03-25",
+        "switch": 2.5643,
+        "bh": 1.7039
+      },
+      {
+        "date": "2025-04-02",
+        "switch": 2.5805,
+        "bh": 1.6751
+      },
+      {
+        "date": "2025-04-10",
+        "switch": 2.5599,
+        "bh": 1.5468
+      },
+      {
+        "date": "2025-04-18",
+        "switch": 2.5713,
+        "bh": 1.5629
+      },
+      {
+        "date": "2025-04-28",
+        "switch": 2.5733,
+        "bh": 1.6385
+      },
+      {
+        "date": "2025-05-06",
+        "switch": 2.5945,
+        "bh": 1.6586
+      },
+      {
+        "date": "2025-05-14",
+        "switch": 2.6507,
+        "bh": 1.7305
+      },
+      {
+        "date": "2025-05-22",
+        "switch": 2.6391,
+        "bh": 1.716
+      },
+      {
+        "date": "2025-05-30",
+        "switch": 2.6586,
+        "bh": 1.7386
+      },
+      {
+        "date": "2025-06-09",
+        "switch": 2.7066,
+        "bh": 1.7669
+      },
+      {
+        "date": "2025-06-17",
+        "switch": 2.7312,
+        "bh": 1.7784
+      },
+      {
+        "date": "2025-06-25",
+        "switch": 2.7705,
+        "bh": 1.8063
+      },
+      {
+        "date": "2025-07-03",
+        "switch": 2.8563,
+        "bh": 1.8686
+      },
+      {
+        "date": "2025-07-11",
+        "switch": 2.8637,
+        "bh": 1.8613
+      },
+      {
+        "date": "2025-07-21",
+        "switch": 2.8608,
+        "bh": 1.858
+      },
+      {
+        "date": "2025-07-29",
+        "switch": 2.8957,
+        "bh": 1.8795
+      },
+      {
+        "date": "2025-08-06",
+        "switch": 2.8914,
+        "bh": 1.8671
+      },
+      {
+        "date": "2025-08-14",
+        "switch": 2.9505,
+        "bh": 1.9242
+      },
+      {
+        "date": "2025-08-22",
+        "switch": 2.9708,
+        "bh": 1.9476
+      },
+      {
+        "date": "2025-09-01",
+        "switch": 2.9747,
+        "bh": 1.9532
+      },
+      {
+        "date": "2025-09-09",
+        "switch": 3.0034,
+        "bh": 1.9686
+      },
+      {
+        "date": "2025-09-17",
+        "switch": 3.0836,
+        "bh": 2.0204
+      },
+      {
+        "date": "2025-09-25",
+        "switch": 3.079,
+        "bh": 2.0095
+      },
+      {
+        "date": "2025-10-03",
+        "switch": 3.1293,
+        "bh": 2.0449
+      },
+      {
+        "date": "2025-10-13",
+        "switch": 3.1171,
+        "bh": 2.0201
+      },
+      {
+        "date": "2025-10-21",
+        "switch": 3.1487,
+        "bh": 2.051
+      },
+      {
+        "date": "2025-10-29",
+        "switch": 3.2305,
+        "bh": 2.1031
+      },
+      {
+        "date": "2025-11-06",
+        "switch": 3.1921,
+        "bh": 2.0463
+      },
+      {
+        "date": "2025-11-14",
+        "switch": 3.2122,
+        "bh": 2.0521
+      },
+      {
+        "date": "2025-11-24",
+        "switch": 3.2401,
+        "bh": 2.0349
+      },
+      {
+        "date": "2025-12-02",
+        "switch": 3.2649,
+        "bh": 2.0585
+      },
+      {
+        "date": "2025-12-10",
+        "switch": 3.3052,
+        "bh": 2.0927
+      },
+      {
+        "date": "2025-12-18",
+        "switch": 3.2839,
+        "bh": 2.041
+      },
+      {
+        "date": "2025-12-26",
+        "switch": 3.3084,
+        "bh": 2.0876
+      },
+      {
+        "date": "2026-01-05",
+        "switch": 3.3358,
+        "bh": 2.0946
+      },
+      {
+        "date": "2026-01-13",
+        "switch": 3.3589,
+        "bh": 2.099
+      },
+      {
+        "date": "2026-01-21",
+        "switch": 3.3651,
+        "bh": 2.0607
+      },
+      {
+        "date": "2026-01-29",
+        "switch": 3.4215,
+        "bh": 2.094
+      },
+      {
+        "date": "2026-02-06",
+        "switch": 3.4788,
+        "bh": 2.101
+      },
+      {
+        "date": "2026-02-16",
+        "switch": 3.4864,
+        "bh": 2.089
+      },
+      {
+        "date": "2026-02-24",
+        "switch": 3.4843,
+        "bh": 2.0784
+      },
+      {
+        "date": "2026-03-04",
+        "switch": 3.501,
+        "bh": 2.1082
+      },
+      {
+        "date": "2026-03-12",
+        "switch": 3.5004,
+        "bh": 2.0738
+      },
+      {
+        "date": "2026-03-20",
+        "switch": 3.5009,
+        "bh": 2.0218
+      },
+      {
+        "date": "2026-03-30",
+        "switch": 3.524,
+        "bh": 1.9802
+      },
+      {
+        "date": "2026-04-07",
+        "switch": 3.5181,
+        "bh": 2.0502
+      },
+      {
+        "date": "2026-04-15",
+        "switch": 3.5967,
+        "bh": 2.1458
+      },
+      {
+        "date": "2026-04-23",
+        "switch": 3.617,
+        "bh": 2.1682
+      },
+      {
+        "date": "2026-05-01",
+        "switch": 3.6552,
+        "bh": 2.1918
+      },
+      {
+        "date": "2026-05-11",
+        "switch": 3.6941,
+        "bh": 2.1923
+      },
+      {
+        "date": "2026-05-19",
+        "switch": 3.6989,
+        "bh": 2.2054
+      },
+      {
+        "date": "2026-05-20",
+        "switch": 3.7019,
+        "bh": 2.2124
+      },
+      {
+        "date": "2026-05-21",
+        "switch": 3.6859,
+        "bh": 2.2026
+      },
+      {
+        "date": "2026-05-22",
+        "switch": 3.6885,
+        "bh": 2.2096
+      },
+      {
+        "date": "2026-05-25",
+        "switch": 3.6885,
+        "bh": 2.2096
+      },
+      {
+        "date": "2026-05-26",
+        "switch": 3.6982,
+        "bh": 2.2011
+      },
+      {
+        "date": "2026-05-27",
+        "switch": 3.7034,
+        "bh": 2.2077
+      },
+      {
+        "date": "2026-05-28",
+        "switch": 3.7218,
+        "bh": 2.2196
+      },
+      {
+        "date": "2026-05-29",
+        "switch": 3.737,
+        "bh": 2.238
+      },
+      {
+        "date": "2026-06-01",
+        "switch": 3.7679,
+        "bh": 2.2473
+      },
+      {
+        "date": "2026-06-02",
+        "switch": 3.7607,
+        "bh": 2.2402
+      },
+      {
+        "date": "2026-06-03",
+        "switch": 3.739,
+        "bh": 2.2198
+      },
+      {
+        "date": "2026-06-04",
+        "switch": 3.7351,
+        "bh": 2.2225
+      },
+      {
+        "date": "2026-06-05",
+        "switch": 3.6984,
+        "bh": 2.1814
+      },
+      {
+        "date": "2026-06-08",
+        "switch": 3.7041,
+        "bh": 2.1809
+      },
+      {
+        "date": "2026-06-09",
+        "switch": 3.6956,
+        "bh": 2.1671
+      },
+      {
+        "date": "2026-06-10",
+        "switch": 3.6747,
+        "bh": 2.147
+      },
+      {
+        "date": "2026-06-11",
+        "switch": 3.6949,
+        "bh": 2.1506
+      },
+      {
+        "date": "2026-06-12",
+        "switch": 3.7017,
+        "bh": 2.1563
+      },
+      {
+        "date": "2026-06-15",
+        "switch": 3.7078,
+        "bh": 2.1746
+      },
+      {
+        "date": "2026-06-16",
+        "switch": 3.478,
+        "bh": 2.1647
+      },
+      {
+        "date": "2026-06-17",
+        "switch": 3.4468,
+        "bh": 2.122
+      },
+      {
+        "date": "2026-06-18",
+        "switch": 3.4448,
+        "bh": 2.1248
+      },
+      {
+        "date": "2026-06-19",
+        "switch": 3.4448,
+        "bh": 2.1248
+      },
+      {
+        "date": "2026-06-22",
+        "switch": 3.4369,
+        "bh": 2.1052
+      },
+      {
+        "date": "2026-06-23",
+        "switch": 3.4424,
+        "bh": 2.1024
+      },
+      {
+        "date": "2026-06-24",
+        "switch": 3.4228,
+        "bh": 2.0865
+      },
+      {
+        "date": "2026-06-25",
+        "switch": 3.4093,
+        "bh": 2.0682
+      },
+      {
+        "date": "2026-06-26",
+        "switch": 3.4435,
+        "bh": 2.098
+      },
+      {
+        "date": "2026-06-29",
+        "switch": 3.4367,
+        "bh": 2.1072
+      },
+      {
+        "date": "2026-06-30",
+        "switch": 3.4251,
+        "bh": 2.0982
+      },
+      {
+        "date": "2026-07-01",
+        "switch": 3.4392,
+        "bh": 2.1232
+      },
+      {
+        "date": "2026-07-02",
+        "switch": 3.4605,
+        "bh": 2.1323
+      },
+      {
+        "date": "2026-07-03",
+        "switch": 3.4605,
+        "bh": 2.1323
+      },
+      {
+        "date": "2026-07-06",
+        "switch": 3.4626,
+        "bh": 2.1404
+      },
+      {
+        "date": "2026-07-07",
+        "switch": 3.4952,
+        "bh": 2.1634
+      },
+      {
+        "date": "2026-07-08",
+        "switch": 3.4879,
+        "bh": 2.1536
+      },
+      {
+        "date": "2026-07-09",
+        "switch": 3.4939,
+        "bh": 2.1681
+      },
+      {
+        "date": "2026-07-10",
+        "switch": 3.5041,
+        "bh": 2.1807
+      },
+      {
+        "date": "2026-07-13",
+        "switch": 3.5211,
+        "bh": 2.1868
+      },
+      {
+        "date": "2026-07-14",
+        "switch": 3.5108,
+        "bh": 2.1794
+      },
+      {
+        "date": "2026-07-15",
+        "switch": 3.5358,
+        "bh": 2.2011
+      },
+      {
+        "date": "2026-07-16",
+        "switch": 3.554,
+        "bh": 2.1993
+      },
+      {
+        "date": "2026-07-17",
+        "switch": 3.5455,
+        "bh": 2.18
+      },
+      {
+        "date": "2026-07-20",
+        "switch": 3.5392,
+        "bh": 2.1762
+      },
+      {
+        "date": "2026-07-21",
+        "switch": 3.5644,
+        "bh": 2.1939
+      },
+      {
+        "date": "2026-07-22",
+        "switch": 3.5769,
+        "bh": 2.1878
+      },
+      {
+        "date": "2026-07-23",
+        "switch": 3.5601,
+        "bh": 2.1474
+      },
+      {
+        "date": "2026-07-24",
+        "switch": 3.5818,
+        "bh": 2.1617
+      },
+      {
+        "date": "2026-07-27",
+        "switch": 3.5788,
+        "bh": 2.1693
+      },
+      {
+        "date": "2026-07-28",
+        "switch": 3.5956,
+        "bh": 2.1886
+      },
+      {
+        "date": "2026-07-29",
+        "switch": 3.5772,
+        "bh": 2.1734
+      },
+      {
+        "date": "2026-07-30",
+        "switch": 3.5956,
+        "bh": 2.1813
+      },
+      {
+        "date": "2026-07-31",
+        "switch": 3.6203,
+        "bh": 2.2052
+      },
+      {
+        "date": "2026-08-03",
+        "switch": 3.6505,
+        "bh": 2.2447
+      },
+      {
+        "date": "2026-08-04",
+        "switch": 3.6719,
+        "bh": 2.2623
+      },
+      {
+        "date": "2026-08-05",
+        "switch": 3.674,
+        "bh": 2.2544
+      },
+      {
+        "date": "2026-08-06",
+        "switch": 3.6879,
+        "bh": 2.2642
+      },
+      {
+        "date": "2026-08-07",
+        "switch": 3.7118,
+        "bh": 2.2873
+      },
+      {
+        "date": "2026-08-10",
+        "switch": 3.7466,
+        "bh": 2.3072
+      },
+      {
+        "date": "2026-08-11",
+        "switch": 3.7323,
+        "bh": 2.2945
+      },
+      {
+        "date": "2026-08-12",
+        "switch": 3.7221,
+        "bh": 2.2842
+      },
+      {
+        "date": "2026-08-13",
+        "switch": 3.7444,
+        "bh": 2.3053
+      },
+      {
+        "date": "2026-08-14",
+        "switch": 3.7367,
+        "bh": 2.3025
+      },
+      {
+        "date": "2026-08-17",
+        "switch": 3.7269,
+        "bh": 2.284
+      },
+      {
+        "date": "2026-08-18",
+        "switch": 3.7393,
+        "bh": 2.2859
+      }
+    ],
     "months_switch": {
       "2021": {
         "1": -1.5,
@@ -32607,7 +34099,7 @@
         "ticker": "AAPL",
         "name": "Apple",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "Momentum",
         "signal_margin": 0.94,
         "sharpe": 1.8,
         "bh_sharpe": 0.86,
@@ -32757,8 +34249,8 @@
         "bh_sharpe": 0.23,
         "pct_invested": 0.513,
         "n_trades": 137,
-        "pe": 12.65641,
-        "pb": 1.9734528,
+        "pe": 12.8515625,
+        "pb": 1.973053,
         "div_yield": 5.73,
         "pct_from_high": -4.5,
         "category": "value"
@@ -32767,16 +34259,16 @@
         "ticker": "T",
         "name": "AT&T Inc.",
         "signal": "LONG",
-        "strategy": "RSI",
+        "strategy": "Momentum",
         "signal_margin": 1.916,
         "sharpe": 1.01,
         "bh_sharpe": 0.27,
         "pct_invested": 0.597,
         "n_trades": 103,
-        "pe": 8.290429,
-        "pb": 1.5645243,
+        "pe": 8.301914,
+        "pb": 1.5666916,
         "div_yield": 4.42,
-        "pct_from_high": -15.7,
+        "pct_from_high": -15.6,
         "category": "value"
       },
       {
@@ -32789,10 +34281,10 @@
         "bh_sharpe": 0.28,
         "pct_invested": 0.588,
         "n_trades": 117,
-        "pe": 12.925925,
-        "pb": 1.6144536,
+        "pe": 12.534929,
+        "pb": 1.6139395,
         "div_yield": 3.31,
-        "pct_from_high": -4.9,
+        "pct_from_high": -5.0,
         "category": "value"
       },
       {
@@ -32805,10 +34297,10 @@
         "bh_sharpe": 0.11,
         "pct_invested": 0.531,
         "n_trades": 105,
-        "pe": 35.746834,
-        "pb": 1.8894687,
+        "pe": 36.519737,
+        "pb": 1.8570186,
         "div_yield": 6.09,
-        "pct_from_high": -1.8,
+        "pct_from_high": -3.5,
         "category": "value"
       },
       {
@@ -32821,10 +34313,10 @@
         "bh_sharpe": 0.46,
         "pct_invested": 0.549,
         "n_trades": 111,
-        "pe": 17.159,
-        "pb": 2.4005,
+        "pe": 17.86508,
+        "pb": 2.4828575,
         "div_yield": 2.57,
-        "pct_from_high": -3.9,
+        "pct_from_high": -0.6,
         "category": "value"
       },
       {
@@ -32837,10 +34329,10 @@
         "bh_sharpe": 0.45,
         "pct_invested": 0.649,
         "n_trades": 83,
-        "pe": 14.828637,
-        "pb": 1.6056632,
+        "pe": 14.54328,
+        "pb": 1.6006405,
         "div_yield": 2.03,
-        "pct_from_high": -3.2,
+        "pct_from_high": -3.5,
         "category": "value"
       },
       {
@@ -32853,10 +34345,10 @@
         "bh_sharpe": 0.25,
         "pct_invested": 0.558,
         "n_trades": 110,
-        "pe": 11.522011,
-        "pb": 1.7166493,
+        "pe": 11.482637,
+        "pb": 1.7185982,
         "div_yield": 2.25,
-        "pct_from_high": -12.1,
+        "pct_from_high": -12.0,
         "category": "value"
       },
       {
@@ -32869,26 +34361,26 @@
         "bh_sharpe": 0.42,
         "pct_invested": 0.586,
         "n_trades": 120,
-        "pe": 18.670694,
-        "pb": 1.7927073,
+        "pe": 18.653324,
+        "pb": 1.7910393,
         "div_yield": 3.51,
-        "pct_from_high": -8.1,
+        "pct_from_high": -8.2,
         "category": "value"
       },
       {
         "ticker": "UPS",
         "name": "United Parcel Service, Inc.",
         "signal": "LONG",
-        "strategy": "Double_MA",
+        "strategy": "Momentum",
         "signal_margin": -0.333,
         "sharpe": 0.94,
         "bh_sharpe": 0.14,
         "pct_invested": 0.543,
         "n_trades": 97,
-        "pe": 18.942911,
-        "pb": 5.8096585,
+        "pe": 19.020447,
+        "pb": 5.779723,
         "div_yield": 6.38,
-        "pct_from_high": -16.0,
+        "pct_from_high": -16.4,
         "category": "value"
       },
       {
@@ -32901,10 +34393,10 @@
         "bh_sharpe": 0.47,
         "pct_invested": 0.583,
         "n_trades": 113,
-        "pe": 21.315653,
-        "pb": 2.6120799,
+        "pe": 21.709574,
+        "pb": 2.660352,
         "div_yield": 2.5,
-        "pct_from_high": -6.6,
+        "pct_from_high": -4.8,
         "category": "value"
       },
       {
@@ -32917,10 +34409,10 @@
         "bh_sharpe": 0.59,
         "pct_invested": 0.638,
         "n_trades": 95,
-        "pe": 74.823524,
-        "pb": 10.507186,
+        "pe": 75.71177,
+        "pb": 10.631919,
         "div_yield": null,
-        "pct_from_high": -34.7,
+        "pct_from_high": -33.9,
         "category": "turnaround"
       },
       {
@@ -32933,8 +34425,8 @@
         "bh_sharpe": 0.49,
         "pct_invested": 0.64,
         "n_trades": 84,
-        "pe": 20.488932,
-        "pb": 5.326083,
+        "pe": 20.577991,
+        "pb": 5.3271546,
         "div_yield": 38.0,
         "pct_from_high": -31.0,
         "category": "turnaround"
@@ -32949,10 +34441,10 @@
         "bh_sharpe": 0.99,
         "pct_invested": 0.728,
         "n_trades": 87,
-        "pe": 63.260036,
-        "pb": 19.667933,
+        "pe": 60.840534,
+        "pb": 19.873034,
         "div_yield": 72.0,
-        "pct_from_high": -26.8,
+        "pct_from_high": -26.0,
         "category": "turnaround"
       },
       {
@@ -32965,10 +34457,10 @@
         "bh_sharpe": 0.54,
         "pct_invested": 0.64,
         "n_trades": 99,
-        "pe": 24.457317,
-        "pb": 11.07858,
+        "pe": 25.13522,
+        "pb": 11.03853,
         "div_yield": null,
-        "pct_from_high": -36.7,
+        "pct_from_high": -36.9,
         "category": "turnaround"
       },
       {
@@ -32981,10 +34473,10 @@
         "bh_sharpe": 0.26,
         "pct_invested": 0.553,
         "n_trades": 107,
-        "pe": 15.061913,
-        "pb": 9.438806,
+        "pe": 15.480274,
+        "pb": 9.379222,
         "div_yield": null,
-        "pct_from_high": -26.5,
+        "pct_from_high": -27.0,
         "category": "turnaround"
       },
       {
@@ -32997,10 +34489,10 @@
         "bh_sharpe": 0.54,
         "pct_invested": 0.605,
         "n_trades": 105,
-        "pe": 24.499147,
-        "pb": 11.028374,
+        "pe": 24.477663,
+        "pb": 10.924848,
         "div_yield": 1.39,
-        "pct_from_high": -58.4,
+        "pct_from_high": -58.8,
         "category": "turnaround"
       },
       {
@@ -33013,10 +34505,10 @@
         "bh_sharpe": 0.81,
         "pct_invested": 0.645,
         "n_trades": 95,
-        "pe": 26.816723,
-        "pb": 8.130781,
+        "pe": 26.837492,
+        "pb": 8.096529,
         "div_yield": 75.0,
-        "pct_from_high": -12.5,
+        "pct_from_high": -12.9,
         "category": "turnaround"
       },
       {
@@ -33029,8 +34521,8 @@
         "bh_sharpe": 0.34,
         "pct_invested": 0.575,
         "n_trades": 87,
-        "pe": 22.722162,
-        "pb": 4.930265,
+        "pe": 22.719957,
+        "pb": 4.9297867,
         "div_yield": 85.0,
         "pct_from_high": -23.4,
         "category": "turnaround"
@@ -33045,10 +34537,10 @@
         "bh_sharpe": 0.38,
         "pct_invested": 0.54,
         "n_trades": 52,
-        "pe": 16.360588,
-        "pb": 5.82823,
+        "pe": 16.41824,
+        "pb": 5.8487678,
         "div_yield": null,
-        "pct_from_high": -23.5,
+        "pct_from_high": -23.2,
         "category": "turnaround"
       },
       {
@@ -33061,10 +34553,10 @@
         "bh_sharpe": 0.36,
         "pct_invested": 0.615,
         "n_trades": 122,
-        "pe": 25.007078,
-        "pb": 3.5724068,
+        "pe": 25.119047,
+        "pb": 3.5884025,
         "div_yield": 2.39,
-        "pct_from_high": -15.8,
+        "pct_from_high": -15.4,
         "category": "turnaround"
       }
     ],
