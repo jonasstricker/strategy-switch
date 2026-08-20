@@ -123,6 +123,21 @@ class AlpacaClient:
     def get_positions(self) -> list:
         return self._call("GET", "/v2/positions")
 
+    def get_cumulative_deposits(self) -> float:
+        """Sum of all executed cash deposits/withdrawals (net contributions).
+        Used to separate strategy performance from capital in/outflows."""
+        try:
+            acts = self._call("GET", "/v2/account/activities?activity_types=CSD,CSW")
+        except Exception:
+            return 0.0
+        total = 0.0
+        for a in acts or []:
+            try:
+                total += float(a.get("net_amount", 0))
+            except (TypeError, ValueError):
+                continue
+        return round(total, 2)
+
     def get_position(self, symbol: str) -> dict | None:
         try:
             return self._call("GET", f"/v2/positions/{symbol}")
@@ -359,6 +374,12 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
     log.info(f"Konto: ${equity:,.2f} Equity  |  ${cash:,.2f} Cash")
     log.info(f"Account Status: {account.get('status')} | Trading blocked: {account.get('trading_blocked')} | Transfers blocked: {account.get('transfers_blocked')}")
 
+    # Net capital contributions (deposits − withdrawals) — used to separate
+    # strategy performance from capital in/outflows in the trade log.
+    cum_deposits = client.get_cumulative_deposits()
+    if cum_deposits:
+        log.info(f"Kumulierte Einzahlungen: ${cum_deposits:,.2f}")
+
     # Current positions
     positions = client.get_positions()
     current = {}
@@ -387,7 +408,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
     if not targets and current:
         log.warning("⚠️  Keine Targets berechnet aber Positionen vorhanden — "
                      "überspringe Trading um versehentliche Liquidation zu vermeiden!")
-        _save_trade_log(equity, cash, current, prices, targets, [], execute, live)
+        _save_trade_log(equity, cash, current, prices, targets, [], execute, live, cum_deposits)
         return True
 
     for sym in targets:
@@ -406,7 +427,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
 
     if not orders:
         print("\n✅ Keine Orders nötig — Portfolio ist aktuell.")
-        _save_trade_log(equity, cash, current, prices, targets, [], execute, live)
+        _save_trade_log(equity, cash, current, prices, targets, [], execute, live, cum_deposits)
         return True
 
     # Execute or dry-run
@@ -455,7 +476,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
         print(f"  Für echte Orders: --execute (oder TRADING_ENABLED=1)")
 
     # ── Save daily trade log ──
-    _save_trade_log(equity, cash, current, prices, targets, executed_orders, execute, live)
+    _save_trade_log(equity, cash, current, prices, targets, executed_orders, execute, live, cum_deposits)
 
     return True
 
@@ -593,7 +614,7 @@ def _save_failed_orders(failed_orders: list, targets: dict):
     log.info(f"Failed orders gespeichert: {FAILED_ORDERS_FILE}")
 
 
-def _save_trade_log(equity, cash, positions, prices, targets, orders, executed, live: bool = False):
+def _save_trade_log(equity, cash, positions, prices, targets, orders, executed, live: bool = False, cum_deposits: float = 0.0):
     """Append daily entry to trade_log.json (paper) or trade_log_live.json (live)."""
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
@@ -623,6 +644,10 @@ def _save_trade_log(equity, cash, positions, prices, targets, orders, executed, 
                     for o in orders],
         "executed": executed,
     }
+    # Net capital contributions (deposits − withdrawals). Lets the return
+    # calculation stay honest across deposits: real profit = equity − cum_deposits.
+    if cum_deposits:
+        entry["cum_deposits"] = round(cum_deposits, 2)
 
     # Load existing log
     log_data = []
