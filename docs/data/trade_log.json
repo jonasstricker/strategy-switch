@@ -12855,5 +12855,263 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-08-29 02:27 UTC",
+    "equity": 103193.08,
+    "cash": 26789.14,
+    "invested": 76403.94,
+    "pct_invested": 74.0,
+    "n_positions": 20,
+    "positions": {
+      "AAPL": {
+        "qty": 11.472,
+        "price": 319.7,
+        "value": 3667.6
+      },
+      "ADBE": {
+        "qty": 8.831,
+        "price": 291.52,
+        "value": 2574.41
+      },
+      "AMZN": {
+        "qty": 13.995,
+        "price": 266.43,
+        "value": 3728.69
+      },
+      "AVGO": {
+        "qty": 16.504,
+        "price": 368.79,
+        "value": 6086.51
+      },
+      "BAC": {
+        "qty": 66.974,
+        "price": 62.32,
+        "value": 4173.82
+      },
+      "BRK.B": {
+        "qty": 7.041,
+        "price": 505.0,
+        "value": 3555.71
+      },
+      "COP": {
+        "qty": 31.703,
+        "price": 130.35,
+        "value": 4132.49
+      },
+      "CRM": {
+        "qty": 10.196,
+        "price": 256.0,
+        "value": 2610.18
+      },
+      "LLY": {
+        "qty": 3.056,
+        "price": 1174.61,
+        "value": 3589.61
+      },
+      "MSFT": {
+        "qty": 12.209,
+        "price": 513.53,
+        "value": 6269.69
+      },
+      "NFLX": {
+        "qty": 31.968,
+        "price": 81.72,
+        "value": 2612.42
+      },
+      "NOW": {
+        "qty": 18.548,
+        "price": 144.71,
+        "value": 2684.08
+      },
+      "NVDA": {
+        "qty": 15.856,
+        "price": 217.55,
+        "value": 3449.47
+      },
+      "ORCL": {
+        "qty": 16.851,
+        "price": 150.85,
+        "value": 2541.97
+      },
+      "PFE": {
+        "qty": 146.44,
+        "price": 27.96,
+        "value": 4094.46
+      },
+      "T": {
+        "qty": 161.343,
+        "price": 26.01,
+        "value": 4196.53
+      },
+      "UPS": {
+        "qty": 38.623,
+        "price": 105.33,
+        "value": 4068.16
+      },
+      "USB": {
+        "qty": 65.487,
+        "price": 62.47,
+        "value": 4090.97
+      },
+      "VZ": {
+        "qty": 83.239,
+        "price": 50.1,
+        "value": 4170.27
+      },
+      "XOM": {
+        "qty": 26.207,
+        "price": 156.71,
+        "value": 4106.9
+      }
+    },
+    "targets": {
+      "NVDA": {
+        "dollars": 3611.76,
+        "reason": "swarm NVDA LONG"
+      },
+      "AAPL": {
+        "dollars": 3611.76,
+        "reason": "swarm AAPL LONG"
+      },
+      "MSFT": {
+        "dollars": 6191.58,
+        "reason": "swarm MSFT LONG + turnaround"
+      },
+      "AMZN": {
+        "dollars": 3611.76,
+        "reason": "swarm AMZN LONG"
+      },
+      "AVGO": {
+        "dollars": 6191.58,
+        "reason": "swarm AVGO LONG + turnaround"
+      },
+      "BRK.B": {
+        "dollars": 3611.76,
+        "reason": "swarm BRK-B LONG"
+      },
+      "LLY": {
+        "dollars": 3611.76,
+        "reason": "swarm LLY LONG"
+      },
+      "VZ": {
+        "dollars": 4127.72,
+        "reason": "value VZ LONG"
+      },
+      "T": {
+        "dollars": 4127.72,
+        "reason": "value T LONG"
+      },
+      "USB": {
+        "dollars": 4127.72,
+        "reason": "value USB LONG"
+      },
+      "PFE": {
+        "dollars": 4127.72,
+        "reason": "value PFE LONG"
+      },
+      "COP": {
+        "dollars": 4127.72,
+        "reason": "value COP LONG"
+      },
+      "BAC": {
+        "dollars": 4127.72,
+        "reason": "value BAC LONG"
+      },
+      "UPS": {
+        "dollars": 4127.72,
+        "reason": "value UPS LONG"
+      },
+      "XOM": {
+        "dollars": 4127.72,
+        "reason": "value XOM LONG"
+      },
+      "NOW": {
+        "dollars": 2579.83,
+        "reason": "turnaround NOW LONG"
+      },
+      "NFLX": {
+        "dollars": 2579.83,
+        "reason": "turnaround NFLX LONG"
+      },
+      "ADBE": {
+        "dollars": 2579.83,
+        "reason": "turnaround ADBE LONG"
+      },
+      "ORCL": {
+        "dollars": 2579.83,
+        "reason": "turnaround ORCL LONG"
+      },
+      "CRM": {
+        "dollars": 2579.83,
+        "reason": "turnaround CRM LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AAPL",
+        "side": "sell",
+        "qty": 0.175,
+        "value": 55.95,
+        "status": "accepted"
+      },
+      {
+        "symbol": "AMZN",
+        "side": "sell",
+        "qty": 0.439,
+        "value": 116.96,
+        "status": "accepted"
+      },
+      {
+        "symbol": "AVGO",
+        "side": "buy",
+        "qty": 0.285,
+        "value": 105.11,
+        "status": "accepted"
+      },
+      {
+        "symbol": "BRK.B",
+        "side": "buy",
+        "qty": 0.111,
+        "value": 56.05,
+        "status": "accepted"
+      },
+      {
+        "symbol": "MSFT",
+        "side": "sell",
+        "qty": 0.152,
+        "value": 78.06,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NOW",
+        "side": "sell",
+        "qty": 0.72,
+        "value": 104.19,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NVDA",
+        "side": "buy",
+        "qty": 0.746,
+        "value": 162.29,
+        "status": "accepted"
+      },
+      {
+        "symbol": "T",
+        "side": "sell",
+        "qty": 2.645,
+        "value": 68.8,
+        "status": "accepted"
+      },
+      {
+        "symbol": "UPS",
+        "side": "buy",
+        "qty": 0.565,
+        "value": 59.51,
+        "status": "accepted"
+      }
+    ],
+    "executed": true
   }
 ]
