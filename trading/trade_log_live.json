@@ -8628,5 +8628,163 @@
     "orders": [],
     "executed": true,
     "cum_deposits": 8000.0
+  },
+  {
+    "date": "2026-09-22 22:25 UTC",
+    "equity": 8020.68,
+    "cash": 3844.57,
+    "invested": 4176.11,
+    "pct_invested": 52.1,
+    "n_positions": 15,
+    "positions": {
+      "AAPL": {
+        "qty": 0.894,
+        "price": 339.87,
+        "value": 303.84
+      },
+      "ADBE": {
+        "qty": 0.474,
+        "price": 239.0,
+        "value": 113.29
+      },
+      "AMZN": {
+        "qty": 1.286,
+        "price": 255.25,
+        "value": 328.25
+      },
+      "BRK.B": {
+        "qty": 0.566,
+        "price": 503.87,
+        "value": 285.19
+      },
+      "COP": {
+        "qty": 2.474,
+        "price": 125.51,
+        "value": 310.51
+      },
+      "CRM": {
+        "qty": 0.625,
+        "price": 233.25,
+        "value": 145.78
+      },
+      "MSFT": {
+        "qty": 0.89,
+        "price": 500.38,
+        "value": 445.34
+      },
+      "NFLX": {
+        "qty": 1.569,
+        "price": 72.28,
+        "value": 113.41
+      },
+      "NOW": {
+        "qty": 1.15,
+        "price": 137.05,
+        "value": 157.61
+      },
+      "NVDA": {
+        "qty": 1.3,
+        "price": 228.41,
+        "value": 296.93
+      },
+      "PFE": {
+        "qty": 13.344,
+        "price": 27.88,
+        "value": 372.03
+      },
+      "T": {
+        "qty": 12.854,
+        "price": 25.14,
+        "value": 323.13
+      },
+      "USB": {
+        "qty": 6.076,
+        "price": 59.44,
+        "value": 361.16
+      },
+      "VZ": {
+        "qty": 6.561,
+        "price": 46.59,
+        "value": 305.68
+      },
+      "XOM": {
+        "qty": 1.976,
+        "price": 158.89,
+        "value": 313.97
+      }
+    },
+    "targets": {
+      "NVDA": {
+        "dollars": 320.83,
+        "reason": "swarm NVDA LONG"
+      },
+      "AAPL": {
+        "dollars": 320.83,
+        "reason": "swarm AAPL LONG"
+      },
+      "MSFT": {
+        "dollars": 481.24,
+        "reason": "swarm MSFT LONG + turnaround"
+      },
+      "AMZN": {
+        "dollars": 320.83,
+        "reason": "swarm AMZN LONG"
+      },
+      "BRK.B": {
+        "dollars": 320.83,
+        "reason": "swarm BRK-B LONG"
+      },
+      "VZ": {
+        "dollars": 320.83,
+        "reason": "value VZ LONG"
+      },
+      "T": {
+        "dollars": 320.83,
+        "reason": "value T LONG"
+      },
+      "USB": {
+        "dollars": 320.83,
+        "reason": "value USB LONG"
+      },
+      "PFE": {
+        "dollars": 320.83,
+        "reason": "value PFE LONG"
+      },
+      "COP": {
+        "dollars": 320.83,
+        "reason": "value COP LONG"
+      },
+      "XOM": {
+        "dollars": 320.83,
+        "reason": "value XOM LONG"
+      },
+      "NOW": {
+        "dollars": 160.41,
+        "reason": "turnaround NOW LONG"
+      },
+      "NFLX": {
+        "dollars": 160.41,
+        "reason": "turnaround NFLX LONG"
+      },
+      "ADBE": {
+        "dollars": 160.41,
+        "reason": "turnaround ADBE LONG"
+      },
+      "CRM": {
+        "dollars": 160.41,
+        "reason": "turnaround CRM LONG"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "PFE",
+        "side": "sell",
+        "qty": 1.837,
+        "value": 51.22,
+        "status": "accepted"
+      }
+    ],
+    "executed": true,
+    "cum_deposits": 8000.0
   }
 ]
