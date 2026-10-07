@@ -1,12 +1,12 @@
 {
-  "updated": "06.10.2026 01:34",
+  "updated": "07.10.2026 00:13",
   "etfs": [
     {
       "ticker": "SXR8.DE",
       "name": "S&P100_EU",
       "signal": "LONG",
       "strategy": "MA",
-      "price": 739.48,
+      "price": 746.66,
       "last_date": "15.09.2026",
       "sharpe_switch": 1.28,
       "sharpe_bh": 0.79,
@@ -2973,8 +2973,8 @@
       "ticker": "URTH",
       "name": "MSCI World",
       "signal": "LONG",
-      "strategy": "Dual_Momentum",
-      "price": 207.53,
+      "strategy": "RSI",
+      "price": 208.55,
       "last_date": "25.09.2026",
       "sharpe_switch": 1.33,
       "sharpe_bh": 0.63,
@@ -4193,7 +4193,7 @@
         },
         {
           "date": "2018-02-23",
-          "switch": 1.3612,
+          "switch": 1.3613,
           "bh": 1.3805,
           "cash": false
         },
@@ -4536,7 +4536,7 @@
         {
           "date": "2020-08-20",
           "switch": 2.1043,
-          "bh": 1.6289,
+          "bh": 1.629,
           "cash": false
         },
         {
@@ -5129,7 +5129,7 @@
         },
         {
           "date": "2024-12-18",
-          "switch": 4.3531,
+          "switch": 4.353,
           "bh": 2.7047,
           "cash": false
         },
@@ -5321,7 +5321,7 @@
         },
         {
           "date": "2026-05-18",
-          "switch": 5.1727,
+          "switch": 5.1726,
           "bh": 3.541,
           "cash": false
         },
@@ -5815,7 +5815,7 @@
         {
           "Datum": "12.08.2024",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Dual_Momentum aktiv",
+          "Grund": "Strategie RSI aktiv",
           "Kurs": "$140.72",
           "Rendite": null
         },
@@ -5829,7 +5829,7 @@
         {
           "Datum": "07.01.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Dual_Momentum aktiv",
+          "Grund": "Strategie MA aktiv",
           "Kurs": "$152.95",
           "Rendite": null
         },
@@ -5843,7 +5843,7 @@
         {
           "Datum": "23.01.2025",
           "Aktion": "KAUF URTH",
-          "Grund": "Strategie Dual_Momentum aktiv",
+          "Grund": "Strategie MA aktiv",
           "Kurs": "$158.29",
           "Rendite": null
         },
@@ -5932,7 +5932,7 @@
       "name": "Emerging Markets",
       "signal": "CASH",
       "strategy": "Cash",
-      "price": 67.67,
+      "price": 68.73,
       "last_date": "17.09.2026",
       "sharpe_switch": 0.78,
       "sharpe_bh": 0.25,
@@ -6882,7 +6882,7 @@
         {
           "date": "2008-12-19",
           "switch": 1.2552,
-          "bh": 0.6886,
+          "bh": 0.6885,
           "cash": true
         },
         {
@@ -7061,7 +7061,7 @@
         },
         {
           "date": "2011-03-28",
-          "switch": 2.2118,
+          "switch": 2.2117,
           "bh": 1.3339,
           "cash": false
         },
@@ -7127,7 +7127,7 @@
         },
         {
           "date": "2012-01-25",
-          "switch": 2.373,
+          "switch": 2.3729,
           "bh": 1.2219,
           "cash": false
         },
@@ -7188,7 +7188,7 @@
         {
           "date": "2012-10-24",
           "switch": 2.3043,
-          "bh": 1.2006,
+          "bh": 1.2005,
           "cash": false
         },
         {
@@ -7199,7 +7199,7 @@
         },
         {
           "date": "2012-12-20",
-          "switch": 2.4808,
+          "switch": 2.4807,
           "bh": 1.2869,
           "cash": false
         },
@@ -7433,13 +7433,13 @@
         },
         {
           "date": "2015-12-01",
-          "switch": 2.9063,
+          "switch": 2.9062,
           "bh": 1.0607,
           "cash": true
         },
         {
           "date": "2015-12-29",
-          "switch": 2.9063,
+          "switch": 2.9062,
           "bh": 1.0316,
           "cash": true
         },
@@ -7505,7 +7505,7 @@
         },
         {
           "date": "2016-10-26",
-          "switch": 3.3987,
+          "switch": 3.3986,
           "bh": 1.1856,
           "cash": false
         },
@@ -7769,7 +7769,7 @@
         },
         {
           "date": "2020-02-25",
-          "switch": 5.1087,
+          "switch": 5.1086,
           "bh": 1.4213,
           "cash": true
         },
@@ -7793,7 +7793,7 @@
         },
         {
           "date": "2020-06-12",
-          "switch": 5.3967,
+          "switch": 5.3966,
           "bh": 1.3707,
           "cash": false
         },
@@ -8081,7 +8081,7 @@
         },
         {
           "date": "2024-01-29",
-          "switch": 7.9087,
+          "switch": 7.9086,
           "bh": 1.4569,
           "cash": true
         },
@@ -8117,7 +8117,7 @@
         },
         {
           "date": "2024-07-12",
-          "switch": 9.1361,
+          "switch": 9.136,
           "bh": 1.6781,
           "cash": false
         },
@@ -8153,13 +8153,13 @@
         },
         {
           "date": "2024-12-23",
-          "switch": 9.019,
+          "switch": 9.0189,
           "bh": 1.6297,
           "cash": true
         },
         {
           "date": "2025-01-23",
-          "switch": 9.019,
+          "switch": 9.0189,
           "bh": 1.6359,
           "cash": true
         },
@@ -8171,7 +8171,7 @@
         },
         {
           "date": "2025-03-19",
-          "switch": 9.0486,
+          "switch": 9.0485,
           "bh": 1.7336,
           "cash": true
         },
@@ -8243,7 +8243,7 @@
         },
         {
           "date": "2026-02-13",
-          "switch": 11.946,
+          "switch": 11.9459,
           "bh": 2.3997,
           "cash": false
         },
@@ -8267,7 +8267,7 @@
         },
         {
           "date": "2026-06-04",
-          "switch": 13.5057,
+          "switch": 13.5056,
           "bh": 2.713,
           "cash": false
         },
@@ -8988,7 +8988,7 @@
         {
           "Datum": "13.09.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie Double_MA aktiv",
+          "Grund": "Strategie MA aktiv",
           "Kurs": "$40.91",
           "Rendite": null
         },
@@ -9002,7 +9002,7 @@
         {
           "Datum": "02.12.2024",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie Double_MA aktiv",
+          "Grund": "Strategie MA aktiv",
           "Kurs": "$41.49",
           "Rendite": null
         },
@@ -9072,7 +9072,7 @@
         {
           "Datum": "18.08.2026",
           "Aktion": "KAUF EEM",
-          "Grund": "Strategie Double_MA aktiv",
+          "Grund": "Strategie MA aktiv",
           "Kurs": "$65.34",
           "Rendite": null
         },
@@ -9112,7 +9112,7 @@
       "name": "FTSE Europe",
       "signal": "LONG",
       "strategy": "MA",
-      "price": 86.38,
+      "price": 86.28,
       "last_date": "23.09.2026",
       "sharpe_switch": 0.92,
       "sharpe_bh": 0.25,
@@ -10307,7 +10307,7 @@
         },
         {
           "date": "2012-12-26",
-          "switch": 1.8543,
+          "switch": 1.8544,
           "bh": 0.9024,
           "cash": false
         },
@@ -10439,7 +10439,7 @@
         },
         {
           "date": "2014-07-24",
-          "switch": 2.4649,
+          "switch": 2.465,
           "bh": 1.1798,
           "cash": false
         },
@@ -10565,19 +10565,19 @@
         },
         {
           "date": "2016-01-25",
-          "switch": 2.8146,
+          "switch": 2.8147,
           "bh": 0.9453,
           "cash": true
         },
         {
           "date": "2016-02-19",
-          "switch": 2.8146,
+          "switch": 2.8147,
           "bh": 0.9534,
           "cash": true
         },
         {
           "date": "2016-03-16",
-          "switch": 2.8146,
+          "switch": 2.8147,
           "bh": 1.0071,
           "cash": true
         },
@@ -10763,7 +10763,7 @@
         },
         {
           "date": "2018-06-04",
-          "switch": 3.6349,
+          "switch": 3.635,
           "bh": 1.2993,
           "cash": false
         },
@@ -10931,7 +10931,7 @@
         },
         {
           "date": "2020-06-04",
-          "switch": 4.507,
+          "switch": 4.5071,
           "bh": 1.2345,
           "cash": false
         },
@@ -11027,7 +11027,7 @@
         },
         {
           "date": "2021-07-27",
-          "switch": 6.0433,
+          "switch": 6.0434,
           "bh": 1.6859,
           "cash": false
         },
@@ -11045,7 +11045,7 @@
         },
         {
           "date": "2021-10-12",
-          "switch": 6.1999,
+          "switch": 6.2,
           "bh": 1.6463,
           "cash": true
         },
@@ -11117,25 +11117,25 @@
         },
         {
           "date": "2022-08-22",
-          "switch": 6.2212,
+          "switch": 6.2213,
           "bh": 1.3665,
           "cash": false
         },
         {
           "date": "2022-09-16",
-          "switch": 6.2212,
+          "switch": 6.2213,
           "bh": 1.3041,
           "cash": true
         },
         {
           "date": "2022-10-12",
-          "switch": 6.2212,
+          "switch": 6.2213,
           "bh": 1.1857,
           "cash": true
         },
         {
           "date": "2022-11-07",
-          "switch": 6.2212,
+          "switch": 6.2213,
           "bh": 1.3335,
           "cash": true
         },
@@ -11171,7 +11171,7 @@
         },
         {
           "date": "2023-04-14",
-          "switch": 7.6084,
+          "switch": 7.6085,
           "bh": 1.65,
           "cash": false
         },
@@ -11183,7 +11183,7 @@
         },
         {
           "date": "2023-06-06",
-          "switch": 7.4153,
+          "switch": 7.4154,
           "bh": 1.6081,
           "cash": false
         },
@@ -11213,13 +11213,13 @@
         },
         {
           "date": "2023-10-13",
-          "switch": 7.3605,
+          "switch": 7.3606,
           "bh": 1.5406,
           "cash": true
         },
         {
           "date": "2023-11-08",
-          "switch": 7.3605,
+          "switch": 7.3606,
           "bh": 1.5535,
           "cash": true
         },
@@ -11231,13 +11231,13 @@
         },
         {
           "date": "2024-01-02",
-          "switch": 7.7488,
+          "switch": 7.7489,
           "bh": 1.7157,
           "cash": false
         },
         {
           "date": "2024-01-29",
-          "switch": 7.806,
+          "switch": 7.8061,
           "bh": 1.7283,
           "cash": false
         },
@@ -11249,7 +11249,7 @@
         },
         {
           "date": "2024-03-20",
-          "switch": 8.1086,
+          "switch": 8.1087,
           "bh": 1.8211,
           "cash": false
         },
@@ -11261,7 +11261,7 @@
         },
         {
           "date": "2024-05-10",
-          "switch": 8.4191,
+          "switch": 8.4192,
           "bh": 1.8677,
           "cash": false
         },
@@ -11303,7 +11303,7 @@
         },
         {
           "date": "2024-11-08",
-          "switch": 8.4261,
+          "switch": 8.4262,
           "bh": 1.8327,
           "cash": true
         },
@@ -11327,19 +11327,19 @@
         },
         {
           "date": "2025-02-26",
-          "switch": 8.7652,
+          "switch": 8.7653,
           "bh": 1.9745,
           "cash": false
         },
         {
           "date": "2025-03-24",
-          "switch": 8.9164,
+          "switch": 8.9165,
           "bh": 2.0085,
           "cash": false
         },
         {
           "date": "2025-04-17",
-          "switch": 8.1286,
+          "switch": 8.1287,
           "bh": 1.9581,
           "cash": false
         },
@@ -11363,7 +11363,7 @@
         },
         {
           "date": "2025-08-01",
-          "switch": 9.0204,
+          "switch": 9.0205,
           "bh": 2.1384,
           "cash": true
         },
@@ -11375,7 +11375,7 @@
         },
         {
           "date": "2025-09-23",
-          "switch": 9.3796,
+          "switch": 9.3797,
           "bh": 2.2622,
           "cash": false
         },
@@ -11387,13 +11387,13 @@
         },
         {
           "date": "2025-11-12",
-          "switch": 9.7174,
+          "switch": 9.7175,
           "bh": 2.3437,
           "cash": false
         },
         {
           "date": "2025-12-09",
-          "switch": 9.7778,
+          "switch": 9.7779,
           "bh": 2.3249,
           "cash": false
         },
@@ -11411,19 +11411,19 @@
         },
         {
           "date": "2026-02-27",
-          "switch": 10.9055,
+          "switch": 10.9056,
           "bh": 2.593,
           "cash": false
         },
         {
           "date": "2026-03-25",
-          "switch": 10.2818,
+          "switch": 10.2819,
           "bh": 2.3622,
           "cash": false
         },
         {
           "date": "2026-04-21",
-          "switch": 10.8362,
+          "switch": 10.8363,
           "bh": 2.5107,
           "cash": false
         },
@@ -11441,25 +11441,25 @@
         },
         {
           "date": "2026-07-09",
-          "switch": 11.0138,
+          "switch": 11.0139,
           "bh": 2.5891,
           "cash": false
         },
         {
           "date": "2026-08-04",
-          "switch": 11.4575,
+          "switch": 11.4576,
           "bh": 2.6896,
           "cash": false
         },
         {
           "date": "2026-08-28",
-          "switch": 11.475,
+          "switch": 11.4751,
           "bh": 2.6937,
           "cash": false
         },
         {
           "date": "2026-09-23",
-          "switch": 11.1556,
+          "switch": 11.1557,
           "bh": 2.5838,
           "cash": true
         }
@@ -12168,7 +12168,7 @@
         {
           "Datum": "25.11.2025",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Dual_Momentum aktiv",
+          "Grund": "Strategie Momentum aktiv",
           "Kurs": "$77.86",
           "Rendite": null
         },
@@ -12224,7 +12224,7 @@
         {
           "Datum": "27.07.2026",
           "Aktion": "KAUF VGK",
-          "Grund": "Strategie Dual_Momentum aktiv",
+          "Grund": "Strategie Momentum aktiv",
           "Kurs": "$88.62",
           "Rendite": null
         }
@@ -12864,7 +12864,7 @@
       },
       {
         "date": "2021-10-21",
-        "switch": 2.4879,
+        "switch": 2.488,
         "bh": 1.6243
       },
       {
@@ -13154,7 +13154,7 @@
       },
       {
         "date": "2024-04-02",
-        "switch": 4.5691,
+        "switch": 4.5692,
         "bh": 1.9732
       },
       {
@@ -13284,7 +13284,7 @@
       },
       {
         "date": "2025-05-07",
-        "switch": 5.7867,
+        "switch": 5.7868,
         "bh": 2.369
       },
       {
@@ -13329,7 +13329,7 @@
       },
       {
         "date": "2025-09-23",
-        "switch": 7.47,
+        "switch": 7.4701,
         "bh": 3.1388
       },
       {
@@ -13514,7 +13514,7 @@
       },
       {
         "date": "2026-07-31",
-        "switch": 9.1047,
+        "switch": 9.1048,
         "bh": 3.1725
       },
       {
@@ -13549,7 +13549,7 @@
       },
       {
         "date": "2026-08-11",
-        "switch": 9.2863,
+        "switch": 9.2864,
         "bh": 3.3025
       },
       {
@@ -13559,7 +13559,7 @@
       },
       {
         "date": "2026-08-13",
-        "switch": 9.2653,
+        "switch": 9.2654,
         "bh": 3.3028
       },
       {
@@ -13639,12 +13639,12 @@
       },
       {
         "date": "2026-09-04",
-        "switch": 9.2842,
+        "switch": 9.2843,
         "bh": 3.2793
       },
       {
         "date": "2026-09-07",
-        "switch": 9.2842,
+        "switch": 9.2843,
         "bh": 3.2793
       },
       {
@@ -13659,7 +13659,7 @@
       },
       {
         "date": "2026-09-10",
-        "switch": 9.2224,
+        "switch": 9.2225,
         "bh": 3.2703
       },
       {
@@ -13699,7 +13699,7 @@
       },
       {
         "date": "2026-09-22",
-        "switch": 9.3524,
+        "switch": 9.3525,
         "bh": 3.4029
       },
       {
@@ -18319,39 +18319,39 @@
         "bh_sharpe": 0.26,
         "pct_invested": 0.518,
         "n_trades": 137,
-        "pe": 11.9401045,
-        "pb": 1.8331201,
-        "div_yield": 6.16,
-        "pct_from_high": -11.3
+        "pe": 11.973958,
+        "pb": 1.8383176,
+        "div_yield": 6.17,
+        "pct_from_high": -11.0
       },
       {
         "ticker": "T",
         "name": "AT&T Inc.",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "RSI",
         "signal_margin": 3.518,
         "sharpe": 1.06,
         "bh_sharpe": 0.3,
         "pct_invested": 0.601,
         "n_trades": 103,
-        "pe": 8.0,
-        "pb": 1.509716,
-        "div_yield": 4.57,
-        "pct_from_high": -17.7
+        "pe": 8.062706,
+        "pb": 1.5215496,
+        "div_yield": 4.58,
+        "pct_from_high": -17.0
       },
       {
         "ticker": "USB",
         "name": "U.S. Bancorp",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "Momentum",
         "signal_margin": -0.2,
         "sharpe": 0.89,
         "bh_sharpe": 0.27,
         "pct_invested": 0.59,
         "n_trades": 119,
-        "pe": 11.431137,
-        "pb": 1.4718204,
-        "div_yield": 3.76,
+        "pe": 11.435129,
+        "pb": 1.4723344,
+        "div_yield": 3.77,
         "pct_from_high": -13.3
       },
       {
@@ -18364,25 +18364,25 @@
         "bh_sharpe": 0.13,
         "pct_invested": 0.536,
         "n_trades": 105,
-        "pe": 36.06579,
-        "pb": 1.8336902,
-        "div_yield": 6.19,
-        "pct_from_high": -6.2
+        "pe": 36.18421,
+        "pb": 1.839711,
+        "div_yield": 6.28,
+        "pct_from_high": -5.9
       },
       {
         "ticker": "COP",
         "name": "ConocoPhillips",
         "signal": "LONG",
-        "strategy": "RSI",
+        "strategy": "Momentum",
         "signal_margin": 4.864,
         "sharpe": 1.31,
         "bh_sharpe": 0.49,
         "pct_invested": 0.553,
         "n_trades": 111,
-        "pe": 17.00662,
-        "pb": 2.3604243,
-        "div_yield": 2.65,
-        "pct_from_high": -9.3
+        "pe": 17.13245,
+        "pb": 2.3778887,
+        "div_yield": 2.62,
+        "pct_from_high": -8.7
       },
       {
         "ticker": "BAC",
@@ -18394,10 +18394,10 @@
         "bh_sharpe": 0.42,
         "pct_invested": 0.652,
         "n_trades": 84,
-        "pe": 12.471132,
-        "pb": 1.372579,
-        "div_yield": 2.38,
-        "pct_from_high": -17.2
+        "pe": 12.491917,
+        "pb": 1.3748666,
+        "div_yield": 2.37,
+        "pct_from_high": -17.1
       },
       {
         "ticker": "CI",
@@ -18409,10 +18409,10 @@
         "bh_sharpe": 0.26,
         "pct_invested": 0.555,
         "n_trades": 112,
-        "pe": 11.214965,
-        "pb": 1.6785359,
-        "div_yield": 2.31,
-        "pct_from_high": -13.1
+        "pe": 11.34229,
+        "pb": 1.6975925,
+        "div_yield": 2.3,
+        "pct_from_high": -12.1
       },
       {
         "ticker": "DUK",
@@ -18424,10 +18424,10 @@
         "bh_sharpe": 0.4,
         "pct_invested": 0.582,
         "n_trades": 122,
-        "pe": 17.144579,
-        "pb": 1.6511472,
-        "div_yield": 3.8,
-        "pct_from_high": -15.4
+        "pe": 17.418676,
+        "pb": 1.6775448,
+        "div_yield": 3.81,
+        "pct_from_high": -14.0
       },
       {
         "ticker": "UPS",
@@ -18439,9 +18439,9 @@
         "bh_sharpe": 0.14,
         "pct_invested": 0.538,
         "n_trades": 98,
-        "pe": 17.312267,
-        "pb": 5.2606606,
-        "div_yield": 7.05,
+        "pe": 17.306692,
+        "pb": 5.2589664,
+        "div_yield": 7.04,
         "pct_from_high": -23.9
       },
       {
@@ -18454,10 +18454,10 @@
         "bh_sharpe": 0.48,
         "pct_invested": 0.587,
         "n_trades": 113,
-        "pe": 21.106821,
-        "pb": 2.599873,
+        "pe": 21.168596,
+        "pb": 2.6074824,
         "div_yield": 2.51,
-        "pct_from_high": -7.0
+        "pct_from_high": -6.8
       }
     ],
     "n_long": 6,
@@ -18851,7 +18851,7 @@
       },
       {
         "date": "2022-10-20",
-        "switch": 1.2497,
+        "switch": 1.2498,
         "bh": 0.971
       },
       {
@@ -19901,7 +19901,7 @@
       },
       {
         "date": "2026-09-23",
-        "switch": 2.9929,
+        "switch": 2.993,
         "bh": 1.9078
       },
       {
@@ -21305,7 +21305,7 @@
         },
         {
           "date": "2026-04-15",
-          "value": 1.0279,
+          "value": 1.0278,
           "cash": true,
           "switch": 1.143
         },
@@ -24266,10 +24266,10 @@
         "bh_sharpe": 0.62,
         "pct_invested": 0.641,
         "n_trades": 95,
-        "pe": 85.05,
-        "pb": 11.240707,
+        "pe": 86.23125,
+        "pb": 11.396828,
         "div_yield": null,
-        "pct_from_high": -29.5
+        "pct_from_high": -28.5
       },
       {
         "ticker": "META",
@@ -24281,10 +24281,10 @@
         "bh_sharpe": 0.52,
         "pct_invested": 0.634,
         "n_trades": 84,
-        "pe": 27.954031,
-        "pb": 7.236637,
-        "div_yield": 29.0,
-        "pct_from_high": -4.9
+        "pe": 27.84024,
+        "pb": 7.2071795,
+        "div_yield": 28.0,
+        "pct_from_high": -5.2
       },
       {
         "ticker": "AVGO",
@@ -24296,10 +24296,10 @@
         "bh_sharpe": 0.93,
         "pct_invested": 0.722,
         "n_trades": 88,
-        "pe": 46.297577,
-        "pb": 17.359928,
-        "div_yield": 73.0,
-        "pct_from_high": -26.8
+        "pe": 47.99617,
+        "pb": 17.99684,
+        "div_yield": 72.0,
+        "pct_from_high": -24.1
       },
       {
         "ticker": "NFLX",
@@ -24311,10 +24311,10 @@
         "bh_sharpe": 0.54,
         "pct_invested": 0.643,
         "n_trades": 99,
-        "pe": 21.226414,
-        "pb": 9.321917,
+        "pe": 21.60063,
+        "pb": 9.4862585,
         "div_yield": null,
-        "pct_from_high": -45.9
+        "pct_from_high": -45.0
       },
       {
         "ticker": "ADBE",
@@ -24326,10 +24326,10 @@
         "bh_sharpe": 0.25,
         "pct_invested": 0.558,
         "n_trades": 107,
-        "pe": 13.332496,
-        "pb": 7.9364843,
+        "pe": 13.295365,
+        "pb": 7.9143815,
         "div_yield": null,
-        "pct_from_high": -34.3
+        "pct_from_high": -34.5
       },
       {
         "ticker": "ORCL",
@@ -24341,10 +24341,10 @@
         "bh_sharpe": 0.51,
         "pct_invested": 0.603,
         "n_trades": 108,
-        "pe": 22.332287,
-        "pb": 6.9699636,
-        "div_yield": 1.41,
-        "pct_from_high": -55.8
+        "pe": 22.34105,
+        "pb": 11.1019945,
+        "div_yield": 1.4,
+        "pct_from_high": -55.1
       },
       {
         "ticker": "MSFT",
@@ -24356,10 +24356,10 @@
         "bh_sharpe": 0.81,
         "pct_invested": 0.649,
         "n_trades": 95,
-        "pe": 29.257936,
-        "pb": 8.816923,
-        "div_yield": 76.0,
-        "pct_from_high": -5.2
+        "pe": 29.487463,
+        "pb": 8.886091,
+        "div_yield": 75.0,
+        "pct_from_high": -4.4
       },
       {
         "ticker": "CRM",
@@ -24371,10 +24371,10 @@
         "bh_sharpe": 0.42,
         "pct_invested": 0.579,
         "n_trades": 87,
-        "pe": 21.023787,
-        "pb": 4.927732,
-        "div_yield": 75.0,
-        "pct_from_high": -14.6
+        "pe": 20.58463,
+        "pb": 4.8247986,
+        "div_yield": 77.0,
+        "pct_from_high": -16.4
       },
       {
         "ticker": "UBER",
@@ -24386,8 +24386,8 @@
         "bh_sharpe": 0.36,
         "pct_invested": 0.539,
         "n_trades": 54,
-        "pe": 15.236843,
-        "pb": 5.188947,
+        "pe": 15.149123,
+        "pb": 5.159074,
         "div_yield": null,
         "pct_from_high": -31.4
       },
@@ -24401,10 +24401,10 @@
         "bh_sharpe": 0.35,
         "pct_invested": 0.609,
         "n_trades": 122,
-        "pe": 24.34598,
-        "pb": 3.4802034,
-        "div_yield": 2.5,
-        "pct_from_high": -18.0
+        "pe": 24.341526,
+        "pb": 3.4594278,
+        "div_yield": 2.45,
+        "pct_from_high": -18.5
       }
     ],
     "n_long": 5,
@@ -28682,7 +28682,7 @@
         },
         {
           "date": "2025-12-23",
-          "value": 1.0977,
+          "value": 1.0978,
           "cash": true,
           "switch": 0.9839
         },
@@ -29776,7 +29776,7 @@
         "4": -2.1,
         "5": 0.0,
         "6": -0.4,
-        "7": 1.9,
+        "7": 2.0,
         "8": 1.1,
         "9": -0.2,
         "10": 1.5,
@@ -30373,41 +30373,41 @@
         "bh_sharpe": 0.26,
         "pct_invested": 0.518,
         "n_trades": 137,
-        "pe": 11.9401045,
-        "pb": 1.8331201,
-        "div_yield": 6.16,
-        "pct_from_high": -11.3,
+        "pe": 11.973958,
+        "pb": 1.8383176,
+        "div_yield": 6.17,
+        "pct_from_high": -11.0,
         "category": "value"
       },
       {
         "ticker": "T",
         "name": "AT&T Inc.",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "RSI",
         "signal_margin": 3.518,
         "sharpe": 1.06,
         "bh_sharpe": 0.3,
         "pct_invested": 0.601,
         "n_trades": 103,
-        "pe": 8.0,
-        "pb": 1.509716,
-        "div_yield": 4.57,
-        "pct_from_high": -17.7,
+        "pe": 8.062706,
+        "pb": 1.5215496,
+        "div_yield": 4.58,
+        "pct_from_high": -17.0,
         "category": "value"
       },
       {
         "ticker": "USB",
         "name": "U.S. Bancorp",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "Momentum",
         "signal_margin": -0.2,
         "sharpe": 0.89,
         "bh_sharpe": 0.27,
         "pct_invested": 0.59,
         "n_trades": 119,
-        "pe": 11.431137,
-        "pb": 1.4718204,
-        "div_yield": 3.76,
+        "pe": 11.435129,
+        "pb": 1.4723344,
+        "div_yield": 3.77,
         "pct_from_high": -13.3,
         "category": "value"
       },
@@ -30421,26 +30421,26 @@
         "bh_sharpe": 0.13,
         "pct_invested": 0.536,
         "n_trades": 105,
-        "pe": 36.06579,
-        "pb": 1.8336902,
-        "div_yield": 6.19,
-        "pct_from_high": -6.2,
+        "pe": 36.18421,
+        "pb": 1.839711,
+        "div_yield": 6.28,
+        "pct_from_high": -5.9,
         "category": "value"
       },
       {
         "ticker": "COP",
         "name": "ConocoPhillips",
         "signal": "LONG",
-        "strategy": "RSI",
+        "strategy": "Momentum",
         "signal_margin": 4.864,
         "sharpe": 1.31,
         "bh_sharpe": 0.49,
         "pct_invested": 0.553,
         "n_trades": 111,
-        "pe": 17.00662,
-        "pb": 2.3604243,
-        "div_yield": 2.65,
-        "pct_from_high": -9.3,
+        "pe": 17.13245,
+        "pb": 2.3778887,
+        "div_yield": 2.62,
+        "pct_from_high": -8.7,
         "category": "value"
       },
       {
@@ -30453,10 +30453,10 @@
         "bh_sharpe": 0.42,
         "pct_invested": 0.652,
         "n_trades": 84,
-        "pe": 12.471132,
-        "pb": 1.372579,
-        "div_yield": 2.38,
-        "pct_from_high": -17.2,
+        "pe": 12.491917,
+        "pb": 1.3748666,
+        "div_yield": 2.37,
+        "pct_from_high": -17.1,
         "category": "value"
       },
       {
@@ -30469,10 +30469,10 @@
         "bh_sharpe": 0.26,
         "pct_invested": 0.555,
         "n_trades": 112,
-        "pe": 11.214965,
-        "pb": 1.6785359,
-        "div_yield": 2.31,
-        "pct_from_high": -13.1,
+        "pe": 11.34229,
+        "pb": 1.6975925,
+        "div_yield": 2.3,
+        "pct_from_high": -12.1,
         "category": "value"
       },
       {
@@ -30485,10 +30485,10 @@
         "bh_sharpe": 0.4,
         "pct_invested": 0.582,
         "n_trades": 122,
-        "pe": 17.144579,
-        "pb": 1.6511472,
-        "div_yield": 3.8,
-        "pct_from_high": -15.4,
+        "pe": 17.418676,
+        "pb": 1.6775448,
+        "div_yield": 3.81,
+        "pct_from_high": -14.0,
         "category": "value"
       },
       {
@@ -30501,9 +30501,9 @@
         "bh_sharpe": 0.14,
         "pct_invested": 0.538,
         "n_trades": 98,
-        "pe": 17.312267,
-        "pb": 5.2606606,
-        "div_yield": 7.05,
+        "pe": 17.306692,
+        "pb": 5.2589664,
+        "div_yield": 7.04,
         "pct_from_high": -23.9,
         "category": "value"
       },
@@ -30517,10 +30517,10 @@
         "bh_sharpe": 0.48,
         "pct_invested": 0.587,
         "n_trades": 113,
-        "pe": 21.106821,
-        "pb": 2.599873,
+        "pe": 21.168596,
+        "pb": 2.6074824,
         "div_yield": 2.51,
-        "pct_from_high": -7.0,
+        "pct_from_high": -6.8,
         "category": "value"
       },
       {
@@ -30533,10 +30533,10 @@
         "bh_sharpe": 0.62,
         "pct_invested": 0.641,
         "n_trades": 95,
-        "pe": 85.05,
-        "pb": 11.240707,
+        "pe": 86.23125,
+        "pb": 11.396828,
         "div_yield": null,
-        "pct_from_high": -29.5,
+        "pct_from_high": -28.5,
         "category": "turnaround"
       },
       {
@@ -30549,10 +30549,10 @@
         "bh_sharpe": 0.52,
         "pct_invested": 0.634,
         "n_trades": 84,
-        "pe": 27.954031,
-        "pb": 7.236637,
-        "div_yield": 29.0,
-        "pct_from_high": -4.9,
+        "pe": 27.84024,
+        "pb": 7.2071795,
+        "div_yield": 28.0,
+        "pct_from_high": -5.2,
         "category": "turnaround"
       },
       {
@@ -30565,10 +30565,10 @@
         "bh_sharpe": 0.93,
         "pct_invested": 0.722,
         "n_trades": 88,
-        "pe": 46.297577,
-        "pb": 17.359928,
-        "div_yield": 73.0,
-        "pct_from_high": -26.8,
+        "pe": 47.99617,
+        "pb": 17.99684,
+        "div_yield": 72.0,
+        "pct_from_high": -24.1,
         "category": "turnaround"
       },
       {
@@ -30581,10 +30581,10 @@
         "bh_sharpe": 0.54,
         "pct_invested": 0.643,
         "n_trades": 99,
-        "pe": 21.226414,
-        "pb": 9.321917,
+        "pe": 21.60063,
+        "pb": 9.4862585,
         "div_yield": null,
-        "pct_from_high": -45.9,
+        "pct_from_high": -45.0,
         "category": "turnaround"
       },
       {
@@ -30597,10 +30597,10 @@
         "bh_sharpe": 0.25,
         "pct_invested": 0.558,
         "n_trades": 107,
-        "pe": 13.332496,
-        "pb": 7.9364843,
+        "pe": 13.295365,
+        "pb": 7.9143815,
         "div_yield": null,
-        "pct_from_high": -34.3,
+        "pct_from_high": -34.5,
         "category": "turnaround"
       },
       {
@@ -30613,10 +30613,10 @@
         "bh_sharpe": 0.51,
         "pct_invested": 0.603,
         "n_trades": 108,
-        "pe": 22.332287,
-        "pb": 6.9699636,
-        "div_yield": 1.41,
-        "pct_from_high": -55.8,
+        "pe": 22.34105,
+        "pb": 11.1019945,
+        "div_yield": 1.4,
+        "pct_from_high": -55.1,
         "category": "turnaround"
       },
       {
@@ -30629,10 +30629,10 @@
         "bh_sharpe": 0.81,
         "pct_invested": 0.649,
         "n_trades": 95,
-        "pe": 29.257936,
-        "pb": 8.816923,
-        "div_yield": 76.0,
-        "pct_from_high": -5.2,
+        "pe": 29.487463,
+        "pb": 8.886091,
+        "div_yield": 75.0,
+        "pct_from_high": -4.4,
         "category": "turnaround"
       },
       {
@@ -30645,10 +30645,10 @@
         "bh_sharpe": 0.42,
         "pct_invested": 0.579,
         "n_trades": 87,
-        "pe": 21.023787,
-        "pb": 4.927732,
-        "div_yield": 75.0,
-        "pct_from_high": -14.6,
+        "pe": 20.58463,
+        "pb": 4.8247986,
+        "div_yield": 77.0,
+        "pct_from_high": -16.4,
         "category": "turnaround"
       },
       {
@@ -30661,8 +30661,8 @@
         "bh_sharpe": 0.36,
         "pct_invested": 0.539,
         "n_trades": 54,
-        "pe": 15.236843,
-        "pb": 5.188947,
+        "pe": 15.149123,
+        "pb": 5.159074,
         "div_yield": null,
         "pct_from_high": -31.4,
         "category": "turnaround"
@@ -30677,10 +30677,10 @@
         "bh_sharpe": 0.35,
         "pct_invested": 0.609,
         "n_trades": 122,
-        "pe": 24.34598,
-        "pb": 3.4802034,
-        "div_yield": 2.5,
-        "pct_from_high": -18.0,
+        "pe": 24.341526,
+        "pb": 3.4594278,
+        "div_yield": 2.45,
+        "pct_from_high": -18.5,
         "category": "turnaround"
       }
     ],
@@ -31410,7 +31410,7 @@
       },
       {
         "date": "2024-10-18",
-        "switch": 2.2529,
+        "switch": 2.253,
         "bh": 1.5471
       },
       {
@@ -32444,6 +32444,11 @@
         "date": "2026-10-05",
         "switch": 1.0077,
         "bh": 1.0477
+      },
+      {
+        "date": "2026-10-06",
+        "switch": 1.0077,
+        "bh": 1.0477
       }
     ],
     "months_switch": {
@@ -33065,41 +33070,41 @@
         "bh_sharpe": 0.26,
         "pct_invested": 0.518,
         "n_trades": 137,
-        "pe": 11.9401045,
-        "pb": 1.8331201,
-        "div_yield": 6.16,
-        "pct_from_high": -11.3,
+        "pe": 11.973958,
+        "pb": 1.8383176,
+        "div_yield": 6.17,
+        "pct_from_high": -11.0,
         "category": "value"
       },
       {
         "ticker": "T",
         "name": "AT&T Inc.",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "RSI",
         "signal_margin": 3.518,
         "sharpe": 1.06,
         "bh_sharpe": 0.3,
         "pct_invested": 0.601,
         "n_trades": 103,
-        "pe": 8.0,
-        "pb": 1.509716,
-        "div_yield": 4.57,
-        "pct_from_high": -17.7,
+        "pe": 8.062706,
+        "pb": 1.5215496,
+        "div_yield": 4.58,
+        "pct_from_high": -17.0,
         "category": "value"
       },
       {
         "ticker": "USB",
         "name": "U.S. Bancorp",
         "signal": "LONG",
-        "strategy": "MA",
+        "strategy": "Momentum",
         "signal_margin": -0.2,
         "sharpe": 0.89,
         "bh_sharpe": 0.27,
         "pct_invested": 0.59,
         "n_trades": 119,
-        "pe": 11.431137,
-        "pb": 1.4718204,
-        "div_yield": 3.76,
+        "pe": 11.435129,
+        "pb": 1.4723344,
+        "div_yield": 3.77,
         "pct_from_high": -13.3,
         "category": "value"
       },
@@ -33113,26 +33118,26 @@
         "bh_sharpe": 0.13,
         "pct_invested": 0.536,
         "n_trades": 105,
-        "pe": 36.06579,
-        "pb": 1.8336902,
-        "div_yield": 6.19,
-        "pct_from_high": -6.2,
+        "pe": 36.18421,
+        "pb": 1.839711,
+        "div_yield": 6.28,
+        "pct_from_high": -5.9,
         "category": "value"
       },
       {
         "ticker": "COP",
         "name": "ConocoPhillips",
         "signal": "LONG",
-        "strategy": "RSI",
+        "strategy": "Momentum",
         "signal_margin": 4.864,
         "sharpe": 1.31,
         "bh_sharpe": 0.49,
         "pct_invested": 0.553,
         "n_trades": 111,
-        "pe": 17.00662,
-        "pb": 2.3604243,
-        "div_yield": 2.65,
-        "pct_from_high": -9.3,
+        "pe": 17.13245,
+        "pb": 2.3778887,
+        "div_yield": 2.62,
+        "pct_from_high": -8.7,
         "category": "value"
       },
       {
@@ -33145,10 +33150,10 @@
         "bh_sharpe": 0.42,
         "pct_invested": 0.652,
         "n_trades": 84,
-        "pe": 12.471132,
-        "pb": 1.372579,
-        "div_yield": 2.38,
-        "pct_from_high": -17.2,
+        "pe": 12.491917,
+        "pb": 1.3748666,
+        "div_yield": 2.37,
+        "pct_from_high": -17.1,
         "category": "value"
       },
       {
@@ -33161,10 +33166,10 @@
         "bh_sharpe": 0.26,
         "pct_invested": 0.555,
         "n_trades": 112,
-        "pe": 11.214965,
-        "pb": 1.6785359,
-        "div_yield": 2.31,
-        "pct_from_high": -13.1,
+        "pe": 11.34229,
+        "pb": 1.6975925,
+        "div_yield": 2.3,
+        "pct_from_high": -12.1,
         "category": "value"
       },
       {
@@ -33177,10 +33182,10 @@
         "bh_sharpe": 0.4,
         "pct_invested": 0.582,
         "n_trades": 122,
-        "pe": 17.144579,
-        "pb": 1.6511472,
-        "div_yield": 3.8,
-        "pct_from_high": -15.4,
+        "pe": 17.418676,
+        "pb": 1.6775448,
+        "div_yield": 3.81,
+        "pct_from_high": -14.0,
         "category": "value"
       },
       {
@@ -33193,9 +33198,9 @@
         "bh_sharpe": 0.14,
         "pct_invested": 0.538,
         "n_trades": 98,
-        "pe": 17.312267,
-        "pb": 5.2606606,
-        "div_yield": 7.05,
+        "pe": 17.306692,
+        "pb": 5.2589664,
+        "div_yield": 7.04,
         "pct_from_high": -23.9,
         "category": "value"
       },
@@ -33209,10 +33214,10 @@
         "bh_sharpe": 0.48,
         "pct_invested": 0.587,
         "n_trades": 113,
-        "pe": 21.106821,
-        "pb": 2.599873,
+        "pe": 21.168596,
+        "pb": 2.6074824,
         "div_yield": 2.51,
-        "pct_from_high": -7.0,
+        "pct_from_high": -6.8,
         "category": "value"
       },
       {
@@ -33225,10 +33230,10 @@
         "bh_sharpe": 0.62,
         "pct_invested": 0.641,
         "n_trades": 95,
-        "pe": 85.05,
-        "pb": 11.240707,
+        "pe": 86.23125,
+        "pb": 11.396828,
         "div_yield": null,
-        "pct_from_high": -29.5,
+        "pct_from_high": -28.5,
         "category": "turnaround"
       },
       {
@@ -33241,10 +33246,10 @@
         "bh_sharpe": 0.52,
         "pct_invested": 0.634,
         "n_trades": 84,
-        "pe": 27.954031,
-        "pb": 7.236637,
-        "div_yield": 29.0,
-        "pct_from_high": -4.9,
+        "pe": 27.84024,
+        "pb": 7.2071795,
+        "div_yield": 28.0,
+        "pct_from_high": -5.2,
         "category": "turnaround"
       },
       {
@@ -33257,10 +33262,10 @@
         "bh_sharpe": 0.93,
         "pct_invested": 0.722,
         "n_trades": 88,
-        "pe": 46.297577,
-        "pb": 17.359928,
-        "div_yield": 73.0,
-        "pct_from_high": -26.8,
+        "pe": 47.99617,
+        "pb": 17.99684,
+        "div_yield": 72.0,
+        "pct_from_high": -24.1,
         "category": "turnaround"
       },
       {
@@ -33273,10 +33278,10 @@
         "bh_sharpe": 0.54,
         "pct_invested": 0.643,
         "n_trades": 99,
-        "pe": 21.226414,
-        "pb": 9.321917,
+        "pe": 21.60063,
+        "pb": 9.4862585,
         "div_yield": null,
-        "pct_from_high": -45.9,
+        "pct_from_high": -45.0,
         "category": "turnaround"
       },
       {
@@ -33289,10 +33294,10 @@
         "bh_sharpe": 0.25,
         "pct_invested": 0.558,
         "n_trades": 107,
-        "pe": 13.332496,
-        "pb": 7.9364843,
+        "pe": 13.295365,
+        "pb": 7.9143815,
         "div_yield": null,
-        "pct_from_high": -34.3,
+        "pct_from_high": -34.5,
         "category": "turnaround"
       },
       {
@@ -33305,10 +33310,10 @@
         "bh_sharpe": 0.51,
         "pct_invested": 0.603,
         "n_trades": 108,
-        "pe": 22.332287,
-        "pb": 6.9699636,
-        "div_yield": 1.41,
-        "pct_from_high": -55.8,
+        "pe": 22.34105,
+        "pb": 11.1019945,
+        "div_yield": 1.4,
+        "pct_from_high": -55.1,
         "category": "turnaround"
       },
       {
@@ -33321,10 +33326,10 @@
         "bh_sharpe": 0.81,
         "pct_invested": 0.649,
         "n_trades": 95,
-        "pe": 29.257936,
-        "pb": 8.816923,
-        "div_yield": 76.0,
-        "pct_from_high": -5.2,
+        "pe": 29.487463,
+        "pb": 8.886091,
+        "div_yield": 75.0,
+        "pct_from_high": -4.4,
         "category": "turnaround"
       },
       {
@@ -33337,10 +33342,10 @@
         "bh_sharpe": 0.42,
         "pct_invested": 0.579,
         "n_trades": 87,
-        "pe": 21.023787,
-        "pb": 4.927732,
-        "div_yield": 75.0,
-        "pct_from_high": -14.6,
+        "pe": 20.58463,
+        "pb": 4.8247986,
+        "div_yield": 77.0,
+        "pct_from_high": -16.4,
         "category": "turnaround"
       },
       {
@@ -33353,8 +33358,8 @@
         "bh_sharpe": 0.36,
         "pct_invested": 0.539,
         "n_trades": 54,
-        "pe": 15.236843,
-        "pb": 5.188947,
+        "pe": 15.149123,
+        "pb": 5.159074,
         "div_yield": null,
         "pct_from_high": -31.4,
         "category": "turnaround"
@@ -33369,10 +33374,10 @@
         "bh_sharpe": 0.35,
         "pct_invested": 0.609,
         "n_trades": 122,
-        "pe": 24.34598,
-        "pb": 3.4802034,
-        "div_yield": 2.5,
-        "pct_from_high": -18.0,
+        "pe": 24.341526,
+        "pb": 3.4594278,
+        "div_yield": 2.45,
+        "pct_from_high": -18.5,
         "category": "turnaround"
       }
     ],
@@ -34533,7 +34538,7 @@
       {
         "date": "2026-08-06",
         "switch": 7.292,
-        "bh": 2.1961
+        "bh": 2.1962
       },
       {
         "date": "2026-08-07",
@@ -34558,7 +34563,7 @@
       {
         "date": "2026-08-13",
         "switch": 7.4074,
-        "bh": 2.271
+        "bh": 2.2711
       },
       {
         "date": "2026-08-14",
