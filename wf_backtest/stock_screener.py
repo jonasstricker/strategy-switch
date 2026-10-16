@@ -25,8 +25,8 @@ import yfinance as yf
 from .strategies import momentum_signal, ma_signal, rsi_signal, apply_costs
 from .strategies_ext import dual_momentum_signal, double_ma_signal
 from .metrics import sharpe_ratio, rolling_sharpe
-from .walk_forward import generate_windows
-from .switching import apply_switching
+from .walk_forward import generate_windows, wf_strategy_oos
+from .switching import apply_switching, held_exposure
 
 log = logging.getLogger("stock_screener")
 
@@ -663,11 +663,11 @@ def run_category_wf(category: str,
         stock_ret = stock_close.pct_change().dropna()
         stock_close = stock_close.loc[stock_ret.index]
 
-        strat_oos = {}
+        strat_oos, strat_pos, strat_next = {}, {}, {}
         for sname, sdef in use_strats.items():
-            r = _wf_single_stock(stock_close, stock_ret, sdef, wf_cfg=use_wf_cfg)
-            if r is not None:
-                strat_oos[sname] = r
+            res = wf_strategy_oos(stock_close, stock_ret, sdef, use_wf_cfg, TX, SLIP, RF)
+            if res is not None:
+                strat_oos[sname], strat_pos[sname], strat_next[sname] = res
 
         if len(strat_oos) < 2:
             continue
@@ -682,9 +682,11 @@ def run_category_wf(category: str,
             n: rolling_sharpe(df_s[n], ROLL_SHARPE_WINDOW, RF)
             for n in names_s
         })
-        sw_ret_s, active_s = apply_switching(
-            df_s, roll_s, tx=TX, slip=SLIP, min_hold=MIN_HOLD,
+        sw_ret_s, active_s, next_s = apply_switching(
+            df_s, roll_s, tx=TX, slip=SLIP, min_hold=MIN_HOLD, return_next=True,
         )
+        exposure_s = held_exposure(active_s, strat_pos)
+        next_long = next_s != "Cash" and strat_next.get(next_s, 0.0) > 0
 
         if len(roll_s) > 0:
             last_sharpes = roll_s.iloc[-1].dropna()
@@ -698,11 +700,13 @@ def run_category_wf(category: str,
             "switch_ret": sw_ret_s,
             "bench_ret": bench_s,
             "active_strat": active_s,
+            "next_strat": next_s,
+            "next_long": next_long,
             "signal_margin": round(margin, 3),
             "sw_sharpe": sharpe_ratio(sw_ret_s, RF),
             "bh_sharpe": sharpe_ratio(bench_s, RF),
-            "pct_invested": float((active_s != "Cash").mean()),
-            "n_trades": int((active_s != "Cash").astype(float).diff().abs().fillna(0).sum()),
+            "pct_invested": float((exposure_s > 0).mean()),
+            "n_trades": int((exposure_s > 0).astype(float).diff().abs().fillna(0).sum()),
             "close": stock_close,
         }
 
@@ -779,8 +783,8 @@ def run_category_wf(category: str,
         fund = current_fund.get(ticker, {})
         stock_results[ticker] = {
             **wf,
-            "signal": "LONG" if wf["active_strat"].iloc[-1] != "Cash" else "CASH",
-            "strategy": wf["active_strat"].iloc[-1] if wf["active_strat"].iloc[-1] != "Cash" else "—",
+            "signal": "LONG" if wf["next_long"] else "CASH",
+            "strategy": wf["next_strat"] if wf["next_strat"] != "Cash" else "—",
             "name": fund.get("name", use_universe.get(ticker, ticker)),
             "pe": fund.get("pe"),
             "pb": fund.get("pb"),

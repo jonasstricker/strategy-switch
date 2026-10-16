@@ -1,0 +1,141 @@
+Types: S&P 500, Nasdaq-100, Russell 2000, MidCap 400; common evaluation start 1988-11-15
+
+== Real US leveraged ETFs: annual drag vs k*index - (k-1)*T-bill (fitted on total return) ==
+  SSO   2x S&P 500       drag  1.68 %/yr  (2006-2026)
+  QLD   2x Nasdaq-100    drag  1.93 %/yr  (2006-2026)
+  UWM   2x Russell 2000  drag  1.65 %/yr  (2007-2026)
+  MVV   2x MidCap 400    drag  1.83 %/yr  (2006-2026)
+  UPRO  3x S&P 500       drag  2.31 %/yr  (2009-2026)
+  TQQQ  3x Nasdaq-100    drag  2.41 %/yr  (2010-2026)
+
+== Same rule on each equity type, index model, lag 1 ==
+                 period    |     Buy&Hold 1x      |       Trend 1x       |       Trend 2x      
+                           |  CAGR Sharpe MaxDD   |  CAGR Sharpe MaxDD   |  CAGR Sharpe MaxDD  
+  S&P 500        1988-07  |  11.6%  0.50   -48% |   9.4%  0.47   -22% |  12.4%  0.44   -46% |
+                 2008-26  |  11.2%  0.56   -52% |   9.1%  0.70   -20% |  15.0%  0.67   -37% |
+                 1988-26  |  11.4%  0.53   -55% |   9.3%  0.58   -22% |  13.7%  0.55   -46% |
+  Nasdaq-100     1988-07  |  14.9%  0.48   -83% |  13.9%  0.52   -49% |  18.3%  0.51   -79% |
+                 2008-26  |  16.0%  0.70   -49% |  12.8%  0.77   -23% |  21.5%  0.74   -41% |
+                 1988-26  |  15.5%  0.57   -83% |  13.3%  0.62   -49% |  19.9%  0.60   -79% |
+  Russell 2000   1988-07  |  10.6%  0.43   -44% |   7.7%  0.32   -43% |   9.1%  0.31   -72% |
+                 2008-26  |   8.4%  0.39   -55% |   5.7%  0.35   -26% |   7.4%  0.34   -46% |
+                 1988-26  |   9.5%  0.40   -59% |   6.7%  0.34   -43% |   8.3%  0.32   -72% |
+  MidCap 400     1988-07  |  14.7%  0.67   -32% |   9.7%  0.46   -40% |  13.0%  0.44   -67% |
+                 2008-26  |   9.3%  0.45   -54% |   6.2%  0.42   -30% |   8.8%  0.40   -53% |
+                 1988-26  |  12.0%  0.53   -55% |   8.0%  0.44   -40% |  10.9%  0.42   -67% |
+
+== Candidates, index model (1988-11-15 - 2026-10-16) ==
+                                 <2008        >=2008 | full: CAGR   Vol  Shrp  MaxDD worstY |         lag2 | 10y: >B&H >=11% >=15%   med
+  B&H S&P 1x              11.6/ -48%  11.2/ -52% |     11.41%   18%  0.53 -55.3%   -37% |  11.4/ -55% |        0%   45%   15% 10.0%
+  B&H S&P 2x              14.7/ -79%  15.4/ -82% |     15.06%   36%  0.49 -88.3%   -68% |  15.1/ -88% |       71%   51%   43% 11.5%
+  S&P trend 1.5x          11.1/ -34%  12.2/ -29% |     11.63%   17%  0.56 -34.4%   -28% |  11.4/ -33% |       58%   39%   10% 10.1%
+  S&P trend 2x            12.4/ -46%  15.0/ -37% |     13.69%   23%  0.55 -46.3%   -37% |  13.4/ -44% |       76%   59%   24% 12.1%
+  Nasdaq-100 trend 2x     18.3/ -79%  21.5/ -41% |     19.88%   36%  0.60 -78.8%   -50% |  20.0/ -73% |       93%   76%   59% 18.7%
+  Russell 2000 trend 2x    9.1/ -72%   7.4/ -46% |      8.27%   27%  0.32 -71.8%   -40% |   5.3/ -76% |       11%   11%    8%  5.9%
+  MidCap 400 trend 2x     13.0/ -67%   8.8/ -53% |     10.88%   25%  0.42 -66.6%   -37% |  11.0/ -59% |       58%   34%   15%  9.7%
+  S&P+NDX trend 1.5x      14.6/ -47%  15.0/ -28% |     14.79%   21%  0.63 -47.5%   -30% |  14.8/ -41% |       89%   63%   43% 13.8%
+  S&P+NDX trend 2x        16.6/ -60%  18.7/ -36% |     17.64%   28%  0.62 -59.9%   -41% |  17.6/ -53% |       99%   72%   57% 16.6%
+  Rot S&P/NDX trend 2x    15.6/ -68%  19.7/ -41% |     17.63%   35%  0.56 -68.8%   -50% |  17.6/ -61% |       92%   75%   57% 17.4%
+  4 types trend 2x        14.5/ -61%  13.9/ -37% |     14.25%   24%  0.55 -61.2%   -32% |  13.5/ -56% |       87%   60%   30% 12.6%
+  Rot 4 types trend 2x    12.8/ -87%  11.5/ -56% |     12.15%   36%  0.42 -86.6%   -60% |  13.2/ -82% |       74%   60%   32% 12.2%
+  S&P trend 3x            14.8/ -65%  20.5/ -54% |     17.60%   34%  0.56 -64.9%   -54% |  17.2/ -61% |       91%   74%   54% 16.0%
+  (10y windows: 336 monthly starts; lag2 = trade one close later)
+
+== Hindsight check: Nasdaq-100 without its excess return, same CAGR as S&P (fair): -3.7 %/yr ==
+  B&H S&P 1x             CAGR 11.41%  Sharpe 0.53  MaxDD -55.3%  <2008  11.6%  >=2008  11.2%  | 10y >B&H   0%  >=11%  45%  >=15%  15%  med 10.0%
+  S&P trend 2x           CAGR 13.69%  Sharpe 0.55  MaxDD -46.3%  <2008  12.4%  >=2008  15.0%  | 10y >B&H  76%  >=11%  59%  >=15%  24%  med 12.1%
+  Nasdaq-100 trend 2x    CAGR 14.33%  Sharpe 0.48  MaxDD -70.4%  <2008  13.3%  >=2008  15.4%  | 10y >B&H  67%  >=11%  58%  >=15%  42%  med 13.0%
+  S&P+NDX trend 1.5x     CAGR 12.69%  Sharpe 0.55  MaxDD -40.7%  <2008  12.6%  >=2008  12.7%  | 10y >B&H  71%  >=11%  53%  >=15%  25%  med 11.6%
+  S&P+NDX trend 2x       CAGR 14.83%  Sharpe 0.54  MaxDD -52.9%  <2008  14.1%  >=2008  15.6%  | 10y >B&H  84%  >=11%  61%  >=15%  45%  med 13.7%
+  Rot S&P/NDX trend 2x   CAGR 14.09%  Sharpe 0.48  MaxDD -66.6%  <2008  13.6%  >=2008  14.6%  | 10y >B&H  83%  >=11%  64%  >=15%  46%  med 14.4%
+
+== Hindsight check: Nasdaq-100 without its excess return, same mean daily return as S&P (harsh): -5.5 %/yr ==
+  B&H S&P 1x             CAGR 11.41%  Sharpe 0.53  MaxDD -55.3%  <2008  11.6%  >=2008  11.2%  | 10y >B&H   0%  >=11%  45%  >=15%  15%  med 10.0%
+  S&P trend 2x           CAGR 13.69%  Sharpe 0.55  MaxDD -46.3%  <2008  12.4%  >=2008  15.0%  | 10y >B&H  76%  >=11%  59%  >=15%  24%  med 12.1%
+  Nasdaq-100 trend 2x    CAGR  7.91%  Sharpe 0.31  MaxDD -79.6%  <2008   6.6%  >=2008   9.3%  | 10y >B&H  26%  >=11%  29%  >=15%   8%  med  5.9%
+  S&P+NDX trend 1.5x     CAGR 10.23%  Sharpe 0.44  MaxDD -43.0%  <2008  10.0%  >=2008  10.4%  | 10y >B&H  37%  >=11%  33%  >=15%  13%  med  8.8%
+  S&P+NDX trend 2x       CAGR 11.53%  Sharpe 0.43  MaxDD -55.6%  <2008  10.6%  >=2008  12.5%  | 10y >B&H  51%  >=11%  46%  >=15%  19%  med 10.0%
+  Rot S&P/NDX trend 2x   CAGR  9.77%  Sharpe 0.36  MaxDD -71.0%  <2008  10.8%  >=2008   8.8%  | 10y >B&H  38%  >=11%  34%  >=15%  10%  med  9.1%
+
+== Longer history: Nasdaq Composite (growth/tech) vs S&P 500, same rule, 2x drag as SSO/QLD ==
+  1972-1989 | S&P B&H  11.3%/ -45% S0.27 | S&P T2x  16.7%/ -31% S0.47 | Comp B&H   8.8%/ -59% S0.12 | Comp T2x  17.6%/ -38% S0.59 | 50/50 T2x  17.5%/ -29% S0.57
+  1990-2026 | S&P B&H  10.8%/ -55% S0.51 | S&P T2x  12.7%/ -46% S0.52 | Comp B&H  12.5%/ -77% S0.51 | Comp T2x  16.7%/ -82% S0.58 | 50/50 T2x  15.2%/ -63% S0.58
+  1972-2026 | S&P B&H  11.0%/ -55% S0.44 | S&P T2x  14.0%/ -46% S0.51 | Comp B&H  11.3%/ -77% S0.41 | Comp T2x  17.0%/ -82% S0.56 | 50/50 T2x  15.9%/ -63% S0.57
+
+== Real US ETFs (SPY/QQQ/IWM/MDY, SSO/QLD/UWM/MVV, BIL), trade one close later, 2007-06-04 - 2026-10-16 ==
+                            CAGR   Vol Sharpe   MaxDD  worstY
+  B&H S&P 1x              10.64%   20%   0.54  -55.2%  -36.8%
+  B&H S&P 2x              14.23%   39%   0.50  -84.7%  -67.9%
+  S&P trend 1.5x          11.11%   17%   0.62  -29.9%  -18.9%
+  S&P trend 2x            13.53%   23%   0.61  -38.9%  -25.4%
+  Nasdaq-100 trend 2x     20.16%   31%   0.70  -46.6%  -27.1%
+  Russell 2000 trend 2x    2.41%   29%   0.18  -59.3%  -29.9%
+  MidCap 400 trend 2x      6.10%   26%   0.30  -50.8%  -29.1%
+  S&P+NDX trend 1.5x      14.05%   19%   0.71  -26.9%  -16.1%
+  S&P+NDX trend 2x        17.33%   26%   0.70  -35.8%  -21.3%
+  Rot S&P/NDX trend 2x    17.74%   31%   0.64  -46.6%  -27.1%
+  4 types trend 2x        11.27%   24%   0.50  -43.4%  -19.3%
+  Rot 4 types trend 2x    10.30%   32%   0.42  -53.4%  -28.9%
+
+== After German tax (26.375 %; strategies taxed yearly as if realised = conservative) ==
+                         setup                       pre-tax after tax | 10y median pre / after
+  B&H S&P 1x             UCITS ETF, held              11.41%    10.82% |  10.0% /  8.7%
+  B&H S&P 2x             UCITS 2x ETF, held           15.06%    14.44% |  11.5% / 10.0%
+  S&P trend 1.5x         US ETFs (Alpaca), no TF      11.63%     8.73% |  10.1% /  7.5%
+  S&P trend 2x           US ETFs (Alpaca), no TF      13.69%    10.35% |  12.1% /  9.0%
+  S&P trend 2x           UCITS 2x, TF 30 %            13.69%    11.33% |  12.1% /  9.9%
+  S&P trend 3x           US ETFs (Alpaca), no TF      17.60%    13.50% |  16.0% / 11.4%
+  Nasdaq-100 trend 2x    US ETFs (Alpaca), no TF      19.88%    15.28% |  18.7% / 13.3%
+  Nasdaq-100 trend 2x    UCITS 2x, TF 30 %            19.88%    16.66% |  18.7% / 14.9%
+  S&P+NDX trend 1.5x     US ETFs (Alpaca), no TF      14.79%    11.15% |  13.7% / 10.1%
+  S&P+NDX trend 1.5x     UCITS 1x+2x, TF 30 %         14.79%    12.22% |  13.7% / 11.2%
+  S&P+NDX trend 2x       UCITS 2x, TF 30 %            17.64%    14.65% |  16.5% / 13.4%
+  S&P+NDX trend 2x       US ETFs (Alpaca), no TF      17.64%    13.39% |  16.5% / 12.0%
+  Rot S&P/NDX trend 2x   UCITS 2x, TF 30 %            17.63%    14.73% |  17.4% / 14.1%
+
+== UCITS 2x ETFs (Teilfreistellung) vs US 2x ETFs, both in EUR ==
+  Xtrackers S&P 500 2x  LU0411078552: suspicious jumps on [datetime.date(2010, 4, 14), datetime.date(2010, 4, 20), datetime.date(2010, 11, 18)] -> using data after last jump
+  Xtrackers S&P 500 2x  LU0411078552 2011-2026:  21.8 %/yr vs SSO  24.7 %/yr (EUR) | weekly beta index 1.74, USD/EUR 0.74
+  Amundi MSCI USA 2x    FR0010755611: suspicious jumps on [datetime.date(2012, 1, 2), datetime.date(2013, 1, 16), datetime.date(2013, 1, 17)] -> using data after last jump
+  Amundi MSCI USA 2x    FR0010755611 2015-2026:  24.2 %/yr vs SSO  22.5 %/yr (EUR) | weekly beta index 1.71, USD/EUR 1.47
+  Amundi Nasdaq-100 2x  FR0010342592: suspicious jumps on [datetime.date(2015, 1, 2)] -> using data after last jump
+  Amundi Nasdaq-100 2x  FR0010342592 2015-2026:  30.5 %/yr vs QLD  30.3 %/yr (EUR) | weekly beta index 1.75, USD/EUR 0.78
+
+== 10y joint block bootstrap since 1988, historical premium (600 paths) ==
+                         CAGR p10    p50    p90 | >=11% >=15%  >B&H | MaxDD p50 DD<-50%
+  B&H S&P 1x                 4.7%  11.4%  18.3% |   53%   26%    0% |    -33.8%     18%
+  B&H S&P 2x                 0.7%  15.5%  30.6% |   67%   52%   72% |    -59.2%     68%
+  S&P trend 1.5x             2.9%  10.5%  19.0% |   46%   26%   42% |    -29.1%      3%
+  S&P trend 2x               2.1%  12.2%  23.6% |   56%   35%   58% |    -37.8%     19%
+  Nasdaq-100 trend 2x        2.4%  17.6%  35.0% |   71%   60%   75% |    -54.2%     61%
+  S&P+NDX trend 1.5x         4.3%  13.3%  23.4% |   65%   40%   70% |    -33.1%      6%
+  S&P+NDX trend 2x           3.9%  15.5%  29.0% |   70%   52%   77% |    -42.8%     29%
+  Rot S&P/NDX trend 2x       2.3%  16.1%  32.4% |   68%   53%   72% |    -52.8%     59%
+  4 types trend 2x           2.8%  13.3%  24.5% |   58%   42%   66% |    -40.8%     24%
+  Rot 4 types trend 2x      -0.6%  12.7%  29.6% |   57%   41%   58% |    -56.1%     68%
+
+== 10y joint block bootstrap since 1988, premium -3 %/yr (600 paths) ==
+                         CAGR p10    p50    p90 | >=11% >=15%  >B&H | MaxDD p50 DD<-50%
+  B&H S&P 1x                 1.6%   8.5%  14.6% |   33%    8%    0% |    -34.0%     22%
+  B&H S&P 2x                -5.1%   9.5%  22.4% |   44%   32%   55% |    -60.1%     73%
+  S&P trend 1.5x            -0.6%   6.1%  13.7% |   21%    6%   33% |    -31.0%      8%
+  S&P trend 2x              -2.3%   6.4%  16.5% |   28%   14%   40% |    -40.9%     30%
+  Nasdaq-100 trend 2x       -0.1%  12.1%  28.1% |   53%   42%   72% |    -56.8%     70%
+  S&P+NDX trend 1.5x         1.7%   9.0%  17.7% |   40%   20%   60% |    -34.5%      6%
+  S&P+NDX trend 2x           0.6%  10.0%  21.2% |   46%   31%   66% |    -44.8%     36%
+  Rot S&P/NDX trend 2x      -0.8%  10.1%  24.9% |   47%   34%   62% |    -56.4%     69%
+  4 types trend 2x          -0.9%   7.3%  18.0% |   34%   18%   47% |    -42.8%     30%
+  Rot 4 types trend 2x      -4.3%   7.3%  21.9% |   37%   27%   48% |    -59.7%     74%
+
+== 10y joint block bootstrap since 1988, premium -3 %/yr AND Nasdaq-100 CAGR = S&P CAGR (600 paths) ==
+                         CAGR p10    p50    p90 | >=11% >=15%  >B&H | MaxDD p50 DD<-50%
+  B&H S&P 1x                 0.6%   8.6%  14.4% |   29%    8%    0% |    -34.0%     24%
+  B&H S&P 2x                -7.0%   9.3%  21.8% |   44%   28%   56% |    -60.4%     72%
+  S&P trend 1.5x            -0.1%   6.0%  12.8% |   19%    5%   32% |    -31.4%      9%
+  S&P trend 2x              -1.8%   6.4%  15.1% |   25%   10%   40% |    -41.6%     30%
+  Nasdaq-100 trend 2x       -7.0%   3.7%  17.0% |   24%   14%   32% |    -61.4%     82%
+  S&P+NDX trend 1.5x        -0.7%   5.7%  13.1% |   19%    7%   33% |    -36.2%     10%
+  S&P+NDX trend 2x          -2.6%   5.5%  15.2% |   25%   10%   36% |    -47.6%     43%
+  Rot S&P/NDX trend 2x      -5.4%   4.0%  16.4% |   23%   12%   31% |    -58.6%     72%
+  4 types trend 2x          -2.1%   5.3%  14.9% |   21%   10%   30% |    -45.1%     34%
+  Rot 4 types trend 2x      -8.2%   2.8%  14.7% |   18%   10%   21% |    -61.9%     80%

@@ -34,7 +34,7 @@ from wf_backtest.metrics import (
     sharpe_ratio, sortino_ratio, max_drawdown, cagr, calmar_ratio,
     rolling_sharpe, time_under_water,
 )
-from wf_backtest.walk_forward import generate_windows
+from wf_backtest.walk_forward import generate_windows, wf_strategy_oos
 from wf_backtest.switching import apply_switching
 from wf_backtest.notifier import send_email, build_multi_etf_email
 
@@ -238,12 +238,12 @@ def compute_etf(ticker: str, start_date: str) -> dict:
     prices = close.loc[returns.index]
 
     # Run per-strategy WF
-    strat_oos = {}
+    strat_oos, strat_pos, strat_next = {}, {}, {}
     for sname, sdef in STRATEGY_DEFS.items():
         log.info(f"    WF: {sname} …")
-        r = wf_single(prices, returns, sdef)
-        if r is not None:
-            strat_oos[sname] = r
+        res = wf_strategy_oos(prices, returns, sdef, WF_CFG, TX, SLIP, RF, min_windows=4)
+        if res is not None:
+            strat_oos[sname], strat_pos[sname], strat_next[sname] = res
 
     if not strat_oos:
         raise RuntimeError(f"{ticker}: Keine Strategie hat genug OOS-Daten.")
@@ -260,8 +260,8 @@ def compute_etf(ticker: str, start_date: str) -> dict:
     sw = 63
     roll = pd.DataFrame({n: rolling_sharpe(df_strats[n], sw, RF) for n in names})
 
-    hard_ret, active_strat = apply_switching(
-        df_strats, roll, tx=TX, slip=SLIP, min_hold=5,
+    hard_ret, active_strat, next_strat = apply_switching(
+        df_strats, roll, tx=TX, slip=SLIP, min_hold=5, return_next=True,
     )
 
     # Trade log
@@ -295,9 +295,9 @@ def compute_etf(ticker: str, start_date: str) -> dict:
                 buy_price = None
             prev = cur
 
-    # Current state
-    current_strat = active_strat.iloc[-1]
-    is_invested = current_strat != "Cash"
+    # Current state = position for the next trading day
+    current_strat = next_strat
+    is_invested = next_strat != "Cash" and strat_next.get(next_strat, 0.0) > 0
     price = float(close.iloc[-1])
 
     # Performance Metrics

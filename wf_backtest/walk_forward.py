@@ -60,12 +60,19 @@ class WalkForwardResult:
 # ── Window generation ────────────────────────────────────────────────────────
 
 def generate_windows(dates: pd.DatetimeIndex,
-                     train_days: int, test_days: int, step_days: int
+                     train_days: int, test_days: int, step_days: int,
+                     include_partial: bool = False,
                      ) -> List[Tuple[int, int, int, int]]:
     """
     Return list of (train_start_idx, train_end_idx,
                      test_start_idx, test_end_idx).
     Indices are positional into *dates*.
+
+    include_partial: also emit a final, shorter test window so the OOS
+    series reaches the last available day (needed for current live signals).
+    If the next window would start right after the last day, an empty test
+    window (test_start == test_end == n) is emitted so its params can be
+    fitted for the next trading day.
     """
     windows = []
     n = len(dates)
@@ -76,7 +83,78 @@ def generate_windows(dates: pd.DatetimeIndex,
         test_end = min(train_end + test_days, n)
         windows.append((train_start, train_end, test_start, test_end))
         train_end += step_days
+    if include_partial and train_end <= n:
+        windows.append((train_end - train_days, train_end, train_end, n))
     return windows
+
+
+def wf_strategy_oos(prices: pd.Series, returns: pd.Series, sdef: dict,
+                    wf_cfg: dict, tx: float, slip: float, rf: float,
+                    min_windows: int = 3):
+    """
+    Walk-forward OOS for one strategy definition (grid / gen / keys).
+
+    Params are fit on each train window (median of top 20 %) and applied to
+    the following test window; the last window may be partial so the OOS
+    reaches the last available day.
+
+    Returns (oos_net_returns, oos_positions, next_position) or None.
+    next_position is the position for the next trading day, computed from
+    data up to the last close with the most recent parameters.
+    """
+    windows = generate_windows(prices.index, wf_cfg["train"], wf_cfg["test"],
+                               wf_cfg["step"], include_partial=True)
+    if len(windows) < min_windows:
+        return None
+    pos_parts = []
+    last_bp, last_ts = None, None
+    for ts, te, os_s, os_e in windows:
+        train_p = prices.iloc[ts:te]
+        train_r = returns.iloc[ts:te]
+        results = []
+        for params in sdef["grid"]:
+            try:
+                sig = sdef["gen"](train_p, params)
+                if sig is None or sig.isna().all():
+                    continue
+                net = apply_costs(sig.fillna(0), train_r, tx, slip).dropna()
+                if len(net) < 20:
+                    continue
+                results.append({**params, "sharpe": sharpe_ratio(net, rf)})
+            except Exception:
+                continue
+        if len(results) < 2:
+            continue
+        bp = _select_median_params(results, sdef["keys"], 0.20)
+        if os_s >= os_e:
+            # Window starts on the next trading day: params only
+            last_bp, last_ts = bp, ts
+            continue
+        try:
+            full_sig = sdef["gen"](prices.iloc[ts:os_e], bp)
+        except Exception:
+            continue
+        if full_sig is None:
+            continue
+        test_idx = returns.index[os_s:os_e]
+        pos_parts.append(full_sig.loc[test_idx].fillna(0))
+        last_bp, last_ts = bp, ts
+    if len(pos_parts) < min_windows:
+        return None
+    pos = pd.concat(pos_parts).sort_index()
+    pos = pos[~pos.index.duplicated(keep="first")]
+    # Costs on the concatenated positions so window boundaries are charged too
+    net = apply_costs(pos, returns.loc[pos.index], tx, slip)
+
+    # Signals are shift(1)-lagged: appending a placeholder day yields the
+    # position decided at the last close without using any future price.
+    nxt = prices.index[-1] + pd.offsets.BDay(1)
+    ext = pd.concat([prices.iloc[last_ts:], pd.Series([np.nan], index=[nxt])])
+    try:
+        next_pos = float(np.nan_to_num(sdef["gen"](ext, last_bp).iloc[-1]))
+    except Exception:
+        next_pos = float(pos.iloc[-1])
+    return net, pos, next_pos
 
 
 # ── Single-strategy optimiser ────────────────────────────────────────────────

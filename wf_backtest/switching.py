@@ -31,9 +31,16 @@ def apply_switching(
     tx: float = SWITCH_TX,
     slip: float = SWITCH_SLIP,
     min_hold: int = MIN_HOLD_DAYS,
-) -> tuple[pd.Series, pd.Series]:
+    *,
+    return_next: bool = False,
+):
     """
     Meta-Level Switching mit Kosten und Hysterese.
+
+    Timing (kein Look-Ahead): Die Entscheidung am Schluss von Tag t (Rolling
+    Sharpe inkl. Tag t) bestimmt die Strategie, die an Tag t+1 gehalten wird.
+    Der Return von Tag t wird also nie zur Auswahl der Strategie für Tag t
+    verwendet.
 
     Parameters
     ----------
@@ -47,16 +54,20 @@ def apply_switching(
         Slippage pro Trade (einfach).
     min_hold : int
         Mindest-Haltedauer (Handelstage) bevor Cash ↔ Long wechseln darf.
+    return_next : bool
+        Zusätzlich die Entscheidung am letzten Schlusskurs (= Strategie für
+        den nächsten Handelstag, Live-Signal) zurückgeben.
 
     Returns
     -------
     hard_ret : Series      – Netto-Returns nach Switching + Meta-Kosten
-    active_strat : Series  – Aktive Strategie pro Tag ("Cash" oder Name)
+    active_strat : Series  – An diesem Tag gehaltene Strategie ("Cash" oder Name)
+    next_strat : str       – nur mit return_next=True
     """
     cost_per_trade = tx + slip
+    roll = roll_sharpe_df.reindex(df_strats.index)
 
-    hard_ret     = pd.Series(0.0, index=df_strats.index)
-    active_strat = pd.Series("Cash", index=df_strats.index)
+    decision = pd.Series("Cash", index=df_strats.index, dtype=object)
 
     prev_position = "Cash"   # "Cash" oder "Long"
     hold_counter  = min_hold  # Startet erfüllt, damit 1. Trade sofort möglich
@@ -64,54 +75,61 @@ def apply_switching(
     for i, idx in enumerate(df_strats.index):
         hold_counter += 1
 
-        # ── Rohsignal bestimmen ──────────────────────────────────────────
-        if idx in roll_sharpe_df.index:
-            row      = roll_sharpe_df.loc[idx]
-            eligible = row[row > 0]
-        else:
-            eligible = pd.Series(dtype=float)
+        row      = roll.loc[idx]
+        eligible = row[row > 0]
 
         raw_best     = None if eligible.empty else eligible.idxmax()
         raw_position = "Cash" if raw_best is None else "Long"
 
         # ── Hysterese: Mindest-Haltedauer prüfen ────────────────────────
         if raw_position != prev_position and hold_counter < min_hold:
-            # Wechsel blockiert → bleibe bei alter Position
             if prev_position == "Cash":
-                active_strat.iloc[i] = "Cash"
-                hard_ret.iloc[i]     = 0.0
+                decision.iloc[i] = "Cash"
+            elif raw_best is not None:
+                decision.iloc[i] = raw_best
             else:
-                # Bleibe Long → nutze beste verfügbare Strategie
-                if raw_best is not None:
-                    active_strat.iloc[i] = raw_best
-                    hard_ret.iloc[i]     = df_strats.loc[idx, raw_best]
-                else:
-                    # Alle Strategien negativ, ABER Hysterese erzwingt Long
-                    if idx in roll_sharpe_df.index:
-                        all_sharpes = roll_sharpe_df.loc[idx].dropna()
-                        if not all_sharpes.empty:
-                            least_bad = all_sharpes.idxmax()
-                            active_strat.iloc[i] = least_bad
-                            hard_ret.iloc[i]     = df_strats.loc[idx, least_bad]
+                # Alle Strategien negativ, ABER Hysterese erzwingt Long
+                all_sharpes = row.dropna()
+                if not all_sharpes.empty:
+                    decision.iloc[i] = all_sharpes.idxmax()
             continue
 
-        # ── Kein Hysterese-Block → normaler Ablauf ──────────────────────
-        if raw_best is not None:
-            active_strat.iloc[i] = raw_best
-            hard_ret.iloc[i]     = df_strats.loc[idx, raw_best]
-            new_position = "Long"
-        else:
-            active_strat.iloc[i] = "Cash"
-            hard_ret.iloc[i]     = 0.0
-            new_position = "Cash"
+        decision.iloc[i] = raw_best if raw_best is not None else "Cash"
+        if raw_position != prev_position:
+            hold_counter = 0
+            prev_position = raw_position
 
-        # ── Meta-Level Kosten bei Cash ↔ Long ───────────────────────────
-        if new_position != prev_position:
-            hard_ret.iloc[i] -= cost_per_trade
-            hold_counter = 0   # Reset Haltedauer-Zähler
-            prev_position = new_position
+    active_strat = decision.shift(1).fillna("Cash")
 
+    cols = {c: j for j, c in enumerate(df_strats.columns)}
+    values = df_strats.to_numpy(dtype=float)
+    held_idx = active_strat.map(cols).to_numpy()
+    hard = np.zeros(len(df_strats))
+    for i, j in enumerate(held_idx):
+        if not pd.isna(j):
+            v = values[i, int(j)]
+            hard[i] = 0.0 if np.isnan(v) else v
+    hard_ret = pd.Series(hard, index=df_strats.index)
+
+    # Meta-Level Kosten bei Cash ↔ Long (am ersten Tag der neuen Position)
+    is_long = (active_strat != "Cash").astype(int)
+    switched = is_long.diff().fillna(is_long.iloc[0] if len(is_long) else 0).abs()
+    hard_ret = hard_ret - switched * cost_per_trade
+
+    if return_next:
+        next_strat = decision.iloc[-1] if len(decision) else "Cash"
+        return hard_ret, active_strat, next_strat
     return hard_ret, active_strat
+
+
+def held_exposure(active_strat: pd.Series, strat_pos: dict) -> pd.Series:
+    """Actual market exposure per day: position of the held strategy (0 = Cash)."""
+    exp = pd.Series(0.0, index=active_strat.index)
+    for name, pos in strat_pos.items():
+        mask = active_strat == name
+        if mask.any():
+            exp[mask] = pos.reindex(active_strat.index).fillna(0.0)[mask]
+    return exp
 
 
 def _align_returns(strat_returns: dict[str, pd.Series]) -> pd.DataFrame:
@@ -135,11 +153,11 @@ def hard_switch(strat_returns: dict[str, pd.Series],
     df = _align_returns(strat_returns)
     names = df.columns.tolist()
 
-    # Rolling Sharpe for each strategy
+    # Rolling Sharpe up to the previous close selects today's strategy
     roll = pd.DataFrame({
         name: rolling_sharpe(df[name], rolling_window, rf_annual)
         for name in names
-    })
+    }).shift(1)
 
     combined = pd.Series(0.0, index=df.index)
     allocation = pd.DataFrame(0.0, index=df.index, columns=names)
@@ -175,7 +193,7 @@ def soft_switch(strat_returns: dict[str, pd.Series],
     roll = pd.DataFrame({
         name: rolling_sharpe(df[name], rolling_window, rf_annual)
         for name in names
-    })
+    }).shift(1)
 
     combined = pd.Series(0.0, index=df.index)
     allocation = pd.DataFrame(0.0, index=df.index, columns=names)

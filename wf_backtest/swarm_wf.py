@@ -33,8 +33,8 @@ import yfinance as yf
 from .strategies import momentum_signal, ma_signal, rsi_signal, apply_costs
 from .strategies_ext import dual_momentum_signal, double_ma_signal
 from .metrics import sharpe_ratio, rolling_sharpe
-from .walk_forward import generate_windows
-from .switching import apply_switching
+from .walk_forward import generate_windows, wf_strategy_oos
+from .switching import apply_switching, held_exposure as _held_exposure
 
 # ── Universum: ~50 größte US-Aktien (nach Market Cap, Stand ~2024) ───────────
 # Wir nehmen ein breites Universum, aus dem historisch die Top-10 bestimmt werden
@@ -547,11 +547,11 @@ def run_swarm_wf(top_n: int = TOP_N,
                               f"WF: {ticker} ({si+1}/{len(all_stocks_to_run)}) …")
 
         # Run WF per strategy for this stock
-        strat_oos = {}
+        strat_oos, strat_pos, strat_next = {}, {}, {}
         for sname, sdef in use_strats.items():
-            r = wf_single_portfolio(stock_close, stock_ret, sdef, wf_cfg=use_wf_cfg)
-            if r is not None:
-                strat_oos[sname] = r
+            res = wf_strategy_oos(stock_close, stock_ret, sdef, use_wf_cfg, TX, SLIP, RF)
+            if res is not None:
+                strat_oos[sname], strat_pos[sname], strat_next[sname] = res
 
         if len(strat_oos) < 2:
             continue
@@ -568,9 +568,11 @@ def run_swarm_wf(top_n: int = TOP_N,
             n: rolling_sharpe(df_s[n], ROLL_SHARPE_WINDOW, RF)
             for n in names_s
         })
-        sw_ret_s, active_s = apply_switching(
-            df_s, roll_s, tx=TX, slip=SLIP, min_hold=MIN_HOLD,
+        sw_ret_s, active_s, next_s = apply_switching(
+            df_s, roll_s, tx=TX, slip=SLIP, min_hold=MIN_HOLD, return_next=True,
         )
+        exposure_s = _held_exposure(active_s, strat_pos)
+        next_long = next_s != "Cash" and strat_next.get(next_s, 0.0) > 0
 
         # Signal margin for this stock
         if len(roll_s) > 0:
@@ -587,13 +589,13 @@ def run_swarm_wf(top_n: int = TOP_N,
             "bench_ret": bench_s,
             "active_strat": active_s,
             "close": stock_close,
-            "signal": "LONG" if active_s.iloc[-1] != "Cash" else "CASH",
-            "strategy": active_s.iloc[-1] if active_s.iloc[-1] != "Cash" else "—",
+            "signal": "LONG" if next_long else "CASH",
+            "strategy": next_s if next_s != "Cash" else "—",
             "signal_margin": round(margin, 3),
             "sw_sharpe": sharpe_ratio(sw_ret_s, RF),
             "bh_sharpe": sharpe_ratio(bench_s, RF),
-            "pct_invested": float((active_s != "Cash").mean()),
-            "n_trades": int((active_s != "Cash").astype(float).diff().abs().fillna(0).sum()),
+            "pct_invested": float((exposure_s > 0).mean()),
+            "n_trades": int((exposure_s > 0).astype(float).diff().abs().fillna(0).sum()),
         }
 
     if not stock_results:

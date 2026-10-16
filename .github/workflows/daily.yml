@@ -2,21 +2,21 @@ name: Daily Strategy Calculation
 
 on:
   schedule:
-    # Mo-Fr 21:00 UTC (nach US-Börsenschluss) — Berechnung & Signale
+    # Mo-Fr 21:00 UTC (nach US-Börsenschluss) — Info-Berechnung Aktien-Switching (nur Dashboard, kein Trading)
     - cron: '0 21 * * 1-5'
-    # Mo-Fr 19:50 UTC (15:50 ET, 10 Min vor Close) — MOC Orders
-    - cron: '50 19 * * 1-5'
+    # Mo-Fr 14:45 UTC (nach US-Eröffnung) — Core-Signal aus Schlusskurs des Vortags + Trading
+    - cron: '45 14 * * 1-5'
   workflow_dispatch:  # Manueller Trigger über GitHub UI
     inputs:
       job:
         description: 'Which job to run'
         required: false
-        default: 'both'
+        default: 'core'
         type: choice
         options:
-          - both
+          - core
           - compute
-          - trade
+          - both
 
 permissions:
   contents: write
@@ -57,54 +57,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/data/mobile_signals.json
-          git diff --staged --quiet && echo "No changes" || git commit -m "📊 Signals $(date -u +%Y-%m-%d)"
-          git push
-
-  trade:
-    if: >-
-      github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'both' || github.event.inputs.job == 'trade')
-      || github.event_name == 'schedule' && github.event.schedule == '50 19 * * 1-5'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
-      ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
-      ALPACA_LIVE: ""
-      TRADING_ENABLED: "1"
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: pip
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Auto-Trade (Alpaca Paper)
-        if: env.ALPACA_KEY_ID != ''
-        run: python -m trading.alpaca_trader
-
-      - name: Copy trade log to Pages
-        if: env.ALPACA_KEY_ID != ''
-        run: |
-          mkdir -p docs/data
-          cp trading/trade_log.json docs/data/trade_log.json
-
-      - name: Commit trade log
-        if: env.ALPACA_KEY_ID != ''
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add trading/trade_log.json docs/data/trade_log.json
           if git diff --staged --quiet; then
             echo "No changes"
           else
-            git commit -m "📈 Trade log $(date -u +%Y-%m-%d)"
+            git commit -m "📊 Signals $(date -u +%Y-%m-%d)"
             for i in 1 2 3 4 5; do
               git pull --rebase && git push && break
               echo "Push attempt $i failed, retrying..."
@@ -112,17 +68,18 @@ jobs:
             done
           fi
 
-  trade_live:
+  core:
     if: >-
-      github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'both' || github.event.inputs.job == 'trade')
-      || github.event_name == 'schedule' && github.event.schedule == '50 19 * * 1-5'
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'both' || github.event.inputs.job == 'core')
+      || github.event_name == 'schedule' && github.event.schedule == '45 14 * * 1-5'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
+    concurrency:
+      group: core-trading
+      cancel-in-progress: false
     env:
-      ALPACA_LIVE_KEY_ID: ${{ secrets.ALPACA_LIVE_KEY_ID }}
-      ALPACA_LIVE_SECRET_KEY: ${{ secrets.ALPACA_LIVE_SECRET_KEY }}
-      ALPACA_LIVE: "1"
-      TRADING_ENABLED: "1"
+      HAS_PAPER: ${{ secrets.ALPACA_KEY_ID != '' }}
+      HAS_LIVE: ${{ secrets.ALPACA_LIVE_KEY_ID != '' }}
 
     steps:
       - name: Checkout
@@ -137,26 +94,49 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Auto-Trade (Alpaca Live 🔴)
-        if: env.ALPACA_LIVE_KEY_ID != ''
+      # Bricht mit Fehler ab (→ kein Trading, GitHub-Mail), wenn Daten veraltet/ungültig sind
+      - name: Core signal
+        id: signal
+        env:
+          ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}          # nur für Daten-Fallback
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+        run: python -m wf_backtest.core_strategy
+
+      - name: Trade (Alpaca Paper)
+        if: steps.signal.outcome == 'success' && env.HAS_PAPER == 'true'
+        continue-on-error: true
+        env:
+          ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          ALPACA_LIVE: ""
+          TRADING_ENABLED: "1"
+        run: python -m trading.alpaca_trader --execute
+
+      - name: Trade (Alpaca Live 🔴)
+        if: steps.signal.outcome == 'success' && env.HAS_LIVE == 'true'
+        env:
+          ALPACA_LIVE_KEY_ID: ${{ secrets.ALPACA_LIVE_KEY_ID }}
+          ALPACA_LIVE_SECRET_KEY: ${{ secrets.ALPACA_LIVE_SECRET_KEY }}
+          ALPACA_LIVE: "1"
+          TRADING_ENABLED: "1"
         run: python -m trading.alpaca_trader --execute --live
 
-      - name: Copy live trade log to Pages
-        if: env.ALPACA_LIVE_KEY_ID != ''
+      - name: Publish & commit signal and trade logs
+        if: always()
         run: |
           mkdir -p docs/data
-          cp trading/trade_log_live.json docs/data/trade_log_live.json
-
-      - name: Commit live trade log
-        if: env.ALPACA_LIVE_KEY_ID != ''
-        run: |
+          [ -f trading/trade_log.json ] && cp trading/trade_log.json docs/data/trade_log.json
+          [ -f trading/trade_log_live.json ] && cp trading/trade_log_live.json docs/data/trade_log_live.json
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add trading/trade_log_live.json docs/data/trade_log_live.json
+          for f in docs/data/core_signal.json docs/data/trade_log.json docs/data/trade_log_live.json \
+                   trading/trade_log.json trading/trade_log_live.json trading/failed_orders.json; do
+            [ -f "$f" ] && git add "$f"
+          done
           if git diff --staged --quiet; then
             echo "No changes"
           else
-            git commit -m "🔴 Live trade log $(date -u +%Y-%m-%d)"
+            git commit -m "🎯 Core signal & trades $(date -u +%Y-%m-%d)"
             for i in 1 2 3 4 5; do
               git pull --rebase && git push && break
               echo "Push attempt $i failed, retrying..."

@@ -1,8 +1,14 @@
 """
-Alpaca Strategy-Switch Auto-Trader
-===================================
-Liest Signale aus mobile_signals.json und platziert Orders über Alpaca REST API.
-Läuft komplett ohne PC — direkt aus GitHub Actions.
+Alpaca Core-Strategy Auto-Trader
+================================
+Liest das Core-Signal (docs/data/core_signal.json, erzeugt von
+`python -m wf_backtest.core_strategy`) und bringt das Konto auf die
+Ziel-Gewichte (je 50 % S&P 500 / Nasdaq-100: SSO bzw. QLD im Aufwärtstrend,
+sonst SGOV). Alle anderen Positionen werden verkauft. Läuft komplett ohne PC — direkt aus GitHub Actions.
+
+Sicherheit: kein Trading bei veraltetem/ungültigem Signal, erst Verkäufe,
+dann Käufe nur mit vorhandenem Cash (nie Margin), offene Alt-Orders werden
+storniert. Bei jedem Problem Exit-Code 1 → GitHub schickt eine Fehler-Mail.
 
 Usage (lokal):
   python -m trading.alpaca_trader                    # Dry-Run
@@ -16,11 +22,15 @@ Env-Variablen (GitHub Secrets):
   TRADING_ENABLED      "1" um Orders zu senden (Default: nur Dry-Run)
 """
 
-import json, os, logging, argparse, time
+import json, os, logging, argparse, time, math, sys
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
+from zoneinfo import ZoneInfo
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from wf_backtest.core_strategy import CONFIG as CORE_CFG, CORE_SIGNAL_FILE  # noqa: E402
 
 TRADE_LOG_PAPER = Path(__file__).parent / "trade_log.json"
 TRADE_LOG_LIVE   = Path(__file__).parent / "trade_log_live.json"
@@ -31,7 +41,11 @@ RETRY_DELAY_SEC = 10
 log = logging.getLogger("alpaca_trader")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-SIGNALS_FILE = Path(__file__).parent.parent / "docs" / "data" / "mobile_signals.json"
+SIGNALS_FILE = CORE_SIGNAL_FILE
+ALLOWED_SYMBOLS = {s[k] for s in CORE_CFG["sleeves"] for k in ("etf_1x", "etf_2x")} | {CORE_CFG["etf_cash"]}
+REBALANCE_TOLERANCE = 0.03   # Ziel-Positionen nur handeln, wenn > 3 % der Equity daneben
+MIN_ORDER_VALUE = 50.0
+FILL_WAIT_SEC = 120
 
 
 def _load_dotenv(path: Path = None):
@@ -56,14 +70,6 @@ _load_dotenv()
 PAPER_URL = "https://paper-api.alpaca.markets"
 LIVE_URL  = "https://api.alpaca.markets"
 
-# Yahoo ticker → Alpaca symbol (Alpaca only trades US-listed securities)
-TICKER_MAP = {
-    "SXR8.DE": "SPY",   # S&P 500 EU ETF → US equivalent
-    "URTH":    "URTH",
-    "EEM":     "EEM",
-    "VGK":     "VGK",
-}
-
 
 def _api(base_url: str, key: str, secret: str, method: str, path: str,
          body: dict = None, retries: int = MAX_RETRIES) -> dict:
@@ -82,6 +88,7 @@ def _api(base_url: str, key: str, secret: str, method: str, path: str,
                 return json.loads(resp.read().decode()) if resp.status != 204 else {}
         except HTTPError as e:
             error_body = e.read().decode() if e.fp else ""
+            e.body = error_body  # stream is consumed — keep the text for callers
             last_error = e
             # Don't retry on auth errors (403) or client errors (4xx except 429)
             if e.code == 429:  # Rate limit — retry
@@ -164,6 +171,21 @@ class AlpacaClient:
     def close_position(self, symbol: str) -> dict:
         return self._call("DELETE", f"/v2/positions/{symbol}")
 
+    def get_clock(self) -> dict:
+        return self._call("GET", "/v2/clock")
+
+    def get_asset(self, symbol: str) -> dict:
+        return self._call("GET", f"/v2/assets/{symbol}")
+
+    def get_open_orders(self) -> list:
+        return self._call("GET", "/v2/orders?status=open&limit=500")
+
+    def cancel_all_orders(self):
+        return self._call("DELETE", "/v2/orders")
+
+    def get_order(self, order_id: str) -> dict:
+        return self._call("GET", f"/v2/orders/{order_id}")
+
 
 def load_signals(path: Path = SIGNALS_FILE) -> dict:
     if not path.exists():
@@ -172,150 +194,130 @@ def load_signals(path: Path = SIGNALS_FILE) -> dict:
         return json.load(f)
 
 
-def map_ticker(yahoo_ticker: str) -> str | None:
-    """Convert Yahoo ticker to Alpaca symbol. Returns None if not tradeable."""
-    if yahoo_ticker in TICKER_MAP:
-        return TICKER_MAP[yahoo_ticker]
-    # US stocks: strip any suffix, fix BRK-B → BRK.B
-    clean = yahoo_ticker.split(".")[0].replace("-", ".")
-    return clean
+def validate_core_signal(sig: dict, now_ny: datetime | None = None) -> str | None:
+    """Fehlermeldung, wenn auf diesem Signal NICHT gehandelt werden darf."""
+    if sig.get("status") != "ok":
+        return f"Signal-Status '{sig.get('status')}': {sig.get('error')}"
+    if sig.get("signal") not in ("RISK_ON", "PARTIAL", "RISK_OFF"):
+        return f"unbekanntes Signal {sig.get('signal')!r}"
+    try:
+        as_of = datetime.strptime(sig["as_of"], "%Y-%m-%d").date()
+    except (KeyError, TypeError, ValueError):
+        return "as_of fehlt oder ungültig"
+    now_ny = now_ny or datetime.now(ZoneInfo("America/New_York"))
+    age = (now_ny.date() - as_of).days
+    if not 0 <= age <= CORE_CFG["max_data_age_days"]:
+        return f"Signal veraltet: Schlusskurs vom {as_of} ({age} Tage alt)"
+    w = sig.get("weights")
+    if not isinstance(w, dict) or not w or set(w) - ALLOWED_SYMBOLS:
+        return f"ungültige Ziel-Gewichte {w!r} (erlaubt: {sorted(ALLOWED_SYMBOLS)})"
+    try:
+        vals = [float(v) for v in w.values()]
+    except (TypeError, ValueError):
+        return f"ungültige Ziel-Gewichte {w!r}"
+    if any(not 0 <= v <= 1 for v in vals) or sum(vals) > 1.0001:
+        return f"Gewichte außerhalb [0,1] oder Summe > 100 %: {w}"
+    return None
 
 
-def compute_targets(signals: dict, equity: float) -> dict:
+def compute_core_targets(sig: dict, equity: float) -> dict:
+    """Ziel-Dollarbetrag je Symbol. Returns {symbol: {"dollars", "signal", "reason"}}."""
+    return {sym: {"dollars": equity * float(w), "signal": "LONG",
+                  "reason": f"Core {sig['signal']} {float(w):.0%}"}
+            for sym, w in sig["weights"].items() if float(w) > 0}
+
+
+def _fmt_qty(q: float) -> str:
+    return f"{q:.9f}".rstrip("0").rstrip(".")
+
+
+def _floor_qty(q: float, fractionable: bool) -> float:
+    return math.floor(q * 1000 + 1e-9) / 1000 if fractionable else float(math.floor(q + 1e-9))
+
+
+def compute_orders(targets: dict, current_positions: dict, prices: dict, equity: float,
+                   fractionable: dict | None = None, min_order_value: float = MIN_ORDER_VALUE,
+                   tolerance: float = REBALANCE_TOLERANCE) -> list:
     """
-    Compute target dollar allocation per symbol.
-    Alpha-Mix: Category-weighted (e.g. 45/40/15), then equal-weight within category.
-
-    IMPORTANT: Only the LONG-proportion of each category budget is invested.
-    If a category has 4/10 stocks LONG, only 4/10 of that category's budget
-    is invested — the rest stays as cash. This ensures the portfolio's
-    investment level reflects the actual signal strength.
-
-    Stocks appearing in multiple categories get combined allocations.
-    Returns: {alpaca_symbol: {"dollars": float, "signal": str, "reason": str}}
+    Orders, um vom aktuellen Bestand zum Ziel zu kommen (Verkäufe zuerst).
+    - Positionen, die nicht im Ziel sind, werden immer komplett verkauft.
+    - Ziel-Positionen werden nur gehandelt, wenn sie mehr als
+      max(min_order_value, tolerance × Equity) vom Ziel abweichen
+      (verhindert Mini-Trades und unnötige Steuer-Realisierungen).
     """
-    targets = {}
-
-    alpha = signals.get("alpha_mix")
-    if alpha and alpha.get("stocks"):
-        raw_weights = alpha.get("weights", {})
-        cat_weights = {}
-        for k, v in raw_weights.items():
-            cat_weights[k] = float(str(v).replace("%", "")) / 100.0
-
-        # Count LONG and total stocks per category
-        long_by_cat = {}
-        total_by_cat = {}
-        for s in alpha["stocks"]:
-            cat = s.get("category", "unknown")
-            total_by_cat[cat] = total_by_cat.get(cat, 0) + 1
-            if s["signal"] == "LONG":
-                long_by_cat.setdefault(cat, []).append(s)
-
-        # Log allocation ratios
-        total_invested_pct = 0
-        for cat, w in cat_weights.items():
-            n_long = len(long_by_cat.get(cat, []))
-            n_total = total_by_cat.get(cat, 1)
-            invest_ratio = n_long / n_total if n_total > 0 else 0
-            invested_pct = w * invest_ratio * 100
-            total_invested_pct += invested_pct
-            log.info(f"  {cat}: {n_long}/{n_total} LONG "
-                     f"→ {invest_ratio:.0%} × {w:.0%} = {invested_pct:.1f}% investiert")
-        log.info(f"  Gesamt: {total_invested_pct:.1f}% investiert, "
-                 f"{100-total_invested_pct:.1f}% Cash")
-
-        for s in alpha["stocks"]:
-            symbol = map_ticker(s["ticker"])
-            if not symbol:
-                continue
-            cat = s.get("category", "unknown")
-            w = cat_weights.get(cat, 0)
-            n_long = len(long_by_cat.get(cat, []))
-            n_total = total_by_cat.get(cat, 1)
-
-            if s["signal"] == "LONG" and n_long > 0:
-                # Each LONG stock gets: equity × cat_weight / total_stocks_in_cat
-                # This means the category budget is proportionally reduced
-                # when fewer stocks are LONG
-                alloc = equity * w / n_total
-                if symbol in targets and targets[symbol]["signal"] == "LONG":
-                    targets[symbol]["dollars"] += alloc
-                    targets[symbol]["reason"] += f" + {cat}"
-                else:
-                    targets[symbol] = {
-                        "dollars": alloc,
-                        "signal": "LONG",
-                        "reason": f"{cat} {s['ticker']} LONG",
-                    }
-            else:
-                if symbol not in targets or targets[symbol]["signal"] != "LONG":
-                    targets[symbol] = {
-                        "dollars": 0,
-                        "signal": "CASH",
-                        "reason": f"{cat} {s['ticker']} CASH",
-                    }
-
-        # Log consolidated targets
-        total_alloc = sum(t["dollars"] for t in targets.values() if t["signal"] == "LONG")
-        log.info(f"  Investiert: ${total_alloc:,.0f} / ${equity:,.0f} "
-                 f"= {total_alloc/equity*100:.1f}%")
-        for sym, t in sorted(targets.items()):
-            if t["signal"] == "LONG":
-                log.info(f"  Target: {sym} ${t['dollars']:,.0f} ({t['reason']})")
-    else:
-        log.warning("Kein alpha_mix vorhanden — keine Targets!")
-
-    return targets
-
-
-def compute_orders(targets: dict, current_positions: dict,
-                   prices: dict, min_order_value: float = 50) -> list:
-    """
-    Compare target vs current positions.
-    Returns list of order dicts.
-    """
+    fractionable = fractionable or {}
+    threshold = max(min_order_value, tolerance * equity)
     orders = []
-    all_symbols = set(targets.keys()) | set(current_positions.keys())
-
-    for symbol in sorted(all_symbols):
-        target = targets.get(symbol, {"dollars": 0, "reason": "Nicht mehr im Portfolio"})
-        target_dollars = target["dollars"]
-        price = prices.get(symbol, 0)
-
+    for symbol in sorted(set(targets) | set(current_positions)):
+        cur = float(current_positions.get(symbol, 0.0))
+        price = float(prices.get(symbol) or 0.0)
+        tgt = targets.get(symbol)
+        if not tgt or tgt["dollars"] <= 0:
+            if cur > 0:
+                orders.append({"symbol": symbol, "side": "sell", "qty": cur,
+                               "reason": "nicht im Ziel-Portfolio (komplett verkaufen)",
+                               "value": round(cur * price, 2)})
+            elif cur < 0:
+                log.warning(f"  Short-Position {symbol} ({cur}) wird nicht automatisch geschlossen")
+            continue
         if price <= 0:
-            log.warning(f"  Kein Preis für {symbol} — übersprungen")
+            raise ValueError(f"kein Preis für Ziel-Symbol {symbol}")
+        diff_val = tgt["dollars"] - cur * price
+        if abs(diff_val) < threshold:
             continue
-
-        target_qty = round(target_dollars / price, 3)  # fractional shares
-        current_qty = current_positions.get(symbol, 0)
-        diff = round(target_qty - current_qty, 3)
-
-        if abs(diff * price) < min_order_value:
+        qty = _floor_qty(abs(diff_val) / price, fractionable.get(symbol, True))
+        if diff_val < 0:
+            qty = min(qty, cur)
+        if qty <= 0:
             continue
-
-        if diff > 0:
-            orders.append({
-                "symbol": symbol,
-                "side": "buy",
-                "qty": round(diff, 3),
-                "reason": target.get("reason", ""),
-                "value": round(diff * price, 2),
-            })
-        elif diff < 0:
-            orders.append({
-                "symbol": symbol,
-                "side": "sell",
-                "qty": round(abs(diff), 3),
-                "reason": target.get("reason", ""),
-                "value": round(abs(diff) * price, 2),
-            })
-
+        orders.append({"symbol": symbol, "side": "buy" if diff_val > 0 else "sell", "qty": qty,
+                       "reason": tgt.get("reason", ""), "value": round(qty * price, 2)})
+    orders.sort(key=lambda o: (o["side"] != "sell", o["symbol"]))
     return orders
 
 
-def run(execute: bool = False, live: bool = False, signals_path: Path = None):
-    """Main trading logic."""
+def _submit(client: "AlpacaClient", o: dict, executed: list, failed: list):
+    try:
+        result = client.place_order(o["symbol"], _fmt_qty(o["qty"]), o["side"],
+                                    order_type="market", time_in_force="day")
+        o["status"] = result.get("status", "?")
+        o["order_id"] = result.get("id")
+        log.info(f"  ✅ {o['side'].upper()} {_fmt_qty(o['qty'])}× {o['symbol']} → Order {o['order_id']} ({o['status']})")
+    except Exception as e:
+        err = str(e)
+        if isinstance(e, HTTPError):
+            err = f"HTTP {e.code}: {getattr(e, 'body', '')}"
+        log.error(f"  ❌ {o['side'].upper()} {o['symbol']}: {err}")
+        o["status"] = f"ERROR: {err}"
+        failed.append(o)
+    executed.append(o)
+
+
+def _wait_for_fills(client: "AlpacaClient", orders: list, failed: list, timeout: int = FILL_WAIT_SEC):
+    """Wartet (bei offenem Markt) auf Ausführung; abgelehnte/stornierte Orders → failed."""
+    pending = [o for o in orders if o.get("order_id")]
+    deadline = time.time() + timeout
+    while pending and time.time() < deadline:
+        time.sleep(3)
+        for o in list(pending):
+            try:
+                st = client.get_order(o["order_id"]).get("status", "?")
+            except Exception as e:
+                log.warning(f"  Order-Status {o['symbol']} nicht abrufbar: {e}")
+                continue
+            o["status"] = st
+            if st == "filled":
+                pending.remove(o)
+            elif st in ("canceled", "expired", "rejected", "suspended"):
+                log.error(f"  ❌ Order {o['symbol']} {st}")
+                failed.append(o)
+                pending.remove(o)
+    for o in pending:
+        log.warning(f"  ⏳ Order {o['symbol']} nach {timeout}s noch '{o['status']}' (wird beim nächsten Lauf geprüft)")
+
+
+def run(execute: bool = False, live: bool = False, signals_path: Path = None) -> bool:
+    """Main trading logic. Returns False on any problem (→ Exit-Code 1 → GitHub-Fehlermail)."""
     if live:
         key    = os.environ.get("ALPACA_LIVE_KEY_ID")    or os.environ.get("ALPACA_KEY_ID", "")
         secret = os.environ.get("ALPACA_LIVE_SECRET_KEY") or os.environ.get("ALPACA_SECRET_KEY", "")
@@ -329,33 +331,34 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
 
     client = AlpacaClient(key, secret, live=live)
 
-    # Diagnostics
-    log.info(f"Key-ID: {key[:8]}...{key[-4:]} (len={len(key)})")
-    log.info(f"Secret: {secret[:4]}...{secret[-4:]} (len={len(secret)})")
-    log.info(f"Base URL: {client.base}")
+    # Diagnostics (never log any part of the secret — Actions logs of public repos are public)
+    log.info(f"Key-ID: {key[:4]}... (len={len(key)}) | Base URL: {client.base}")
 
     print(f"\n{'='*60}")
-    print(f"  Alpaca Strategy-Switch Trader")
+    print(f"  Alpaca Core-Strategy Trader")
     print(f"  Modus: {'🔴 LIVE' if live else '🟢 PAPER'}  |  "
           f"{'⚠️  EXECUTE' if execute else 'DRY-RUN'}")
     print(f"{'='*60}\n")
 
-    # Load signals
+    # Core-Signal laden und prüfen — bei Problemen KEIN Trading
     path = signals_path or SIGNALS_FILE
-    signals = load_signals(path)
-    log.info(f"Signale geladen: {len(signals.get('etfs', []))} ETFs")
-
-    # Print signals
-    print("── Aktuelle Signale ──")
-    for etf in signals.get("etfs", []):
-        icon = "🟢" if etf["signal"] == "LONG" else "🔴"
-        print(f"  {icon} {etf['ticker']:12s} {etf['signal']:6s}  ({etf['strategy']})")
-    for cat_key in ("swarm", "value", "turnaround"):
-        cat = signals.get(cat_key)
-        if not cat:
-            continue
-        n_l = sum(1 for s in cat["stocks"] if s["signal"] == "LONG")
-        print(f"  {cat_key.upper()}: {n_l}/{len(cat['stocks'])} LONG")
+    try:
+        sig = load_signals(path)
+    except Exception as e:
+        log.error(f"❌ Core-Signal nicht lesbar ({path}): {e}")
+        return False
+    err = validate_core_signal(sig)
+    if err:
+        log.error(f"❌ Core-Signal ungültig — kein Trading: {err}")
+        return False
+    print(f"── Core-Signal (Schlusskurs {sig['as_of']}) ──")
+    print(f"  {({'RISK_ON': '🟢', 'PARTIAL': '🟡'}).get(sig['signal'], '🔴')} {sig['signal']}  |  "
+          f"Exposure {float(sig.get('exposure') or 0):.1f}x")
+    for sl in sig.get("sleeves", []):
+        ix = sl.get("index", {})
+        print(f"    {'🟢' if sl.get('signal') == 'RISK_ON' else '🔴'} {sl.get('name')}: {ix.get('close')} "
+              f"vs SMA{CORE_CFG['sma_days']} {ix.get('sma')} ({ix.get('dist_pct', 0):+.2f}%)")
+    print("  Ziel: " + ", ".join(f"{s} {float(w):.1%}" for s, w in sig["weights"].items()))
 
     # Account info
     try:
@@ -363,22 +366,40 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
     except Exception as e:
         err_msg = str(e)
         if isinstance(e, HTTPError):
-            err_body = e.read().decode() if e.fp else "n/a"
+            err_body = getattr(e, "body", "") or "n/a"
             err_msg = f"HTTP {e.code}: {err_body}"
         log.error(f"❌ API-Verbindung fehlgeschlagen: {err_msg}")
         _send_api_down_alert(err_msg, key)
         return False
 
+    if account.get("trading_blocked") or account.get("account_blocked"):
+        log.error("❌ Konto gesperrt (trading_blocked/account_blocked) — kein Trading")
+        return False
+
     equity = float(account["equity"])
     cash = float(account["cash"])
-    log.info(f"Konto: ${equity:,.2f} Equity  |  ${cash:,.2f} Cash")
+    log.info(f"Konto: ${equity:,.2f} Equity  |  ${cash:,.2f} Cash  |  Buying Power "
+             f"${float(account.get('buying_power') or 0):,.2f}  |  Multiplier {account.get('multiplier')}")
     log.info(f"Account Status: {account.get('status')} | Trading blocked: {account.get('trading_blocked')} | Transfers blocked: {account.get('transfers_blocked')}")
+    if equity <= 0:
+        log.error("❌ Equity <= 0 — kein Trading")
+        return False
 
     # Net capital contributions (deposits − withdrawals) — used to separate
     # strategy performance from capital in/outflows in the trade log.
     cum_deposits = client.get_cumulative_deposits()
     if cum_deposits:
         log.info(f"Kumulierte Einzahlungen: ${cum_deposits:,.2f}")
+
+    # Offene Orders früherer Läufe stornieren — jeder Lauf rechnet das Ziel komplett neu
+    open_orders = client.get_open_orders() or []
+    if open_orders:
+        log.info(f"{len(open_orders)} offene Order(s): " + ", ".join(
+            f"{o.get('side')} {o.get('qty') or o.get('notional')} {o.get('symbol')}" for o in open_orders))
+        if execute:
+            client.cancel_all_orders()
+            time.sleep(3)
+            log.info("  → storniert")
 
     # Current positions
     positions = client.get_positions()
@@ -401,84 +422,89 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None):
     else:
         print("\n  Keine offenen Positionen.")
 
-    # Fetch prices for symbols not in portfolio
-    targets = compute_targets(signals, equity)
-
-    # Safety: if alpha_mix is missing and we have positions, do NOT liquidate
-    if not targets and current:
-        log.warning("⚠️  Keine Targets berechnet aber Positionen vorhanden — "
-                     "überspringe Trading um versehentliche Liquidation zu vermeiden!")
-        _save_trade_log(equity, cash, current, prices, targets, [], execute, live, cum_deposits)
-        return True
-
+    # Ziele, Handelbarkeit, Preise
+    targets = compute_core_targets(sig, equity)
+    fractionable = {}
     for sym in targets:
+        try:
+            asset = client.get_asset(sym)
+        except Exception as e:
+            log.error(f"❌ Asset-Info {sym} nicht abrufbar: {e}")
+            return False
+        if not asset.get("tradable") or asset.get("status") != "active":
+            log.error(f"❌ {sym} ist bei Alpaca nicht handelbar ({asset.get('status')})")
+            return False
+        fractionable[sym] = bool(asset.get("fractionable"))
         if sym not in prices:
-            # Use Alpaca snapshot for price
             try:
                 snap = _api("https://data.alpaca.markets", key, secret,
                             "GET", f"/v2/stocks/{sym}/snapshot")
                 prices[sym] = float(snap["latestTrade"]["p"])
-            except Exception:
-                log.warning(f"  Preis für {sym} nicht verfügbar")
-                prices[sym] = 0
+            except Exception as e:
+                log.error(f"❌ Kein Preis für {sym}: {e}")
+                return False
+    log.info("Ziel: " + ", ".join(f"{s} ${t['dollars']:,.0f}" + ("" if fractionable[s] else " (nur ganze Stück)")
+                                  for s, t in targets.items()))
 
-    # Compute orders
-    orders = compute_orders(targets, current, prices)
+    try:
+        orders = compute_orders(targets, current, prices, equity, fractionable)
+    except ValueError as e:
+        log.error(f"❌ {e}")
+        return False
 
+    extra = {"core_signal": sig["signal"], "signal_as_of": sig["as_of"]}
     if not orders:
-        print("\n✅ Keine Orders nötig — Portfolio ist aktuell.")
-        _save_trade_log(equity, cash, current, prices, targets, [], execute, live, cum_deposits)
+        print(f"\n✅ Keine Orders nötig — Portfolio entspricht dem Ziel (Toleranz {REBALANCE_TOLERANCE:.0%}).")
+        if execute:
+            _save_trade_log(equity, cash, current, prices, targets, [], execute, live, cum_deposits, extra)
         return True
 
-    # Execute or dry-run
-    print(f"\n── {'⚠️  MOC Orders' if execute else 'DRY-RUN'} ──")
+    print(f"\n── {'⚠️  Orders' if execute else 'DRY-RUN'} (erst Verkäufe, dann Käufe) ──")
     for o in orders:
         icon = "🟢" if o["side"] == "buy" else "🔴"
-        print(f"  {icon} {o['side'].upper():4s} {o['qty']:7.3f}× {o['symbol']:8s}  "
-              f"MOC  (~${o['value']:,.0f})  — {o['reason']}")
+        print(f"  {icon} {o['side'].upper():4s} {o['qty']:10.3f}× {o['symbol']:6s} (~${o['value']:,.0f})  — {o['reason']}")
 
-    executed_orders = []
-    failed_orders = []
-    if execute:
-        print("\n── Sende Market Orders ──")
-        for o in orders:
-            try:
-                result = client.place_order(
-                    o["symbol"], o["qty"], o["side"],
-                    order_type="market",
-                    time_in_force="day",
-                )
-                o["status"] = result.get("status", "?")
-                o["order_id"] = result.get("id", "?")
-                executed_orders.append(o)
-                log.info(f"  ✅ {o['side'].upper()} {o['qty']}× {o['symbol']} "
-                         f"MOC → Order {o['order_id']} ({o['status']})")
-            except Exception as e:
-                err_detail = str(e)
-                if isinstance(e, HTTPError):
-                    err_body = e.read().decode() if e.fp else ""
-                    err_detail = f"HTTP {e.code}: {err_body}"
-                    log.error(f"  ❌ {o['symbol']}: {err_detail}")
-                    log.error(f"     URL: {e.url}")
-                    log.error(f"     Key-ID (first 8): {key[:8]}...")
-                else:
-                    log.error(f"  ❌ {o['symbol']}: {err_detail}")
-                o["status"] = f"ERROR: {err_detail}"
-                executed_orders.append(o)
-                failed_orders.append(o)
-
-        # ── Send alert email if any orders failed ──
-        if failed_orders:
-            _send_failure_alert(failed_orders, equity, targets)
-            _save_failed_orders(failed_orders, targets)
-    else:
-        print(f"\n  ℹ️  DRY-RUN — keine Orders gesendet.")
+    if not execute:
+        print(f"\n  ℹ️  DRY-RUN — keine Orders gesendet, kein Log geschrieben.")
         print(f"  Für echte Orders: --execute (oder TRADING_ENABLED=1)")
+        return True
 
-    # ── Save daily trade log ──
-    _save_trade_log(equity, cash, current, prices, targets, executed_orders, execute, live, cum_deposits)
+    market_open = bool(client.get_clock().get("is_open"))
+    log.info("Markt offen" if market_open else
+             "Markt geschlossen — Orders werden zur nächsten Eröffnung ausgeführt")
 
-    return True
+    executed_orders, failed_orders = [], []
+    sells = [o for o in orders if o["side"] == "sell"]
+    buys = [o for o in orders if o["side"] == "buy"]
+    for o in sells:
+        _submit(client, o, executed_orders, failed_orders)
+    if market_open and sells:
+        _wait_for_fills(client, sells, failed_orders)
+
+    if buys:
+        # Käufe nur mit vorhandenem Cash — nie Margin. Rest folgt beim nächsten Lauf.
+        acct = client.get_account()
+        budget = min(float(acct["cash"]), float(acct.get("buying_power") or 0)) * 0.995
+        planned = sum(o["value"] for o in buys)
+        if planned > budget:
+            scale = max(budget, 0.0) / planned
+            log.warning(f"  Kaufbudget ${budget:,.0f} < geplant ${planned:,.0f} → Käufe auf {scale:.0%} "
+                        f"skaliert, Rest beim nächsten Lauf")
+            for o in buys:
+                o["qty"] = _floor_qty(o["qty"] * scale, fractionable.get(o["symbol"], True))
+                o["value"] = round(o["qty"] * prices[o["symbol"]], 2)
+            buys = [o for o in buys if o["qty"] > 0 and o["value"] >= MIN_ORDER_VALUE]
+        for o in buys:
+            _submit(client, o, executed_orders, failed_orders)
+        if market_open and buys:
+            _wait_for_fills(client, buys, failed_orders)
+
+    if failed_orders:
+        _send_failure_alert(failed_orders, equity, targets)
+        _save_failed_orders(failed_orders, targets)
+
+    _save_trade_log(equity, cash, current, prices, targets, executed_orders, execute, live, cum_deposits, extra)
+    return not failed_orders
 
 
 def _send_email_alert(subject: str, html_body: str):
@@ -614,7 +640,8 @@ def _save_failed_orders(failed_orders: list, targets: dict):
     log.info(f"Failed orders gespeichert: {FAILED_ORDERS_FILE}")
 
 
-def _save_trade_log(equity, cash, positions, prices, targets, orders, executed, live: bool = False, cum_deposits: float = 0.0):
+def _save_trade_log(equity, cash, positions, prices, targets, orders, executed, live: bool = False, cum_deposits: float = 0.0,
+                    extra: dict | None = None):
     """Append daily entry to trade_log.json (paper) or trade_log_live.json (live)."""
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
@@ -648,6 +675,8 @@ def _save_trade_log(equity, cash, positions, prices, targets, orders, executed, 
     # calculation stay honest across deposits: real profit = equity − cum_deposits.
     if cum_deposits:
         entry["cum_deposits"] = round(cum_deposits, 2)
+    if extra:
+        entry.update(extra)
 
     # Load existing log
     log_data = []
@@ -689,7 +718,8 @@ def main():
                 return
 
     sig_path = Path(args.signals) if args.signals else None
-    run(execute=execute, live=live, signals_path=sig_path)
+    ok = run(execute=execute, live=live, signals_path=sig_path)
+    sys.exit(0 if ok else 1)
 
 
 if __name__ == "__main__":
