@@ -78,34 +78,53 @@
     // ── State ───────────────────────────────────────────────────────────
     let D = {};          // full data
     let allSignals = []; // etfs
-    let tradeLog = [];   // alpaca trade log
+    let tradeLog = [];   // alpaca paper log of the old Alpha-Mix (entries without core_signal)
+    let coreLogs = {paper: [], live: []};  // Alpaca runs of the Core strategy
+    let QUOTA = [];      // equity quota log of SSO/QLD (tax evidence)
     let CORE = null;     // core strategy signal (traded)
     let activeTab = 'core';
     let subTab = {};     // per-tab sub-tab
 
     // ── Fetch ───────────────────────────────────────────────────────────
+    async function optJson(r) {
+      try { return r && r.ok ? await r.json() : null; } catch (e) { return null; }
+    }
+    function parseCsv(txt) {
+      const [head, ...rows] = txt.trim().split(/\r?\n/).map(l => l.split(','));
+      return rows.filter(r => r.length === head.length)
+        .map(r => Object.fromEntries(head.map((k, i) => [k, r[i]])));
+    }
     async function fetchSignals() {
       try {
-        const [resp, tlResp, coreResp] = await Promise.all([
-          fetch('data/mobile_signals.json?t=' + Date.now()).catch(() => null),
-          fetch('data/trade_log.json?t=' + Date.now()).catch(() => null),
-          fetch('data/core_signal.json?t=' + Date.now()).catch(() => null)
+        const t = '?t=' + Date.now();
+        const [resp, tlResp, coreResp, liveResp, quotaResp] = await Promise.all([
+          fetch('data/mobile_signals.json' + t).catch(() => null),
+          fetch('data/trade_log.json' + t).catch(() => null),
+          fetch('data/core_signal.json' + t).catch(() => null),
+          fetch('data/trade_log_live.json' + t).catch(() => null),
+          fetch('data/equity_quota.csv' + t).catch(() => null)
         ]);
         if (coreResp && coreResp.ok) CORE = await coreResp.json();
         if (!CORE) activeTab = 'overview';
         if (!(resp && resp.ok) && !CORE) throw new Error('Noch keine Daten');
         if (resp && resp.ok) D = await resp.json();
         allSignals = D.etfs || [];
-        if (tlResp && tlResp.ok) tradeLog = await tlResp.json();
+        const paper = await optJson(tlResp), live = await optJson(liveResp);
+        if (Array.isArray(paper)) {
+          tradeLog = paper.filter(e => !e.core_signal);
+          coreLogs.paper = paper.filter(e => e.core_signal);
+        }
+        if (Array.isArray(live)) coreLogs.live = live.filter(e => e.core_signal);
+        try { if (quotaResp && quotaResp.ok) QUOTA = parseCsv(await quotaResp.text()); } catch (e) { QUOTA = []; }
         document.getElementById('lastUpdate').textContent = 'Stand: ' + (CORE ? CORE.generated_utc : (D.updated || '?'));
         if (CORE || allSignals.length || D.swarm || D.value || D.turnaround) { buildTabs(); render(); }
         else {
           document.getElementById('content').innerHTML =
-            '<div class="loading"><div>⏳ Erste Berechnung steht aus</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Daten werden automatisch Mo–Fr 22:30 UTC berechnet.</div></div>';
+            '<div class="loading"><div>⏳ Erste Berechnung steht aus</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Daten werden automatisch Mo–Fr berechnet (Core 14:45 UTC, Info-Tabs 21:00 UTC).</div></div>';
         }
       } catch (e) {
         document.getElementById('content').innerHTML =
-          '<div class="loading"><div>⏳ Noch keine Daten</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Die erste Berechnung läuft automatisch Mo–Fr um 22:30 UTC.<br>Bitte später erneut öffnen.</div></div>';
+          '<div class="loading"><div>⏳ Noch keine Daten</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Die Berechnung läuft automatisch Mo–Fr (Core 14:45 UTC, Info-Tabs 21:00 UTC).<br>Bitte später erneut öffnen.</div></div>';
       }
     }
 
@@ -157,6 +176,8 @@
         const data = allSignals.find(s => s.ticker === activeTab);
         if (data) { c.innerHTML = renderETF(data); afterETFRender(data); }
       }
+      if (!['core', 'compare', 'methodik'].includes(activeTab))
+        c.insertAdjacentHTML('afterbegin', '<div class="info-note">ℹ️ <strong>Nur Information – wird nicht gehandelt.</strong> Gehandelt wird ausschließlich die Core-Strategie (Tab 🎯 Core). Warum die alten Strategien nicht mehr laufen: Tab 📖 Info.</div>');
       wireClicks(c);
     }
 
@@ -186,7 +207,19 @@
     // ── OVERVIEW ────────────────────────────────────────────────────────
     // ══════════════════════════════════════════════════════════════════════
     function renderOverview() {
-      let h = '<div class="section"><div class="section-title">ETF Signal</div><div class="etf-overview">';
+      let h = '';
+      if (CORE) {
+        const sl = CORE.sleeves || [], on = sl.filter(x => x.signal === 'RISK_ON').length;
+        const S = CORE.backtest ? CORE.backtest.strategy : null;
+        h += `<div class="section"><div class="section-title">🎯 Gehandelt</div><div class="etf-overview">
+          <div class="etf-mini-card" data-ticker="core">
+            <div class="etf-ticker">Core ${Number((CORE.config || {}).leverage || 2)}x</div>
+            <div class="etf-name">S&amp;P 500 + Nasdaq-100, Trendfilter SMA200</div>
+            <div class="etf-signal ${on === sl.length ? 'long' : on ? '' : 'cash'}">${on === sl.length ? '🟢 RISK ON' : on ? '🟡 TEILWEISE' : '🔴 RISK OFF'}</div>
+            <div style="font-size:11px;color:#8b949e;margin-top:4px;">${S ? 'Backtest ' + pct(S.cagr) + '% p.a. · MaxDD ' + pct(S.max_dd) + '%' : ''}</div>
+          </div></div></div>`;
+      }
+      h += '<div class="section"><div class="section-title">ETF Signal</div><div class="etf-overview">';
       for (const s of allSignals) {
         if (s.ticker !== 'URTH') continue;
         const isL = s.signal==='LONG';
@@ -947,12 +980,28 @@
     // ══════════════════════════════════════════════════════════════════════
     function renderComparison() {
       let items = [];
+      const yrs = (a, b) => (a && b) ? String(a).slice(0, 4) + '–' + String(b).slice(0, 4) : '—';
+      if (CORE && CORE.backtest) {
+        const bt = CORE.backtest, S = bt.strategy, B = bt.buy_hold, r2 = v => v != null ? Number(v.toFixed(2)) : null;
+        items.push({
+          name: '🎯 Core', type: 'Gehandelt', signal: CORE.signal,
+          period: yrs(bt.period, String(bt.period).slice(-10)),
+          cagr_sw: S.cagr, cagr_bh: B.cagr,
+          sharpe_sw: r2(S.sharpe), sharpe_bh: r2(B.sharpe),
+          maxdd_sw: S.max_dd, maxdd_bh: B.max_dd,
+          sortino_sw: r2(S.sortino), sortino_bh: r2(B.sortino),
+          vol_sw: S.vol, vol_bh: B.vol,
+          inv: bt.invested
+        });
+      }
       for (const s of allSignals) {
         if (s.ticker !== 'URTH') continue;
+        const ef = s.equity_full || [];
         items.push({
           name: s.ticker.replace('.DE',''),
           type: 'ETF',
           signal: s.signal,
+          period: ef.length ? yrs(ef[0].date, ef[ef.length - 1].date) : '—',
           cagr_sw: s.cagr_switch, cagr_bh: s.cagr_bh,
           sharpe_sw: s.sharpe_switch, sharpe_bh: s.sharpe_bh,
           maxdd_sw: s.max_dd_switch, maxdd_bh: s.max_dd_bh,
@@ -968,6 +1017,7 @@
           name: icon+' '+label,
           type: 'Kategorie',
           signal: cat.n_long+'/'+cat.n_total+' LONG',
+          period: yrs(cat.start, cat.end),
           cagr_sw: cat.cagr_switch, cagr_bh: cat.cagr_bh,
           sharpe_sw: cat.sharpe_switch, sharpe_bh: cat.sharpe_bh,
           maxdd_sw: cat.max_dd_switch, maxdd_bh: cat.max_dd_bh,
@@ -983,9 +1033,10 @@
         const lastEq = tradeLog[tradeLog.length-1].equity;
         const alpRet = (lastEq / startEq) - 1;
         items.push({
-          name: '🏦 Alpaca (Paper)',
+          name: '🏦 Alpaca Paper (Alpha-Mix, alt)',
           type: 'Validierung',
           signal: tradeLog.length + ' Tage',
+          period: yrs(tradeLog[0].date, tradeLog[tradeLog.length-1].date),
           cagr_sw: alpRet, cagr_bh: D.alpha_mix ? D.alpha_mix.cagr_switch : null,
           sharpe_sw: null, sharpe_bh: D.alpha_mix ? D.alpha_mix.sharpe_switch : null,
           maxdd_sw: null, maxdd_bh: null,
@@ -997,22 +1048,27 @@
 
       let h = '<div class="section"><div class="section-title">📊 Strategie-Vergleich</div>';
       h += '<div style="overflow-x:auto;"><table class="detail-table"><thead><tr>';
-      h += '<th>Strategie</th><th>Signal</th><th>CAGR<br>Switch</th><th>CAGR<br>B&H</th>';
+      h += '<th>Strategie</th><th>Signal</th><th>Zeitraum</th><th>CAGR<br>Switch</th><th>CAGR<br>B&H</th>';
       h += '<th>Sharpe<br>Sw</th><th>Sharpe<br>BH</th><th>Max DD<br>Sw</th><th>Max DD<br>BH</th><th>Inv%</th>';
       h += '</tr></thead><tbody>';
       for (const it of items) {
-        const sigClr = (typeof it.signal === 'string' && it.signal.includes('LONG')) ? 'var(--green)'
-                     : (typeof it.signal === 'string' && it.signal.includes('CASH')) ? 'var(--red)' : '#8b949e';
+        const sg = String(it.signal ?? '');
+        const sigClr = /LONG|RISK_ON/.test(sg) ? 'var(--green)' : /CASH|RISK_OFF/.test(sg) ? 'var(--red)'
+                     : sg === 'PARTIAL' ? 'var(--orange)' : '#8b949e';
         h += `<tr>`;
         h += `<td style="font-weight:700;white-space:nowrap;">${it.name}</td>`;
-        h += `<td style="color:${sigClr};font-weight:600;font-size:12px;">${it.signal}</td>`;
+        h += `<td style="color:${sigClr};font-weight:600;font-size:12px;">${esc(sg)}</td>`;
+        h += `<td style="color:#8b949e;font-size:12px;white-space:nowrap;">${it.period}</td>`;
         h += `<td style="color:var(--green);">${pct(it.cagr_sw)}%</td><td>${pct(it.cagr_bh)}%</td>`;
         h += `<td>${it.sharpe_sw??'—'}</td><td>${it.sharpe_bh??'—'}</td>`;
         h += `<td style="color:var(--red);">${pct(it.maxdd_sw)}%</td><td>${pct(it.maxdd_bh)}%</td>`;
         h += `<td>${it.inv!=null?Math.round(it.inv*100)+'%':'—'}</td>`;
         h += `</tr>`;
       }
-      h += '</tbody></table></div></div>';
+      h += '</tbody></table></div>';
+      h += `<div style="font-size:11px;color:#8b949e;margin-top:6px;line-height:1.5;">Zeiträume und Vergleichswerte unterscheiden sich:
+        Core = Backtest mit echten ETFs vs. SPY; die übrigen (nur Info) vs. eigenes Buy&amp;Hold.
+        Sharpe/Sortino Core: Überrendite über T-Bills, übrige: über 2 % p.a. Inv% = durchschnittlich investierter Anteil.</div></div>`;
 
       // Additional detail: Sortino & Volatility
       h += '<div class="section"><div class="section-title">Risiko-Kennzahlen</div>';
@@ -1046,92 +1102,241 @@
     // ══════════════════════════════════════════════════════════════════════
     // ── METHODIK / INFO ─────────────────────────────────────────────────
     // ══════════════════════════════════════════════════════════════════════
+    function docTable(head, rows, hl = []) {
+      return '<div class="table-scroll"><table class="doc-table"><thead><tr>' + head.map(x => `<th>${x}</th>`).join('') +
+        '</tr></thead><tbody>' + rows.map((r, i) => `<tr${hl.includes(i) ? ' class="hl"' : ''}>` +
+        r.map(x => `<td>${x}</td>`).join('') + '</tr>').join('') + '</tbody></table></div>';
+    }
+    function de(v, d = 1) { return v != null && isFinite(v) ? (v * 100).toFixed(d).replace('.', ',').replace('-', '−') : '—'; }
+    function f2(v) { return v != null && isFinite(v) ? Number(v).toFixed(2).replace('.', ',').replace('-', '−') : '—'; }
+
+    // Feste Research-Kennzahlen: research/universe_report.txt und research/swarm_report.txt (Daten bis 16.10.2026)
     function renderMethodik() {
-      return `
-      <div class="section">
-        <div class="section-title">📖 So funktioniert Strategy Switch</div>
-        <div class="info-block">
-          <h3>🎯 Grundprinzip</h3>
-          <p>Für jeden ETF / jede Aktie werden mehrere Strategien parallel berechnet.
-          Ein <strong>Rolling-Sharpe-Vergleich</strong> wählt automatisch die beste Strategie.
-          Ist keine Strategie profitabel → <strong>CASH</strong> (kein Investment).</p>
+      const cfg = (CORE && CORE.config) || {}, bt = CORE && CORE.backtest;
+      const lev = Number(cfg.leverage || 2), buf = Math.round((cfg.cash_buffer ?? 0.01) * 100);
+      const cash = esc(cfg.etf_cash || 'SGOV'), sma = Number(cfg.sma_days || 200), bandIn = Math.round((cfg.band_in ?? 0.01) * 100);
+      const legs = (cfg.sleeves || []).map(x => `${Math.round(x.weight * 100)} % ${esc(x.name)} (Signal ${esc(x.signal_ticker)}, ETF ${esc(x.etf_2x)})`)
+        .join(' + ') || '50 % S&amp;P 500 (SSO) + 50 % Nasdaq-100 (QLD)';
+      const sw = bt ? (bt.switches_per_year || 0).toFixed(1).replace('.', ',') : '8';
+      let live = '';
+      if (bt) {
+        const S = bt.strategy, B = bt.buy_hold;
+        live = `<p><strong>Live-Modul</strong> (genau die gehandelte Umsetzung, ${esc(bt.period)}: Signal am Schlusskurs, Handel zur Eröffnung des Folgetags,
+          ${buf} % Cash-Puffer, Zins auf Cash): CAGR <strong>${de(S.cagr, 2)} %</strong>, Vol ${de(S.vol, 0)} %, Sharpe ${f2(S.sharpe)}, Sortino ${f2(S.sortino)},
+          MaxDD ${de(S.max_dd)} %, schlechtestes Jahr ${de(S.worst_year)} %, Ø ${de(bt.invested, 0)} % investiert, ${sw} Wechsel/Jahr.
+          ${esc(bt.benchmark || 'SPY')}: ${de(B.cagr, 2)} %, Sharpe ${f2(B.sharpe)}, MaxDD ${de(B.max_dd)} %. Wird täglich neu berechnet.</p>`;
+      }
+      const Q = quotaByFund(), qStart = QUOTA.map(r => r.as_of).filter(Boolean).sort()[0] || '2026-10-16';
+      const quota = Q.length ? docTable(['Fonds', 'Stand', 'Aktienquote', 'Minimum', 'Tage', 'Aktien', 'Fondsvermögen'],
+        Q.map(q => [esc(q.fund), esc(q.as_of), de(q.quota) + ' %', de(q.min) + ' % (' + esc(q.year) + ')', q.days, esc(q.n_stocks),
+                     '$' + (q.net / 1e9).toFixed(2).replace('.', ',') + ' Mrd.']))
+        : '<p>Noch keine Archivdaten geladen.</p>';
+      const OLD = [['swarm', '🐝 Schwarm'], ['value', '💎 Value'], ['turnaround', '🔄 Turnaround'], ['alpha_mix', '🧬 Alpha-Mix'], ['alpha_boost', '🚀 Boost 2x']]
+        .filter(([k]) => D[k]).map(([k, n]) => { const c = D[k];
+          return [n, esc(String(c.start || '').slice(0, 4)) + '–' + esc(String(c.end || '').slice(0, 4)), de(c.cagr_switch) + ' %', de(c.cagr_bh) + ' %',
+                  f2(c.sharpe_switch) + ' / ' + f2(c.sharpe_bh), de(c.max_dd_switch, 0) + ' %', de(c.pct_invested, 0) + ' %']; });
+      const urth = allSignals.find(s => s.ticker === 'URTH');
+      if (urth) {
+        const ef = urth.equity_full || [];
+        OLD.push(['🌍 URTH (MSCI World)', ef.length && ef[0].date ? esc(ef[0].date.slice(0, 4)) + '–' + esc(ef[ef.length - 1].date.slice(0, 4)) : '—',
+                  de(urth.cagr_switch) + ' %', de(urth.cagr_bh) + ' %', f2(urth.sharpe_switch) + ' / ' + f2(urth.sharpe_bh),
+                  de(urth.max_dd_switch, 0) + ' %', de(urth.pct_invested, 0) + ' %']);
+      }
 
-          <h3>📊 Strategien</h3>
-          <ul>
-            <li><strong>Momentum</strong>: Kauft, wenn der Kurs über dem Kurs vor X Tagen liegt (Lookback: 60–250 Tage)</li>
-            <li><strong>MA (Moving Average)</strong>: Kauft, wenn der Kurs über dem gleitenden Durchschnitt liegt (50–200 Tage)</li>
-            <li><strong>RSI</strong>: Kauft, wenn der Relative Stärke Index über einem Schwellenwert liegt (14–30 Tage, Schwelle 30–50)</li>
-            <li><strong>Double MA</strong>: Kauft, wenn der schnelle MA über dem langsamen MA kreuzt (Fast 20–50, Slow 100–200)</li>
-            <li><strong>Dual Momentum</strong>: Kombiniert absolute + relative Stärke</li>
-          </ul>
+      return `<div class="section"><div class="section-title">📖 Methodik, Kennzahlen &amp; Doku</div><div class="info-block">
 
-          <h3>🔄 Walk-Forward Optimierung</h3>
-          <p>Parameter werden NICHT auf die Vergangenheit überoptimiert!
-          Stattdessen wird ein <strong>rollendes Fenster</strong> verwendet:</p>
-          <ul>
-            <li>Training: 756 Tage (3 Jahre) für ETFs, 504 Tage für Aktien</li>
-            <li>Test: 21 Tage (1 Monat) out-of-sample</li>
-            <li>Das Fenster rollt Monat für Monat weiter</li>
-          </ul>
+      <details open><summary>🎯 Was wird gehandelt?</summary>
+        <p><strong>Nur die Core-Strategie</strong> (Tab 🎯 Core) – im Alpaca-Live-Konto und parallel im Paper-Konto. Alle anderen Tabs sind nur Information.</p>
+        <ul>
+          <li><strong>Zwei Hälften:</strong> ${legs}. Jede Hälfte folgt nur ihrem eigenen Index.</li>
+          <li><strong>Trendfilter:</strong> Index-Schlusskurs über dem ${sma}-Tage-Durchschnitt (SMA) +${bandIn} % → RISK ON → ${lev}x-ETF.
+            Schlusskurs unter dem SMA → RISK OFF → T-Bill-ETF ${cash}. Dazwischen bleibt der Zustand (Puffer gegen Fehlsignale).</li>
+          <li><strong>Gesamt-Exposure:</strong> 0x, 1x oder 2x – je nachdem, ob keine, eine oder beide Hälften investiert sind.
+            Die Hälften werden auf 50/50 zurückgeführt, sobald eine Position mehr als 3 % des Depots vom Ziel abweicht.</li>
+          <li><strong>Cash-Puffer:</strong> ${buf} % bleiben frei (Kursbewegungen, Gebühren) und bekommen den Alpaca-Cash-Zins.</li>
+          <li><strong>Feste Regel:</strong> SMA200 ist die Standardregel aus der Literatur; kein Parameter wurde auf Rendite optimiert.
+            Dieselbe Regel funktioniert auch 1972–1989 und auf dem S&amp;P allein (siehe Kennzahlen).</li>
+        </ul>
+        <p><strong>Warum das funktioniert:</strong> Große Verluste passieren meist unter dem 200-Tage-Durchschnitt (2000–2003, 2008, 2022).
+          Der Filter weicht einem Teil davon aus – erst dadurch wird der Hebel tragbar: Buy&amp;Hold 2x hatte 2007–2026 −84,7 % Drawdown, Core −35,8 %.</p>
+      </details>
 
-          <h3>⚖️ Gewichtung (Schwarm / Value / Turnaround)</h3>
-          <p>Die Aktien-Kategorien verwenden <strong>Gleichgewichtung (1/N)</strong>:</p>
-          <ul>
-            <li>Bei 10 Aktien hat jede <strong>10% Gewicht</strong></li>
-            <li>Wenn 3 Aktien LONG und 7 CASH sind, ist das Portfolio zu <strong>30% investiert</strong></li>
-            <li>Cash-Aktien bringen 0% Tagesrendite → der Durchschnitt wird glatter, aber langsamer</li>
-            <li>Es gibt KEINE Konzentration — eine einzelne LONG-Aktie hat immer nur 1/N Gewicht</li>
-          </ul>
+      <details><summary>⚙️ Täglicher Ablauf (automatisch, GitHub Actions)</summary>
+        <ul>
+          <li><strong>Mo–Fr 14:45 UTC</strong> (kurz nach US-Börsenöffnung): Schlusskurse des Vortags von ^GSPC und ^NDX laden (yfinance; Ersatzquelle Alpaca SPY/QQQ).</li>
+          <li><strong>Datenprüfung:</strong> genug Historie, keine Lücken, Daten höchstens ${Number(cfg.max_data_age_days || 4)} Tage alt, kein unplausibler Tagessprung (&gt; 25 %).
+            Schlägt etwas fehl → <strong>kein Handel</strong>, GitHub schickt eine Fehlermail, hier erscheint das letzte gültige Signal mit Warnung.</li>
+          <li><strong>Trader</strong> (erst Paper, dann Live): offene Orders stornieren, Zielbeträge je ETF berechnen, nur bei Abweichung &gt; 3 % des Depots handeln (Mindestorder 50 $).
+            Erst Verkäufe (auf Ausführung warten), dann Käufe – <strong>nur aus vorhandenem Cash, nie auf Kredit</strong>. Bruchstücke erlaubt.</li>
+          <li>Scheitert eine Live-Order, schlägt der Lauf fehl (GitHub-Fehlermail); der nächste Lauf gleicht automatisch wieder aufs Ziel ab.</li>
+          <li>Danach werden die Holdings von SSO/QLD für den Steuer-Nachweis archiviert. Signal, Trade-Logs und Archiv landen im GitHub-Repo – das ist die Datenquelle dieser Seite.</li>
+          <li><strong>Mo–Fr 21:00 UTC:</strong> Info-Tabs (alte Strategien) neu berechnen, zweiter Versuch fürs Holdings-Archiv.</li>
+        </ul>
+      </details>
 
-          <h3>🐝 Schwarm (Top-10 Market Cap)</h3>
-          <p>Alle 63 Tage werden die <strong>10 größten Aktien nach Marktkapitalisierung</strong>
-          aus ~50 Mega-Caps ausgewählt. Jede bekommt ein eigenes Kauf/Verkauf-Signal.
-          Die Market-Cap-Berechnung verwendet <strong>historische Shares Outstanding</strong>
-          (yfinance, ab 2015) — keine heutigen Werte für vergangene Rankings.</p>
+      <details><summary>📈 Kennzahlen: Backtest mit echten ETFs 2007–2026</summary>
+        ${docTable(['Variante', 'CAGR', 'Vol', 'Sharpe', 'MaxDD', 'schlechtestes Jahr'], [
+          ['Buy&amp;Hold S&amp;P 500 (SPY)', '10,64 %', '20 %', '0,54', '−55,2 %', '−36,8 %'],
+          ['Buy&amp;Hold S&amp;P 2x (SSO)', '14,23 %', '39 %', '0,50', '−84,7 %', '−67,9 %'],
+          ['S&amp;P Trend 2x', '13,53 %', '23 %', '0,61', '−38,9 %', '−25,4 %'],
+          ['Nasdaq-100 Trend 2x', '20,16 %', '31 %', '0,70', '−46,6 %', '−27,1 %'],
+          ['S&amp;P+NDX Trend 1,5x', '14,05 %', '19 %', '0,71', '−26,9 %', '−16,1 %'],
+          ['S&amp;P+NDX Trend 2x = Core', '17,33 %', '26 %', '0,70', '−35,8 %', '−21,3 %']], [5])}
+        <p class="doc-note">2007-06-04 bis 2026-10-16, echte US-ETFs (SPY, QQQ, SSO, QLD, BIL) inkl. Ausschüttungen, Handel einen Schlusskurs nach dem Signal,
+          5 bp je Umschichtung, vor Steuern. Sharpe = Überrendite über T-Bills.</p>
+        ${live}
+      </details>
 
-          <h3>💎 Value</h3>
-          <p>Die <strong>günstigsten Aktien</strong> werden nach Fundamentaldaten ausgewählt:
-          niedriges P/E & P/B, hohe Dividendenrendite, stabile Gewinne.</p>
+      <details><summary>📜 Kennzahlen: lange Historie seit 1972</summary>
+        <p>Vor den ETFs wird gerechnet: k-fach-ETF = k × Index − (k−1) × T-Bill-Zins − gemessene ETF-Kosten (SSO 1,68 %/J, QLD 1,93 %/J, UPRO 2,31 %/J).
+          Risk-off verdient T-Bill-Zins, 5 bp je Umschichtung, Handel am Folgetag.</p>
+        ${docTable(['1988–2026', 'CAGR', 'Vol', 'Sharpe', 'MaxDD', 'schl. Jahr', '10 J &gt; B&amp;H', '10-J-Median'], [
+          ['Buy&amp;Hold S&amp;P 500', '11,41 %', '18 %', '0,53', '−55,3 %', '−37 %', '–', '10,0 %'],
+          ['Buy&amp;Hold S&amp;P 2x', '15,06 %', '36 %', '0,49', '−88,3 %', '−68 %', '71 %', '11,5 %'],
+          ['S&amp;P Trend 2x', '13,69 %', '23 %', '0,55', '−46,3 %', '−37 %', '76 %', '12,1 %'],
+          ['Nasdaq-100 Trend 2x', '19,88 %', '36 %', '0,60', '−78,8 %', '−50 %', '93 %', '18,7 %'],
+          ['S&amp;P+NDX Trend 1,5x', '14,79 %', '21 %', '0,63', '−47,5 %', '−30 %', '89 %', '13,8 %'],
+          ['S&amp;P+NDX Trend 2x = Core', '17,64 %', '28 %', '0,62', '−59,9 %', '−41 %', '99 %', '16,6 %'],
+          ['S&amp;P Trend 3x', '17,60 %', '34 %', '0,56', '−64,9 %', '−54 %', '91 %', '16,0 %']], [5])}
+        <p class="doc-note">1988-11-15 bis 2026-10-16. „10 J &gt; B&amp;H“ = Anteil der 336 rollierenden 10-Jahres-Zeiträume (monatliche Starts), in denen die Variante Buy&amp;Hold S&amp;P schlägt.</p>
+        <ul>
+          <li>Core in Teilperioden: vor 2008 16,6 % p.a. (MaxDD −60 %, Dotcom-Crash), ab 2008 18,7 % (−36 %); Buy&amp;Hold 11,6 % / 11,2 %.</li>
+          <li>Handel einen Tag später: 17,6 % / −53 % → kaum abhängig vom genauen Handelszeitpunkt.</li>
+        </ul>
+        <h4>Noch länger: Nasdaq Composite statt Nasdaq-100 (CAGR / MaxDD)</h4>
+        ${docTable(['Zeitraum', 'S&amp;P B&amp;H', 'S&amp;P Trend 2x', '50/50 Trend 2x'], [
+          ['1972–1989', '11,3 % / −45 %', '16,7 % / −31 %', '17,5 % / −29 %'],
+          ['1990–2026', '10,8 % / −55 %', '12,7 % / −46 %', '15,2 % / −63 %'],
+          ['1972–2026', '11,0 % / −55 %', '14,0 % / −46 %', '15,9 % / −63 %']])}
+        <p class="doc-note">Gleiche Regel und gleiche ETF-Kosten wie SSO/QLD. S&amp;P allein seit 1960: Trend 2x schlägt Buy&amp;Hold in 86 % der 10-Jahres-Zeiträume.</p>
+      </details>
 
-          <h3>🔄 Turnaround</h3>
-          <p><strong>Gefallene Aktien mit Erholungspotenzial</strong>: 10–50% unter 52-Wochen-Hoch,
-          aber positives Umsatzwachstum und Profitabilität.</p>
+      <details><summary>🎲 Zukunft: Simulation &amp; Stresstests</summary>
+        <h4>10-Jahres-Simulation (Block-Bootstrap seit 1988, 600 Pfade)</h4>
+        ${docTable(['Szenario', 'Core Median (P10 … P90)', '&gt; B&amp;H', 'MaxDD Median', 'DD &lt; −50 %', 'B&amp;H Median'], [
+          ['Historische Prämie', '15,5 %<br>3,9 … 29,0 %', '77 %', '−42,8 %', '29 %', '11,4 %'],
+          ['Aktienprämie −3 %/J', '10,0 %<br>0,6 … 21,2 %', '66 %', '−44,8 %', '36 %', '8,5 %'],
+          ['… und Nasdaq = S&amp;P', '5,5 %<br>−2,6 … 15,2 %', '36 %', '−47,6 %', '43 %', '8,6 %']])}
+        <p class="doc-note">Buy&amp;Hold S&amp;P: MaxDD-Median −34 %, Risiko für −50 %: 18–24 %. Der Bootstrap (Jahresblöcke) unterschätzt eher den Nutzen des Trendfilters.</p>
+        <h4>Rückschau-Check: Nasdaq-100 ohne seinen historischen Vorsprung (1988–2026)</h4>
+        ${docTable(['Annahme', 'Core CAGR', 'Sharpe', 'MaxDD', '10 J &gt; B&amp;H'], [
+          ['wie historisch', '17,64 %', '0,62', '−59,9 %', '99 %'],
+          ['fair: Nasdaq −3,7 %/J (= S&amp;P-CAGR)', '14,83 %', '0,54', '−52,9 %', '84 %'],
+          ['hart: Nasdaq −5,5 %/J (= S&amp;P-Tagesrendite)', '11,53 %', '0,43', '−55,6 %', '51 %'],
+          ['zum Vergleich: Buy&amp;Hold S&amp;P', '11,41 %', '0,53', '−55,3 %', '–']])}
+        <p><strong>Fazit:</strong> Ein großer Teil des Vorsprungs kommt vom Nasdaq. Der Trendfilter allein bringt auf dem S&amp;P rund +2 Prozentpunkte
+          (13,7 % statt 11,4 %) bei kleinerem Drawdown. Mehr Rendite als Buy&amp;Hold gibt es nur mit mehr Risiko – und ohne Garantie.</p>
+      </details>
 
-          <h3>⚠️ Hinweis: Historische Fundamentaldaten</h3>
-          <p>Value- und Turnaround-Aktien werden <strong>jährlich neu ausgewählt</strong>
-          anhand der Fundamentaldaten, die zum jeweiligen Zeitpunkt bekannt waren.
-          yfinance liefert ~4-5 Jahre Jahresabschlüsse (ab ~2021).
-          Für 2017-2020 wird der früheste verfügbare Stand (2021) verwendet —
-          dies verursacht für die ersten Jahre einen leichten Bias, der jedoch
-          deutlich geringer ist als eine feste Auswahl mit heutigen Daten.
-          Die Turnaround-Auswahl (52W-Hoch, Kurseinbruch) basiert größtenteils
-          auf Preisdaten und ist daher weniger betroffen.</p>
+      <details><summary>💵 Kosten &amp; Zinsen</summary>
+        <ul>
+          <li><strong>Kommission:</strong> 0 $ bei Alpaca; bei Verkäufen kleine SEC/FINRA-Gebühren (Cent-Beträge).</li>
+          <li><strong>ETF-Kosten:</strong> stecken im gemessenen Abstand zu 2 × Index − T-Bill: SSO 1,68 %/J, QLD 1,93 %/J
+            (Verwaltungsgebühr ca. 0,9 %, Swap-Finanzierung, tägliches Rebalancing). In Backtests mit echten Kursen automatisch enthalten.</li>
+          <li><strong>Handel:</strong> 5 bp (0,05 %) je umgeschichtetem Dollar für Spread/Slippage angesetzt; ca. ${sw} Signalwechsel pro Jahr (beide Hälften zusammen).</li>
+          <li><strong>Risk-off-Zins:</strong> ${cash} (T-Bills mit 0–3 Monaten Laufzeit) rentiert ca. 3,6 % p.a. (Stand Okt. 2026).</li>
+          <li><strong>Cash-Zins:</strong> Alpaca verzinst freies Cash (FDIC-Sweep, ca. 3,25 % p.a., monatliche Gutschrift, z. B. Jul 3,40 $, Aug 5,95 $, Sep 8,09 $).
+            Weil ${cash} mehr bringt, liegt Risk-off-Geld in ${cash}; nur der ${buf}-%-Puffer bleibt Cash.</li>
+          <li><strong>Backtest:</strong> Risk-off-Anteil und Puffer verdienen T-Bill-Zins (BIL als historische Näherung, inkl. Ausschüttungen).</li>
+        </ul>
+      </details>
 
-          <h3>💰 Kosten (Alpaca)</h3>
-          <ul>
-            <li>Transaktionskosten: $0 Kommission (Alpaca)</li>
-            <li>Slippage: 5 bp (0.05%) für Aktien, 3 bp für ETFs (konservativ)</li>
-            <li>Alle Backtests inkludieren diese Kosten</li>
-          </ul>
+      <details><summary>🧾 Steuern (Deutschland) &amp; Teilfreistellungs-Nachweis</summary>
+        <h4>Rendite nach Steuer (Modell 1988–2026)</h4>
+        ${docTable(['Variante', 'Umsetzung', 'vor Steuer', 'nach Steuer', '10-J-Median'], [
+          ['Buy&amp;Hold S&amp;P 500', 'UCITS-ETF', '11,41 %', '10,82 %', '10,0 → 8,7 %'],
+          ['S&amp;P Trend 2x', 'Alpaca', '13,69 %', '10,35 %', '12,1 → 9,0 %'],
+          ['S&amp;P+NDX Trend 1,5x', 'Alpaca', '14,79 %', '11,15 %', '13,7 → 10,1 %'],
+          ['Core (S&amp;P+NDX 2x)', 'Alpaca', '17,64 %', '13,39 %', '16,5 → 12,0 %'],
+          ['Core (S&amp;P+NDX 2x)', 'mit TF 30 %', '17,64 %', '14,65 %', '16,5 → 13,4 %'],
+          ['Nasdaq-100 Trend 2x', 'Alpaca', '19,88 %', '15,28 %', '18,7 → 13,3 %']], [3, 4])}
+        <p class="doc-note">26,375 % (Abgeltungsteuer + Soli, ohne Kirchensteuer). Alpaca = US-ETFs ohne Teilfreistellung (TF); „mit TF 30 %“ = UCITS-Aktien-ETF oder Nachweis unten.
+          Strategien konservativ: Gewinne jedes Jahr versteuert (mit Verlustvortrag); Buy&amp;Hold erst am Ende, mit 30 % TF. Sparerpauschbetrag nicht berücksichtigt.
+          10-J-Median: vor → nach Steuer.</p>
+        <h4>Teilfreistellung für SSO/QLD per Nachweis</h4>
+        <ul>
+          <li>SSO/QLD sind US-Fonds, die den Hebel über Swaps erzeugen. Sie gelten nicht automatisch als Aktienfonds → standardmäßig <strong>keine</strong> Teilfreistellung.</li>
+          <li><strong>§ 20 Abs. 4 InvStG:</strong> Weist der Anleger nach, dass der Fonds die Aktienquote (&gt; 50 %) <strong>während des Kalenderjahres tatsächlich durchgehend</strong>
+            überschritten hat, gilt die Teilfreistellung von 30 % – auf Antrag in der Steuererklärung.</li>
+          <li><strong>Archiv:</strong> Jeden Handelstag werden die offiziellen Tages-Holdings von ProShares unverändert gespeichert (mit SHA-256-Prüfsumme) und die Quote berechnet:
+            Aktien ÷ Fondsvermögen (Aktien + T-Bills + sonstiges Nettovermögen); Swaps/Futures zählen nicht. Näherung – das InvStG bezieht die Quote auf das Aktivvermögen.
+            Warnung, sobald eine Quote auf 55 % fällt.</li>
+        </ul>
+        ${quota}
+        <ul>
+          <li>Das Archiv beginnt am ${esc(qStart)} → für <strong>${esc(qStart.slice(0, 4))} kein lückenloser Nachweis</strong> (Teilfreistellung für dieses Jahr unsicher);
+            ab dem folgenden Jahr vollständig, solange es täglich läuft.</li>
+          <li>REITs (ca. 2–3 %) sind mitgezählt, obwohl sie steuerlich keine Kapitalbeteiligungen sind; die Quote liegt auch ohne sie weit über 50 %.</li>
+          <li>Wer den Nachweis nutzt und später Veräußerungsverluste &gt; 500 € aus diesen Fonds geltend macht, muss ihn für die gesamte Besitzdauer erbringen
+            (inkl. Rücknahmepreisen zum Jahresende).</li>
+          <li>Alpaca führt keine deutsche Steuer ab → Gewinne, Ausschüttungen und Vorabpauschale selbst in Anlage KAP / KAP-INV erklären.
+            Die 15 % US-Quellensteuer auf Ausschüttungen (W-8BEN) ist in der Regel anrechenbar.</li>
+          <li><em>Keine Steuerberatung – Details mit Steuerberater/Finanzamt klären.</em></li>
+        </ul>
+        <p class="doc-note">Rohdaten: Ordner tax_evidence/ im GitHub-Repo (nicht auf dieser Seite).</p>
+      </details>
 
-          <h3>🧬 Alpha-Mix</h3>
-          <p>Kombiniert Schwarm, Value und Turnaround mit <strong>Sharpe-optimierten Gewichten</strong>.
-          Auf Kategorie-Ebene (3 Gewichte) ist Optimierung sinnvoll —
-          im Gegensatz zu Einzelaktien-Gewichtung, wo 1/N nachweislich robust überlegen ist.</p>
+      <details><summary>⚠️ Risiken</summary>
+        <ul>
+          <li><strong>Drawdowns:</strong> mit echten ETFs bis −38 % (2007–2026), im Modell bis −60 % (Dotcom-Crash). In 10 Jahren typisch −43 bis −48 %.</li>
+          <li><strong>Seitwärtsmärkte:</strong> viele Fehlsignale (rein/raus) kosten jeweils etwas; 2x-ETFs verlieren in schwankenden Seitwärtsphasen zusätzlich durch das tägliche Rebalancing.</li>
+          <li><strong>Crash an einem Tag:</strong> Das Signal reagiert erst am nächsten Handelstag. Ein Einbruch wie am 19.10.1987 (S&amp;P −20 %) träfe die 2x-ETFs voll (ca. −40 %).</li>
+          <li><strong>Nasdaq-Abhängigkeit:</strong> Ohne den historischen Vorsprung des Nasdaq bleibt wenig Mehrrendite (Stresstest oben).</li>
+          <li><strong>ETF-/Gegenpartei-Risiko:</strong> Swaps mit Banken, mögliche Schließung oder Umstrukturierung eines ETFs.</li>
+          <li><strong>Technik/Broker:</strong> GitHub Actions, Datenquelle yfinance, Alpaca-API. Abgesichert durch Datenprüfung, Fehlermails und Käufe nur aus Cash – im Zweifel wird nicht gehandelt.</li>
+          <li>Vergangene Renditen garantieren nichts. Keine Anlageberatung.</li>
+        </ul>
+      </details>
 
-          <h3>⚖️ Warum 1/N bei Einzelaktien?</h3>
-          <p>Studien (DeMiguel et al. 2009) zeigen: Gleichgewichtung schlägt
-          optimierte Gewichtungen out-of-sample, weil Schätzfehler bei 10+ Assets
-          den Optimierungsvorteil auffressen. Die Alpha-Mix Kategorie-Gewichtung
-          (nur 3 Gewichte) ist dagegen stabil genug für Optimierung.</p>
+      <details><summary>🗂️ Alte Strategien (Info-Tabs) – warum nicht mehr gehandelt</summary>
+        <p>Bis Oktober 2026 lief ein Walk-Forward-Switching: Für jede Aktie bzw. jeden ETF wurden mehrere Timing-Regeln (Momentum, gleitende Durchschnitte, RSI, Dual Momentum)
+          monatlich auf den letzten 2–3 Jahren bewertet; die beste Regel bestimmte LONG oder CASH. Kategorien: Schwarm (Top-10 nach Börsenwert), Value, Turnaround,
+          Alpha-Mix (gewichtete Mischung) und Boost 2x.</p>
+        <p>Am 16.10.2026 wurde ein <strong>Look-ahead-Fehler</strong> behoben (die Auswahl nutzte die Rendite des Handelstags selbst). Ehrliche Ergebnisse (täglich neu berechnet):</p>
+        ${OLD.length ? docTable(['Strategie', 'Zeitraum', 'Switching', 'B&amp;H', 'Sharpe Sw/BH', 'MaxDD', 'Inv.'], OLD) : ''}
+        <h4>Diagnose Schwarm (2018–2026)</h4>
+        <ul>
+          <li>Im Schnitt 52,7 % investiert. Die Aktien stiegen an investierten Tagen nur 8,6 % p.a., an Cash-Tagen aber 26,8 % p.a. → das Timing lag systematisch falsch und verpasste die Erholungen.</li>
+          <li>Rein zufällig zu 52,7 % investiert wären ca. 9,4 % p.a. zu erwarten gewesen – real 3,3 %. Dazu 6,5 Ein-/Ausstiege pro Aktie und Jahr.</li>
+        </ul>
+        ${docTable(['2018–2026', 'CAGR', 'Sharpe', 'MaxDD'], [
+          ['SPY Buy&amp;Hold', '14,29 %', '0,69', '−33,7 %'],
+          ['QQQ Buy&amp;Hold', '19,29 %', '0,78', '−35,1 %'],
+          ['Top-10 Buy&amp;Hold (gleichgewichtet)', '15,65 %', '0,66', '−36,6 %'],
+          ['Top-10 + Switching (= Schwarm)', '3,31 %', '0,17', '−16,3 %'],
+          ['Top-10 + SMA200 je Aktie', '8,91 %', '0,54', '−22,5 %'],
+          ['Top-10 + S&amp;P-Trendfilter', '11,94 %', '0,67', '−24,1 %'],
+          ['QQQ + Nasdaq-Trendfilter (1x)', '17,31 %', '0,89', '−22,0 %']], [6])}
+        <p><strong>Fazit:</strong> Timing einzelner Aktien kostet Rendite; ein Trendfilter auf breite Indizes funktioniert → daraus wurde Core.
+          Hinweis: Die Buy&amp;Hold-Linie im Schwarm-Tab ist für 2018 bis Mai 2019 zu niedrig (Datenlücke; korrekt wären 15,7 % statt 14,3 % p.a.).</p>
+      </details>
 
-          <h3>📅 Berechnung & Trading</h3>
-          <p>Automatisch <strong>Mo–Fr 21:00 UTC</strong> (nach US-Börsenschluss) via GitHub Actions.</p>
-          <p>Trading: <strong>Mo–Fr 19:50 UTC</strong> (15:50 ET, 10 Min vor Close) —
-          Market-on-Close (MOC) Orders. Ausführung zum offiziellen Schlusskurs =
-          exakt der Preis, auf dem die Backtests basieren. Montags werden Freitags-Signale gehandelt.</p>
-        </div>
-      </div>`;
+      <details><summary>🔬 Getestet &amp; verworfen</summary>
+        <ul>
+          <li><strong>Russell 2000 / MidCap 400 mit Trendfilter:</strong> schlechter als deren eigenes Buy&amp;Hold (echte ETFs 2007–2026: 2,41 % bzw. 6,10 % p.a.).</li>
+          <li><strong>Alle vier Indizes gemischt</strong> (11,27 %) oder <strong>Rotation</strong> in den stärksten (10,30 %): schlechter als S&amp;P+NDX.</li>
+          <li><strong>Rotation S&amp;P ↔ Nasdaq 2x:</strong> 17,74 % (echte ETFs), aber MaxDD −46,6 % statt −35,8 %.</li>
+          <li><strong>S&amp;P Trend 3x:</strong> 17,60 % (Modell), aber MaxDD −64,9 % und höhere Kosten (UPRO 2,31 %/J).</li>
+          <li><strong>1,5x statt 2x:</strong> gleiche Sharpe (0,71 vs. 0,70) und kleinere Drawdowns, aber gut 3 Prozentpunkte weniger Rendite.</li>
+          <li><strong>Volatilitäts-Steuerung, Kombination mehrerer SMAs:</strong> kein robuster Vorteil, mehr Trades.</li>
+          <li><strong>Trendfilter auf anderen Weltmärkten:</strong> im Schnitt kein Vorteil (4 von 10 Märkten besser) → der Effekt ist nicht universell.</li>
+          <li><strong>UCITS-2x-ETFs</strong> (Teilfreistellung ohne Nachweis): bei Alpaca nicht handelbar.</li>
+        </ul>
+      </details>
+
+      <details><summary>📁 Code &amp; Daten</summary>
+        <ul>
+          <li><strong>wf_backtest/core_strategy.py</strong> – Regel, Datenprüfung, Live-Backtest → data/core_signal.json</li>
+          <li><strong>trading/alpaca_trader.py</strong> – Orders Paper/Live → data/trade_log.json, data/trade_log_live.json</li>
+          <li><strong>trading/holdings_archive.py</strong> – Holdings-Archiv und Aktienquote → tax_evidence/, data/equity_quota.csv</li>
+          <li><strong>.github/workflows/daily.yml</strong> – Zeitplan (Core 14:45 UTC, Info-Tabs 21:00 UTC)</li>
+          <li><strong>research/</strong> – evaluate_universe.py (→ universe_report.txt), evaluate_swarm.py (→ swarm_report.txt), evaluate_core.py, compare_variants.py, plot_risk_return.py</li>
+          <li><strong>wf_backtest/daily_runner.py</strong> – alte Strategien (Info-Tabs) → data/mobile_signals.json</li>
+        </ul>
+        <p class="doc-note">Research-Kennzahlen: Stand 17.10.2026 (Daten bis 16.10.2026). Core-Tab und „Live-Modul“ werden täglich neu berechnet.</p>
+      </details>
+
+      </div></div>`;
     }
 
     // ══════════════════════════════════════════════════════════════════════
@@ -1251,6 +1456,7 @@
       }
       h += `</div>
         <div style="font-size:12px;color:#8b949e;">Schlusskurs vom ${esc(s.as_of)} · berechnet ${esc(s.generated_utc)} · Daten: ${esc(s.source)}</div></div>`;
+      h += renderDepot() + renderQuota();
 
       h += `<div class="section"><div class="section-title">Regel (fest, nicht optimiert)</div>
         <div style="font-size:13px;line-height:1.6;color:#c9d1d9;">
@@ -1258,7 +1464,11 @@
           • Nach jedem Handelstag: Index-Schlusskurs vs. ${cfg.sma_days}-Tage-Durchschnitt (SMA).<br>
           • <b>RISK ON</b> wenn Kurs &gt; SMA +${Math.round((cfg.band_in || 0) * 100)}% → ${lev}x-ETF der Hälfte.<br>
           • <b>RISK OFF</b> wenn Kurs &lt; SMA → diese Hälfte in T-Bills (${esc(cfg.etf_cash)}).<br>
-          • Dazwischen bleibt der Zustand. Umsetzung am nächsten Handelstag. Weicht eine Position um mehr als 3 % des Depots vom Ziel ab, wird zurückgeschichtet.
+          • Dazwischen bleibt der Zustand (Puffer gegen Fehlsignale).<br>
+          • Umsetzung am nächsten Handelstag ab 14:45 UTC, nur wenn eine Position um mehr als 3 % des Depots vom Ziel abweicht (Mindestorder 50 $).
+            Erst Verkäufe, dann Käufe – nur aus vorhandenem Cash, nie auf Kredit.<br>
+          • ${Math.round((cfg.cash_buffer || 0) * 100)} % bleiben als Cash-Puffer und bekommen den Alpaca-Cash-Zins (ca. 3,25 % p.a.);
+            Risk-off-Geld liegt in ${esc(cfg.etf_cash)} (kurzlaufende T-Bills, ca. 3,6 % p.a., Stand Okt. 2026).
         </div></div>`;
 
       if (bt) {
@@ -1269,12 +1479,16 @@
             ${mc('Max. Drawdown', pct(S.max_dd) + '%', 'B&H: ' + pct(B.max_dd) + '%', 'neutral')}
             ${mc('Volatilität', pct(S.vol) + '%', 'B&H: ' + pct(B.vol) + '%', 'neutral')}
             ${mc('Schlechtestes Jahr', pct(S.worst_year) + '%', 'B&H: ' + pct(B.worst_year) + '%', 'neutral')}
+            ${S.sharpe != null ? mc('Sharpe', S.sharpe.toFixed(2), 'B&H: ' + B.sharpe.toFixed(2), S.sharpe >= B.sharpe ? 'positive' : 'negative') : ''}
+            ${S.sortino != null ? mc('Sortino', S.sortino.toFixed(2), 'B&H: ' + B.sortino.toFixed(2), S.sortino >= B.sortino ? 'positive' : 'negative') : ''}
+            ${bt.invested != null ? mc('Investiert', Math.round(bt.invested * 100) + '%', 'Ø Anteil der Zeit', 'neutral') : ''}
+            ${mc('Wechsel/Jahr', (bt.switches_per_year || 0).toFixed(1), 'beide Hälften zusammen', 'neutral')}
           </div>
           <div class="chart-container" style="height:240px;"><canvas id="coreChart"></canvas></div>
           <div class="chart-legend"><span class="sw">Core</span><span class="bh">B&amp;H ${bm}</span></div>
           <div style="font-size:12px;color:#8b949e;margin-top:6px;">Signal am Schlusskurs, Handel zur Eröffnung des Folgetags,
-            inkl. ETF-Kosten und 5 bp je Umschichtung, vor Steuern. ${(bt.switches_per_year || 0).toFixed(1)} Wechsel/Jahr (beide Hälften).
-            Rot = T-Bills (heller = nur eine Hälfte).</div></div>`;
+            inkl. ETF-Kosten und 5 bp je Umschichtung; Risk-off-Anteil und Cash-Puffer mit T-Bill-Zins (BIL); vor Steuern.
+            Sharpe/Sortino: Überrendite über T-Bills. Rot = T-Bills (heller = nur eine Hälfte).</div></div>`;
         if (bt.yearly && bt.yearly.length) h += renderYearlyBars(bt.yearly);
       }
 
@@ -1298,8 +1512,53 @@
         h += '</div></div>';
       }
       h += `<div style="font-size:11px;color:#8b949e;padding:0 4px 16px;">Die übrigen Tabs (Aktien-/ETF-Switching) sind nur noch Information:
-        nach Korrektur eines Look-ahead-Fehlers zeigen sie keinen Vorteil gegenüber Buy&amp;Hold und werden nicht mehr gehandelt.</div>`;
+        nach Korrektur eines Look-ahead-Fehlers zeigen sie keinen Vorteil gegenüber Buy&amp;Hold und werden nicht mehr gehandelt.
+        Alle Kennzahlen, Steuern, Risiken und Doku: Tab 📖 Info.</div>`;
       return h;
+    }
+
+    // Alpaca-Konten: nur Läufe der Core-Strategie (Einträge mit core_signal)
+    function renderDepot() {
+      const accts = [['🔴 Live', coreLogs.live], ['🧪 Paper', coreLogs.paper]].filter(([, l]) => l.length);
+      let h = '<div class="section"><div class="section-title">🏦 Depot bei Alpaca (Core-Läufe)</div>';
+      if (!accts.length) return h + `<div style="font-size:13px;color:#8b949e;">Noch kein Core-Handelslauf protokolliert.
+        Gehandelt wird Mo–Fr ab 14:45 UTC; danach stehen hier Depotwert, Ergebnis und Orders (Live und Paper).</div></div>`;
+      h += '<div class="metrics-grid" style="margin-bottom:6px;">';
+      for (const [label, l] of accts) {
+        const a = l[0], z = l[l.length - 1], dep = e => Number(e.cum_deposits || 0);
+        const pnl = (z.equity - dep(z)) - (a.equity - dep(a)), r = a.equity > 0 ? pnl / a.equity : 0;
+        const ord = z.orders || [], bad = ord.filter(o => /error|reject|fail|cancel/i.test(String(o.status || ''))).length;
+        const tgt = Object.entries(z.targets || {}).map(([k, v]) => esc(k) + ' $' + num(v.dollars)).join(' · ') || '—';
+        h += mc(label + ' · Depotwert', '$' + num(z.equity),
+          'Ergebnis seit ' + esc(String(a.date).slice(0, 10)) + ': ' + (pnl >= 0 ? '+' : '−') + '$' + num(Math.abs(pnl)) +
+          ' (' + (r >= 0 ? '+' : '') + (r * 100).toFixed(1) + '%, ohne Einzahlungen)<br>Ziel: ' + tgt +
+          '<br>Letzter Lauf ' + esc(z.date) + ': ' + ord.length + ' Order(s)' + (bad ? ' · ⚠️ ' + bad + ' Fehler' : ''),
+          pnl >= 0 ? 'positive' : 'negative');
+      }
+      return h + '</div><div style="font-size:12px;color:#8b949e;">Depotwert jeweils zu Beginn des Laufs (vor den Orders).</div></div>';
+    }
+
+    function quotaByFund() {
+      const by = {};
+      for (const r of QUOTA) if (r.fund && r.as_of) (by[r.fund] = by[r.fund] || []).push(r);
+      return Object.keys(by).sort().map(f => {
+        const rs = by[f].sort((a, b) => a.as_of.localeCompare(b.as_of)), z = rs[rs.length - 1], yr = z.as_of.slice(0, 4);
+        const ys = rs.filter(r => r.as_of.startsWith(yr)), q = ys.map(r => Number(r.equity_quota));
+        return {fund: f, as_of: z.as_of, quota: Number(z.equity_quota), n_stocks: z.n_stocks, net: Number(z.net_assets_usd),
+                year: yr, first: ys[0].as_of, days: ys.length, min: Math.min(...q)};
+      });
+    }
+
+    function renderQuota() {
+      const Q = quotaByFund();
+      if (!Q.length) return '';
+      const late = Q.filter(q => q.first > q.year + '-01-06');
+      return `<div class="section"><div class="section-title">🧾 Steuer-Nachweis Aktienquote</div>
+        <div class="metrics-grid" style="margin-bottom:6px;">${Q.map(q => mc(esc(q.fund) + ' · Aktienquote', pct(q.quota) + '%',
+          'Stand ' + esc(q.as_of) + '<br>Minimum ' + esc(q.year) + ': ' + pct(q.min) + '% (' + q.days + (q.days === 1 ? ' Tag' : ' Tage') + ' archiviert)',
+          q.min > 0.5 ? 'positive' : 'negative')).join('')}</div>
+        <div style="font-size:12px;color:#8b949e;">Teilfreistellung 30 % auf Antrag, wenn die Quote im Kalenderjahr durchgehend &gt; 50 % liegt (§ 20 Abs. 4 InvStG).
+          ${late.length ? 'Archiv für ' + esc(late[0].year) + ' erst ab ' + esc(late[0].first) + ' → dieses Jahr nicht lückenlos. ' : ''}Details: Tab 📖 Info.</div></div>`;
     }
 
     function afterCoreRender() {

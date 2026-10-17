@@ -696,6 +696,33 @@ body {
 }
 .info-block li { margin-bottom: 3px; }
 .info-block strong { color: var(--text); }
+.info-block details { border-top: 1px solid var(--border); padding: 10px 0; }
+.info-block details:first-child { border-top: none; padding-top: 0; }
+.info-block details:last-child { padding-bottom: 0; }
+.info-block summary { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text); list-style: none; }
+.info-block summary::-webkit-details-marker { display: none; }
+.info-block summary::before { content: '\25B8\00A0'; color: var(--text2); }
+.info-block details[open] > summary::before { content: '\25BE\00A0'; }
+.info-block details[open] > summary { margin-bottom: 8px; }
+.info-block h4 { font-size: 13px; margin: 12px 0 4px; color: var(--text); }
+.table-scroll { overflow-x: auto; margin: 4px 0 10px; }
+.doc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.doc-table th, .doc-table td { padding: 5px 5px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; color: var(--text2); }
+.doc-table th { font-weight: 600; white-space: normal; vertical-align: bottom; }
+.doc-table th:first-child, .doc-table td:first-child { text-align: left; white-space: normal; min-width: 120px; }
+.doc-table tr.hl td { color: var(--green); font-weight: 700; }
+.doc-note { font-size: 11px; color: var(--text2); margin: -4px 0 10px; }
+.info-note {
+  background: rgba(88,166,255,0.08);
+  border: 1px solid rgba(88,166,255,0.35);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text2);
+}
+.info-note strong { color: var(--text); }
 
 /* Stock Detail Modal */
 .stock-modal-overlay {

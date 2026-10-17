@@ -21,6 +21,7 @@ import hashlib
 import logging
 import os
 import re
+import shutil
 import sys
 import time
 from datetime import datetime, timezone
@@ -34,6 +35,7 @@ log = logging.getLogger("holdings_archive")
 ROOT = Path(__file__).resolve().parent.parent
 EVIDENCE_DIR = ROOT / "tax_evidence"
 QUOTA_LOG = EVIDENCE_DIR / "equity_quota.csv"
+PUBLIC_LOG = ROOT / "docs" / "data" / "equity_quota.csv"   # copy shown on the dashboard
 SOURCE_URL = "https://accounts.profunds.com/etfdata/ByFund/{fund}-psdlyhld.csv"
 FUNDS = sorted({sl["etf_2x"] for sl in CORE_CFG["sleeves"]})
 WARN_QUOTA = 0.55                 # legal limit is > 50 %; warn early
@@ -154,6 +156,9 @@ def main() -> int:
             if write_header:
                 w.writeheader()
             w.writerows(new)
+    if QUOTA_LOG.exists():
+        PUBLIC_LOG.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(QUOTA_LOG, PUBLIC_LOG)
     return 1 if failed else 0
 
 

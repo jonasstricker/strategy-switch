@@ -66,6 +66,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/data/mobile_signals.json
           [ -d tax_evidence ] && git add tax_evidence
+          [ -f docs/data/equity_quota.csv ] && git add docs/data/equity_quota.csv
           if git diff --staged --quiet; then
             echo "No changes"
           else
@@ -147,6 +148,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           for f in docs/data/core_signal.json docs/data/trade_log.json docs/data/trade_log_live.json \
+                   docs/data/equity_quota.csv \
                    trading/trade_log.json trading/trade_log_live.json trading/failed_orders.json; do
             [ -f "$f" ] && git add "$f"
           done

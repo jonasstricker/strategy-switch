@@ -228,12 +228,16 @@ def backtest_real(states: dict, cfg: dict = CONFIG) -> dict | None:
     strat = (1 + (W_old * gap).sum(1)) * (1 + (W_new * intra).sum(1)) - 1 - turn * cfg["cost_per_turnover"]
     strat = pd.Series(strat, index=idx).iloc[1:]
     bh = c[cfg["benchmark"]].pct_change().loc[strat.index].fillna(0.0)
+    rf = c[cash_sym].pct_change().loc[strat.index].fillna(0.0)    # T-bill proxy, as in research/
 
     def _m(x):
         eq = (1 + x).cumprod()
         yrs = len(x) / 252
+        ex = x - rf
         return {"cagr": float(eq.iloc[-1] ** (1 / yrs) - 1),
                 "vol": float(x.std() * np.sqrt(252)),
+                "sharpe": float(ex.mean() / ex.std() * np.sqrt(252)),
+                "sortino": float(ex.mean() / ex[ex < 0].std() * np.sqrt(252)),
                 "max_dd": float((eq / eq.cummax() - 1).min()),
                 "worst_year": float(((1 + x).groupby(x.index.year).prod() - 1).min())}
 
@@ -251,6 +255,7 @@ def backtest_real(states: dict, cfg: dict = CONFIG) -> dict | None:
         "strategy": _m(strat),
         "buy_hold": _m(bh),
         "switches_per_year": float((np.diff(st.astype(int), axis=0) != 0).sum() / (len(st) / 252)),
+        "invested": float(1.0 - off_dec[:-1].mean()),     # avg risk-on share of the sleeves
         "equity": equity,
         "yearly": [{"year": int(y), "switch": round(float(ys[y]) * 100, 1), "bh": round(float(yb[y]) * 100, 1)}
                    for y in ys.index],
