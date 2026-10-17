@@ -53,7 +53,7 @@ CONFIG = {
     "etf_cash": "SGOV",
     "etf_cash_hist": "BIL",        # backtest proxy (SGOV exists only since 2020)
     "benchmark": "SPY",            # buy & hold comparison in the backtest
-    "cash_buffer": 0.01,           # keep 1 % uninvested for price moves / fees
+    "cash_buffer": 0.01,           # keep 1 % uninvested for price moves / fees (earns Alpaca sweep interest)
     "max_data_age_days": 4,        # weekend + one holiday
     "history_start": "2000-01-01",
     "backtest_start": "2007-06-01",
@@ -210,10 +210,18 @@ def backtest_real(states: dict, cfg: dict = CONFIG) -> dict | None:
     names = [sl["name"] for sl in cfg["sleeves"]]
     st = np.column_stack([states[n].reindex(idx, method="ffill").fillna(0.0).to_numpy() > 0 for n in names])
     keys = [tuple(map(bool, row)) for row in st]
-    bt_cfg = {**cfg, "cash_buffer": 0.0}
-    combos = {k: [target_weights(dict(zip(names, k)), bt_cfg, cfg["etf_cash_hist"]).get(s, 0.0) for s in syms]
-              for k in set(keys)}
+    cash_sym = cfg["etf_cash_hist"]
+
+    def _weights(key: tuple) -> list:
+        # the uninvested buffer earns Alpaca's cash sweep interest live -> credit it with
+        # the T-bill proxy return, like the risk-off part
+        w = target_weights(dict(zip(names, key)), cfg, cash_sym)
+        w[cash_sym] = w.get(cash_sym, 0.0) + max(0.0, 1.0 - sum(w.values()))
+        return [w.get(s, 0.0) for s in syms]
+
+    combos = {k: _weights(k) for k in set(keys)}
     W_dec = np.array([combos[k] for k in keys])
+    off_dec = 1.0 - st.astype(float) @ np.array([sl["weight"] for sl in cfg["sleeves"]])
     W_new = np.vstack([np.zeros((1, len(syms))), W_dec[:-1]])     # held from open t+1
     W_old = np.vstack([np.zeros((1, len(syms))), W_new[:-1]])
     turn = np.abs(np.diff(W_new, axis=0, prepend=W_new[:1])).sum(1)
@@ -233,7 +241,7 @@ def backtest_real(states: dict, cfg: dict = CONFIG) -> dict | None:
     step = max(1, len(eq_s) // 250)
     pts = list(range(0, len(eq_s), step)) + list(range(max(0, len(eq_s) - 60), len(eq_s)))
     equity = [{"date": eq_s.index[i].strftime("%Y-%m-%d"), "switch": round(float(eq_s.iloc[i]), 4),
-               "bh": round(float(eq_b.iloc[i]), 4), "cash": round(float(W_new[i + 1][0]), 2)}
+               "bh": round(float(eq_b.iloc[i]), 4), "cash": round(float(off_dec[i]), 2)}
               for i in sorted(set(pts))]
     ys = (1 + strat).groupby(strat.index.year).prod() - 1
     yb = (1 + bh).groupby(bh.index.year).prod() - 1

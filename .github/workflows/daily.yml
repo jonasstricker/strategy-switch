@@ -52,11 +52,20 @@ jobs:
           mkdir -p docs/data
           cp wf_backtest/mobile_signals.json docs/data/mobile_signals.json
 
+      # Zweiter Versuch des Holdings-Archivs (falls der Lauf am Morgen fehlschlug)
+      - name: Archive ETF holdings (tax evidence)
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 5
+        run: python -m trading.holdings_archive
+
       - name: Commit & push results
+        if: ${{ !cancelled() }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/data/mobile_signals.json
+          [ -d tax_evidence ] && git add tax_evidence
           if git diff --staged --quiet; then
             echo "No changes"
           else
@@ -121,6 +130,14 @@ jobs:
           TRADING_ENABLED: "1"
         run: python -m trading.alpaca_trader --execute --live
 
+      # Steuer-Nachweis Teilfreistellung (§ 20 Abs. 4 InvStG): Original-Holdings von SSO/QLD
+      # täglich archivieren -> tax_evidence/ (blockiert nie das Trading)
+      - name: Archive ETF holdings (tax evidence)
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 5
+        run: python -m trading.holdings_archive
+
       - name: Publish & commit signal and trade logs
         if: always()
         run: |
@@ -133,6 +150,7 @@ jobs:
                    trading/trade_log.json trading/trade_log_live.json trading/failed_orders.json; do
             [ -f "$f" ] && git add "$f"
           done
+          [ -d tax_evidence ] && git add tax_evidence
           if git diff --staged --quiet; then
             echo "No changes"
           else

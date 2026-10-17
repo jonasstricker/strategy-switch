@@ -1,0 +1,42 @@
+Swarm-Diagnose  (Top-10 Market Cap, quartalsweise, Universum = swarm_wf.MEGA_CAP_UNIVERSE)
+  Universum: 50 Aktien, Daten 2016-01-04 .. 2026-10-16, 40 Rebalances
+  Top-10 per 2026-07-15: NVDA, AAPL, GOOGL, MSFT, AMZN, AVGO, META, TSLA, BRK-B, LLY
+  Top-10 per 2026-10-13: NVDA, AAPL, GOOGL, MSFT, AMZN, META, AVGO, TSLA, BRK-B, LLY
+
+A+B) Zeitraum 2018-01-04 .. 2026-10-16  (= Dashboard-Swarm-Zeitraum)
+  Variante                                          CAGR    Vol   MaxDD  Sharpe
+  SPY Buy & Hold                                  14.29%   19.0%   -33.7%   0.69
+  QQQ Buy & Hold                                  19.29%   23.8%   -35.1%   0.78
+  Top-10 EW Buy & Hold (Swarm-Benchmark)          15.65%   22.9%   -36.6%   0.66
+  Top-10 cap-gewichtet ('kopflastig')             16.13%   23.8%   -34.5%   0.66
+  Top-10 + Produktions-Switching (= Swarm)         3.31%   10.5%   -16.3%   0.17
+  Top-10 + Einzelaktien-SMA200                     8.91%   13.9%   -22.5%   0.54
+  Top-10 + Index-Trendfilter S&P SMA200 (1x)      11.94%   15.6%   -24.1%   0.67
+  QQQ + Index-Trendfilter NDX SMA200 (1x)         17.31%   17.3%   -22.0%   0.89
+
+B) Timing-Skill des Produktions-Switchings (nur Tage mit Top-10-Mitgliedschaft)
+  Anteil investiert                          52.7%
+  Aktienrendite an investierten Tagen           8.6% p.a. (arithm.)
+  Aktienrendite an Cash-Tagen (verpasst)       26.8% p.a. (arithm.)
+  Erwartung ohne Skill (Quote x B&H + Cash)     9.4% CAGR  vs. real 3.3%
+  Ein/Aus-Wechsel je Aktie und Jahr            6.5
+
+  Jahr     SPY   Top10-EW   Swarm
+  2018    -5.8%    -11.5%    -4.1%
+  2019    31.2%     39.3%     9.4%
+  2020    18.3%     16.1%     4.4%
+  2021    28.7%     23.8%     7.2%
+  2022   -18.2%    -27.7%   -15.1%
+  2023    26.2%     50.0%    15.3%
+  2024    24.9%     41.7%    11.1%
+  2025    17.7%     22.1%    12.3%
+  2026    12.8%      7.6%    -7.4%
+
+C) 'Kopflastig' langfristig - echte ETFs (keine Survivorship), CAGR p.a. (Diff. zu SPY)
+                          2001-2007           2008-2014           2015-2026           
+  SPY  S&P 500              3.6% ( +0.0)        7.4% ( +0.0)       13.7% ( +0.0)      
+  OEF  S&P 100 (Top 100)    2.1% ( -1.4)        6.6% ( -0.8)       14.7% ( +1.1)      
+  XLG  S&P Top 50         n/a                   6.2% ( -1.2)       15.1% ( +1.4)      
+  MGC  Vanguard Mega Cap  n/a                   7.3% ( -0.1)       14.4% ( +0.7)      
+  QQQ  Nasdaq-100          -0.3% ( -3.9)       11.9% ( +4.5)       18.7% ( +5.0)      
+  RSP  S&P 500 Equal Wt   n/a                   9.8% ( +2.4)       10.6% ( -3.1)      
