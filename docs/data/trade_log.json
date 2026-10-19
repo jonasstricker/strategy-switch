@@ -20766,5 +20766,176 @@
       }
     ],
     "executed": true
+  },
+  {
+    "date": "2026-10-19 20:14 UTC",
+    "equity": 101724.57,
+    "cash": 57154.56,
+    "invested": 44570.01,
+    "pct_invested": 43.8,
+    "n_positions": 11,
+    "positions": {
+      "AAPL": {
+        "qty": 11.822,
+        "price": 343.0,
+        "value": 4054.95
+      },
+      "BRK.B": {
+        "qty": 7.696,
+        "price": 532.23,
+        "value": 4096.04
+      },
+      "CI": {
+        "qty": 13.614,
+        "price": 298.5,
+        "value": 4063.78
+      },
+      "COP": {
+        "qty": 28.722,
+        "price": 145.24,
+        "value": 4171.58
+      },
+      "CRM": {
+        "qty": 8.272,
+        "price": 243.5,
+        "value": 2014.23
+      },
+      "META": {
+        "qty": 8.29,
+        "price": 705.75,
+        "value": 5850.67
+      },
+      "MSFT": {
+        "qty": 11.359,
+        "price": 533.77,
+        "value": 6063.05
+      },
+      "NOW": {
+        "qty": 13.729,
+        "price": 145.25,
+        "value": 1994.14
+      },
+      "NVDA": {
+        "qty": 18.545,
+        "price": 217.06,
+        "value": 4025.38
+      },
+      "PFE": {
+        "qty": 138.604,
+        "price": 29.44,
+        "value": 4080.5
+      },
+      "XOM": {
+        "qty": 23.306,
+        "price": 178.31,
+        "value": 4155.69
+      }
+    },
+    "targets": {
+      "SSO": {
+        "dollars": 50353.66,
+        "reason": "Core RISK_ON 50%"
+      },
+      "QLD": {
+        "dollars": 50353.66,
+        "reason": "Core RISK_ON 50%"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "AAPL",
+        "side": "sell",
+        "qty": 11.822,
+        "value": 4054.95,
+        "status": "accepted"
+      },
+      {
+        "symbol": "BRK.B",
+        "side": "sell",
+        "qty": 7.696,
+        "value": 4096.04,
+        "status": "accepted"
+      },
+      {
+        "symbol": "CI",
+        "side": "sell",
+        "qty": 13.614,
+        "value": 4063.78,
+        "status": "accepted"
+      },
+      {
+        "symbol": "COP",
+        "side": "sell",
+        "qty": 28.722,
+        "value": 4171.58,
+        "status": "accepted"
+      },
+      {
+        "symbol": "CRM",
+        "side": "sell",
+        "qty": 8.272,
+        "value": 2014.23,
+        "status": "accepted"
+      },
+      {
+        "symbol": "META",
+        "side": "sell",
+        "qty": 8.29,
+        "value": 5850.67,
+        "status": "accepted"
+      },
+      {
+        "symbol": "MSFT",
+        "side": "sell",
+        "qty": 11.359,
+        "value": 6063.05,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NOW",
+        "side": "sell",
+        "qty": 13.729,
+        "value": 1994.14,
+        "status": "accepted"
+      },
+      {
+        "symbol": "NVDA",
+        "side": "sell",
+        "qty": 18.545,
+        "value": 4025.38,
+        "status": "accepted"
+      },
+      {
+        "symbol": "PFE",
+        "side": "sell",
+        "qty": 138.604,
+        "value": 4080.5,
+        "status": "accepted"
+      },
+      {
+        "symbol": "XOM",
+        "side": "sell",
+        "qty": 23.306,
+        "value": 4155.69,
+        "status": "accepted"
+      },
+      {
+        "symbol": "QLD",
+        "side": "buy",
+        "qty": 316.623,
+        "value": 28434.33,
+        "status": "accepted"
+      },
+      {
+        "symbol": "SSO",
+        "side": "buy",
+        "qty": 407.253,
+        "value": 28434.4,
+        "status": "accepted"
+      }
+    ],
+    "executed": true,
+    "core_signal": "RISK_ON",
+    "signal_as_of": "2026-10-19"
   }
 ]
