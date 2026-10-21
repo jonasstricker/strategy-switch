@@ -15,6 +15,12 @@ readme.txt
 .env
 .env.local
 .env.*.local
+/ibkr/PW.txt
+
+# Private Depot-Dokumente (niemals committen)
+# Glob statt "ö"/"ü": deckt NFC- und NFD-Schreibweise (o + U+0308) ab
+Portfolio.csv
+Verm*gens*bersicht*.pdf
 
 # Local-only files
 cloudflared.exe

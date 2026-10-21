@@ -4,8 +4,16 @@ on:
   schedule:
     # Mo-Fr 21:00 UTC (nach US-Börsenschluss) — Info-Berechnung Aktien-Switching (nur Dashboard, kein Trading)
     - cron: '0 21 * * 1-5'
-    # Mo-Fr 14:45 UTC (nach US-Eröffnung) — Core-Signal aus Schlusskurs des Vortags + Trading
+    # Mo-Fr 14:45 UTC (nach US-Eröffnung) — Fallback für Folgetag-Handel (nur aktiv bei TRADE_TIMING=nextday)
     - cron: '45 14 * * 1-5'
+    # Same-Day-Handel (Standard, TRADE_TIMING leer oder sameday): Signal und Orders 7-35 min vor US-Handelsschluss.
+    # Je zwei Läufe für Sommerzeit (Schluss 20:00 UTC) und Winterzeit (21:00 UTC); das Gate prüft das
+    # Zeitfenster mit der Alpaca-Marktuhr (Feiertage, früher Schluss) — der zweite Lauf ist das Backup
+    # für verspätete GitHub-Cron-Läufe und handelt nur, wenn sich das Signal inzwischen geändert hat.
+    - cron: '28 19 * * 1-5'
+    - cron: '41 19 * * 1-5'
+    - cron: '28 20 * * 1-5'
+    - cron: '41 20 * * 1-5'
   workflow_dispatch:  # Manueller Trigger über GitHub UI
     inputs:
       job:
@@ -17,6 +25,15 @@ on:
           - core
           - compute
           - both
+      timing:
+        description: 'Core timing (auto = Repository-Variable TRADE_TIMING)'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - nextday
+          - sameday
 
 permissions:
   contents: write
@@ -78,10 +95,36 @@ jobs:
             done
           fi
 
-  core:
+  # Entscheidet, ob dieser Lauf handelt (Timing + Zeitfenster), siehe trading/trade_window.py
+  gate:
     if: >-
       github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'both' || github.event.inputs.job == 'core')
-      || github.event_name == 'schedule' && github.event.schedule == '45 14 * * 1-5'
+      || github.event_name == 'schedule' && github.event.schedule != '0 21 * * 1-5'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      go: ${{ steps.gate.outputs.go }}
+      timing: ${{ steps.gate.outputs.timing }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gate (Timing und Handelsfenster)
+        id: gate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          TRADE_TIMING: ${{ vars.TRADE_TIMING }}
+          INPUT_TIMING: ${{ github.event.inputs.timing }}
+          ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          ALPACA_LIVE_KEY_ID: ${{ secrets.ALPACA_LIVE_KEY_ID }}
+          ALPACA_LIVE_SECRET_KEY: ${{ secrets.ALPACA_LIVE_SECRET_KEY }}
+        run: python3 -m trading.trade_window
+
+  core:
+    needs: gate
+    if: needs.gate.outputs.go == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     concurrency:
@@ -90,6 +133,7 @@ jobs:
     env:
       HAS_PAPER: ${{ secrets.ALPACA_KEY_ID != '' }}
       HAS_LIVE: ${{ secrets.ALPACA_LIVE_KEY_ID != '' }}
+      CORE_TIMING: ${{ needs.gate.outputs.timing }}
 
     steps:
       - name: Checkout
@@ -108,8 +152,10 @@ jobs:
       - name: Core signal
         id: signal
         env:
-          ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}          # nur für Daten-Fallback
+          ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}          # Daten-Fallback und Live-Kurs (Same-Day)
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          ALPACA_LIVE_KEY_ID: ${{ secrets.ALPACA_LIVE_KEY_ID }}
+          ALPACA_LIVE_SECRET_KEY: ${{ secrets.ALPACA_LIVE_SECRET_KEY }}
         run: python -m wf_backtest.core_strategy
 
       - name: Trade (Alpaca Paper)

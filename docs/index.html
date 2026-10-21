@@ -26,7 +26,7 @@
   <div class="header" id="mainApp" style="display:none;">
     <h1>📊 Strategy Switch</h1>
     <div class="subtitle" id="lastUpdate">Laden …</div>
-    <div class="auto-info">Core: Signal (Schlusskurs Vortag) + Trading Mo–Fr ab 14:45 UTC | Info-Tabs: Mo–Fr 21:00 UTC</div>
+    <div class="auto-info">Core: Signal + Trading Mo–Fr kurz vor US-Börsenschluss (15:30–15:50 ET) | Info-Tabs: Mo–Fr 21:00 UTC</div>
   </div>
 
   <div class="tabs" id="tabs"></div>
@@ -120,11 +120,11 @@
         if (CORE || allSignals.length || D.swarm || D.value || D.turnaround) { buildTabs(); render(); }
         else {
           document.getElementById('content').innerHTML =
-            '<div class="loading"><div>⏳ Erste Berechnung steht aus</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Daten werden automatisch Mo–Fr berechnet (Core 14:45 UTC, Info-Tabs 21:00 UTC).</div></div>';
+            '<div class="loading"><div>⏳ Erste Berechnung steht aus</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Daten werden automatisch Mo–Fr berechnet (Core vor US-Börsenschluss, Info-Tabs 21:00 UTC).</div></div>';
         }
       } catch (e) {
         document.getElementById('content').innerHTML =
-          '<div class="loading"><div>⏳ Noch keine Daten</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Die Berechnung läuft automatisch Mo–Fr (Core 14:45 UTC, Info-Tabs 21:00 UTC).<br>Bitte später erneut öffnen.</div></div>';
+          '<div class="loading"><div>⏳ Noch keine Daten</div><div style="margin-top:12px;font-size:13px;color:#8b949e;">Die Berechnung läuft automatisch Mo–Fr (Core vor US-Börsenschluss, Info-Tabs 21:00 UTC).<br>Bitte später erneut öffnen.</div></div>';
       }
     }
 
@@ -1121,7 +1121,10 @@
       let live = '';
       if (bt) {
         const S = bt.strategy, B = bt.buy_hold;
-        live = `<p><strong>Live-Modul</strong> (genau die gehandelte Umsetzung, ${esc(bt.period)}: Signal am Schlusskurs, Handel zur Eröffnung des Folgetags,
+        const sameday = (bt.timing || (CORE && CORE.timing) || 'sameday') === 'sameday';
+        const timingTxt = sameday ? 'Signal und Handel am selben Schlusskurs (Same-Day kurz vor Börsenschluss)'
+                                  : 'Signal am Schlusskurs, Handel zur Eröffnung des Folgetags';
+        live = `<p><strong>Live-Modul</strong> (genau die gehandelte Umsetzung, ${esc(bt.period)}: ${timingTxt},
           ${buf} % Cash-Puffer, Zins auf Cash): CAGR <strong>${de(S.cagr, 2)} %</strong>, Vol ${de(S.vol, 0)} %, Sharpe ${f2(S.sharpe)}, Sortino ${f2(S.sortino)},
           MaxDD ${de(S.max_dd)} %, schlechtestes Jahr ${de(S.worst_year)} %, Ø ${de(bt.invested, 0)} % investiert, ${sw} Wechsel/Jahr.
           ${esc(bt.benchmark || 'SPY')}: ${de(B.cagr, 2)} %, Sharpe ${f2(B.sharpe)}, MaxDD ${de(B.max_dd)} %. Wird täglich neu berechnet.</p>`;
@@ -1163,10 +1166,11 @@
 
       <details><summary>⚙️ Täglicher Ablauf (automatisch, GitHub Actions)</summary>
         <ul>
-          <li><strong>Mo–Fr 14:45 UTC</strong> (kurz nach US-Börsenöffnung): Schlusskurse des Vortags von ^GSPC und ^NDX laden (yfinance; Ersatzquelle Alpaca SPY/QQQ).</li>
-          <li><strong>Datenprüfung:</strong> genug Historie, keine Lücken, Daten höchstens ${Number(cfg.max_data_age_days || 4)} Tage alt, kein unplausibler Tagessprung (&gt; 25 %).
+          <li><strong>Mo–Fr 7–35 Min. vor US-Börsenschluss</strong> (19:28/19:41 UTC im Sommer, 20:28/20:41 UTC im Winter; geprüft über die Alpaca-Marktuhr):
+            Historische Schlusskurse von ^GSPC und ^NDX laden und den heutigen Indexstand live über den Alpaca-Snapshot von SPY/QQQ (gegengeprüft mit yfinance) bestimmen.</li>
+          <li><strong>Datenprüfung:</strong> genug Historie, keine Lücken, Daten höchstens ${Number(cfg.max_data_age_days || 4)} Tage alt, kein unplausibler Tagessprung (&gt; 25 %), Live-Quellen weichen höchstens 1 % voneinander ab.
             Schlägt etwas fehl → <strong>kein Handel</strong>, GitHub schickt eine Fehlermail, hier erscheint das letzte gültige Signal mit Warnung.</li>
-          <li><strong>Trader</strong> (erst Paper, dann Live): offene Orders stornieren, Zielbeträge je ETF berechnen, nur bei Abweichung &gt; 3 % des Depots handeln (Mindestorder 50 $).
+          <li><strong>Trader</strong> (erst Paper, dann Live): prüft, dass das Signal frisch (&lt; 15 Min.) ist und noch &ge; 90 Sek. bis Handelsschluss bleiben; offene Orders stornieren, Zielbeträge je ETF berechnen, nur bei Abweichung &gt; 3 % des Depots handeln (Mindestorder 50 $).
             Erst Verkäufe (auf Ausführung warten), dann Käufe – <strong>nur aus vorhandenem Cash, nie auf Kredit</strong>. Bruchstücke erlaubt.</li>
           <li>Scheitert eine Live-Order, schlägt der Lauf fehl (GitHub-Fehlermail); der nächste Lauf gleicht automatisch wieder aufs Ziel ab.</li>
           <li>Danach werden die Holdings von SSO/QLD für den Steuer-Nachweis archiviert. Signal, Trade-Logs und Archiv landen im GitHub-Repo – das ist die Datenquelle dieser Seite.</li>
@@ -1326,10 +1330,10 @@
 
       <details><summary>📁 Code &amp; Daten</summary>
         <ul>
-          <li><strong>wf_backtest/core_strategy.py</strong> – Regel, Datenprüfung, Live-Backtest → data/core_signal.json</li>
+          <li><strong>wf_backtest/core_strategy.py</strong>, <strong>wf_backtest/core_intraday.py</strong> – Regel, Live-Kurs vor Börsenschluss, Datenprüfung, Live-Backtest → data/core_signal.json</li>
           <li><strong>trading/alpaca_trader.py</strong> – Orders Paper/Live → data/trade_log.json, data/trade_log_live.json</li>
           <li><strong>trading/holdings_archive.py</strong> – Holdings-Archiv und Aktienquote → tax_evidence/, data/equity_quota.csv</li>
-          <li><strong>.github/workflows/daily.yml</strong> – Zeitplan (Core 14:45 UTC, Info-Tabs 21:00 UTC)</li>
+          <li><strong>.github/workflows/daily.yml</strong>, <strong>trading/trade_window.py</strong> – Zeitplan &amp; Handelsfenster (Core 7–35 Min. vor US-Schluss, Info-Tabs 21:00 UTC)</li>
           <li><strong>research/</strong> – evaluate_universe.py (→ universe_report.txt), evaluate_swarm.py (→ swarm_report.txt), evaluate_core.py, compare_variants.py, plot_risk_return.py</li>
           <li><strong>wf_backtest/daily_runner.py</strong> – alte Strategien (Info-Tabs) → data/mobile_signals.json</li>
         </ul>
@@ -1454,18 +1458,19 @@
           num(ix.close) + ' / SMA' + cfg.sma_days + ' ' + num(ix.sma) + '<br>' + lvl + '<br>seit ' + esc(x.last_switch) +
           ' (' + x.days_in_state + ' Handelstage)', on ? 'positive' : 'negative');
       }
+      const sameday = (s.timing || cfg.timing || 'sameday') === 'sameday';
       h += `</div>
-        <div style="font-size:12px;color:#8b949e;">Schlusskurs vom ${esc(s.as_of)} · berechnet ${esc(s.generated_utc)} · Daten: ${esc(s.source)}</div></div>`;
+        <div style="font-size:12px;color:#8b949e;">${s.intraday ? 'Live-Kurs' : 'Schlusskurs'} vom ${esc(s.as_of)} · berechnet ${esc(s.generated_utc)} · Timing: ${sameday ? 'Same-Day (vor US-Schluss)' : 'Folgetag (14:45 UTC)'} · Daten: ${esc(s.source)}</div></div>`;
       h += renderDepot() + renderQuota();
 
       h += `<div class="section"><div class="section-title">Regel (fest, nicht optimiert)</div>
         <div style="font-size:13px;line-height:1.6;color:#c9d1d9;">
           • Zwei Hälften: ${legs}. Jede Hälfte folgt nur ihrem eigenen Index.<br>
-          • Nach jedem Handelstag: Index-Schlusskurs vs. ${cfg.sma_days}-Tage-Durchschnitt (SMA).<br>
+          • Jeden Handelstag: Index-Stand vs. ${cfg.sma_days}-Tage-Durchschnitt (SMA).<br>
           • <b>RISK ON</b> wenn Kurs &gt; SMA +${Math.round((cfg.band_in || 0) * 100)}% → ${lev}x-ETF der Hälfte.<br>
           • <b>RISK OFF</b> wenn Kurs &lt; SMA → diese Hälfte in T-Bills (${esc(cfg.etf_cash)}).<br>
           • Dazwischen bleibt der Zustand (Puffer gegen Fehlsignale).<br>
-          • Umsetzung am nächsten Handelstag ab 14:45 UTC, nur wenn eine Position um mehr als 3 % des Depots vom Ziel abweicht (Mindestorder 50 $).
+          • ${sameday ? 'Entscheidung und Umsetzung am selben Handelstag 7–35 Min. vor US-Börsenschluss (ca. 15:30–15:50 ET)' : 'Umsetzung am nächsten Handelstag ab 14:45 UTC'}, nur wenn eine Position um mehr als 3 % des Depots vom Ziel abweicht (Mindestorder 50 $).
             Erst Verkäufe, dann Käufe – nur aus vorhandenem Cash, nie auf Kredit.<br>
           • ${Math.round((cfg.cash_buffer || 0) * 100)} % bleiben als Cash-Puffer und bekommen den Alpaca-Cash-Zins (ca. 3,25 % p.a.);
             Risk-off-Geld liegt in ${esc(cfg.etf_cash)} (kurzlaufende T-Bills, ca. 3,6 % p.a., Stand Okt. 2026).
@@ -1473,6 +1478,7 @@
 
       if (bt) {
         const S = bt.strategy, B = bt.buy_hold, bm = esc(bt.benchmark || 'SPY');
+        const btSameday = (bt.timing || s.timing || 'sameday') === 'sameday';
         h += `<div class="section"><div class="section-title">Backtest mit echten ETFs (${esc(bt.period)})</div>
           <div class="metrics-grid" style="margin-bottom:12px;">
             ${mc('CAGR', pct(S.cagr) + '%', 'B&H ' + bm + ': ' + pct(B.cagr) + '%', S.cagr >= B.cagr ? 'positive' : 'negative')}
@@ -1486,7 +1492,7 @@
           </div>
           <div class="chart-container" style="height:240px;"><canvas id="coreChart"></canvas></div>
           <div class="chart-legend"><span class="sw">Core</span><span class="bh">B&amp;H ${bm}</span></div>
-          <div style="font-size:12px;color:#8b949e;margin-top:6px;">Signal am Schlusskurs, Handel zur Eröffnung des Folgetags,
+          <div style="font-size:12px;color:#8b949e;margin-top:6px;">${btSameday ? 'Signal und Handel am selben Schlusskurs (Same-Day)' : 'Signal am Schlusskurs, Handel zur Eröffnung des Folgetags'},
             inkl. ETF-Kosten und 5 bp je Umschichtung; Risk-off-Anteil und Cash-Puffer mit T-Bill-Zins (BIL); vor Steuern.
             Sharpe/Sortino: Überrendite über T-Bills. Rot = T-Bills (heller = nur eine Hälfte).</div></div>`;
         if (bt.yearly && bt.yearly.length) h += renderYearlyBars(bt.yearly);
@@ -1522,7 +1528,7 @@
       const accts = [['🔴 Live', coreLogs.live], ['🧪 Paper', coreLogs.paper]].filter(([, l]) => l.length);
       let h = '<div class="section"><div class="section-title">🏦 Depot bei Alpaca (Core-Läufe)</div>';
       if (!accts.length) return h + `<div style="font-size:13px;color:#8b949e;">Noch kein Core-Handelslauf protokolliert.
-        Gehandelt wird Mo–Fr ab 14:45 UTC; danach stehen hier Depotwert, Ergebnis und Orders (Live und Paper).</div></div>`;
+        Gehandelt wird Mo–Fr kurz vor US-Börsenschluss (ca. 15:30–15:50 ET); danach stehen hier Depotwert, Ergebnis und Orders (Live und Paper).</div></div>`;
       h += '<div class="metrics-grid" style="margin-bottom:6px;">';
       for (const [label, l] of accts) {
         const a = l[0], z = l[l.length - 1], dep = e => Number(e.cum_deposits || 0);

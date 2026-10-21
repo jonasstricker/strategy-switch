@@ -9,6 +9,8 @@ sonst SGOV). Alle anderen Positionen werden verkauft. Läuft komplett ohne PC �
 Sicherheit: kein Trading bei veraltetem/ungültigem Signal, erst Verkäufe,
 dann Käufe nur mit vorhandenem Cash (nie Margin), offene Alt-Orders werden
 storniert. Bei jedem Problem Exit-Code 1 → GitHub schickt eine Fehler-Mail.
+Same-Day-Signale (timing "sameday", siehe README) werden nur mit frischem Live-Kurs
+und kurz vor Handelsschluss gehandelt.
 
 Usage (lokal):
   python -m trading.alpaca_trader                    # Dry-Run
@@ -46,6 +48,8 @@ ALLOWED_SYMBOLS = {s[k] for s in CORE_CFG["sleeves"] for k in ("etf_1x", "etf_2x
 REBALANCE_TOLERANCE = 0.03   # Ziel-Positionen nur handeln, wenn > 3 % der Equity daneben
 MIN_ORDER_VALUE = 50.0
 FILL_WAIT_SEC = 120
+SAMEDAY_MAX_SIGNAL_AGE_S = 900     # Live-Signal darf beim Handeln max. 15 min alt sein
+SAMEDAY_MIN_SECONDS_TO_CLOSE = 90  # Same-Day: darunter keine neuen Orders (Day-Orders würden sonst auf morgen rutschen)
 
 
 def _load_dotenv(path: Path = None):
@@ -208,6 +212,18 @@ def validate_core_signal(sig: dict, now_ny: datetime | None = None) -> str | Non
     age = (now_ny.date() - as_of).days
     if not 0 <= age <= CORE_CFG["max_data_age_days"]:
         return f"Signal veraltet: Schlusskurs vom {as_of} ({age} Tage alt)"
+    if sig.get("timing") == "sameday":
+        if not sig.get("intraday"):
+            return "Same-Day-Signal ohne Live-Kurs (Markt nicht offen oder Kursquelle ausgefallen)"
+        if as_of != now_ny.date():
+            return f"Same-Day-Signal gilt für {as_of}, heute ist {now_ny.date()}"
+        try:
+            gen = datetime.strptime(sig["generated_utc"], "%Y-%m-%d %H:%M UTC").replace(tzinfo=timezone.utc)
+        except (KeyError, TypeError, ValueError):
+            return "generated_utc fehlt oder ungültig"
+        age_s = (now_ny.astimezone(timezone.utc) - gen).total_seconds()
+        if not -120 <= age_s <= SAMEDAY_MAX_SIGNAL_AGE_S:
+            return f"Live-Signal ist {age_s / 60:.0f} min alt (max. {SAMEDAY_MAX_SIGNAL_AGE_S // 60} min)"
     w = sig.get("weights")
     if not isinstance(w, dict) or not w or set(w) - ALLOWED_SYMBOLS:
         return f"ungültige Ziel-Gewichte {w!r} (erlaubt: {sorted(ALLOWED_SYMBOLS)})"
@@ -218,6 +234,16 @@ def validate_core_signal(sig: dict, now_ny: datetime | None = None) -> str | Non
     if any(not 0 <= v <= 1 for v in vals) or sum(vals) > 1.0001:
         return f"Gewichte außerhalb [0,1] oder Summe > 100 %: {w}"
     return None
+
+
+def seconds_to_close(clock: dict) -> float | None:
+    """Sekunden bis zum Handelsschluss (None, wenn Markt geschlossen oder Antwort unlesbar)."""
+    if not clock.get("is_open"):
+        return None
+    try:
+        return (datetime.fromisoformat(clock["next_close"]) - datetime.fromisoformat(clock["timestamp"])).total_seconds()
+    except (KeyError, TypeError, ValueError):
+        return None
 
 
 def compute_core_targets(sig: dict, equity: float) -> dict:
@@ -351,7 +377,8 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None) ->
     if err:
         log.error(f"❌ Core-Signal ungültig — kein Trading: {err}")
         return False
-    print(f"── Core-Signal (Schlusskurs {sig['as_of']}) ──")
+    sameday = sig.get("timing") == "sameday"
+    print(f"── Core-Signal ({'Live-Kurs vor Handelsschluss' if sameday else 'Schlusskurs'} {sig['as_of']}) ──")
     print(f"  {({'RISK_ON': '🟢', 'PARTIAL': '🟡'}).get(sig['signal'], '🔴')} {sig['signal']}  |  "
           f"Exposure {float(sig.get('exposure') or 0):.1f}x")
     for sl in sig.get("sleeves", []):
@@ -385,6 +412,12 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None) ->
         log.error("❌ Equity <= 0 — kein Trading")
         return False
 
+    if sameday:
+        secs = seconds_to_close(client.get_clock())
+        if secs is None or secs < SAMEDAY_MIN_SECONDS_TO_CLOSE:
+            log.error(f"❌ Same-Day-Modus, aber Markt zu bzw. nur noch {secs}s bis Handelsschluss — kein Trading")
+            return False
+        log.info(f"Same-Day-Modus: noch {secs / 60:.1f} min bis Handelsschluss")
     # Net capital contributions (deposits − withdrawals) — used to separate
     # strategy performance from capital in/outflows in the trade log.
     cum_deposits = client.get_cumulative_deposits()
@@ -452,7 +485,7 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None) ->
         log.error(f"❌ {e}")
         return False
 
-    extra = {"core_signal": sig["signal"], "signal_as_of": sig["as_of"]}
+    extra = {"core_signal": sig["signal"], "signal_as_of": sig["as_of"], "timing": sig.get("timing", "nextday")}
     if not orders:
         print(f"\n✅ Keine Orders nötig — Portfolio entspricht dem Ziel (Toleranz {REBALANCE_TOLERANCE:.0%}).")
         if execute:
@@ -480,6 +513,17 @@ def run(execute: bool = False, live: bool = False, signals_path: Path = None) ->
         _submit(client, o, executed_orders, failed_orders)
     if market_open and sells:
         _wait_for_fills(client, sells, failed_orders)
+
+    if buys and sameday:
+        secs = seconds_to_close(client.get_clock())
+        if secs is None or secs < SAMEDAY_MIN_SECONDS_TO_CLOSE:
+            log.error(f"❌ Nur noch {secs}s bis Handelsschluss — Käufe nicht mehr gesendet "
+                      f"(Verkaufserlös bleibt Cash, der nächste Lauf holt es nach)")
+            for o in buys:
+                o["status"] = "SKIPPED: zu spät vor Handelsschluss"
+                executed_orders.append(o)
+                failed_orders.append(o)
+            buys = []
 
     if buys:
         # Käufe nur mit vorhandenem Cash — nie Margin. Rest folgt beim nächsten Lauf.
@@ -688,7 +732,13 @@ def _save_trade_log(equity, cash, positions, prices, targets, orders, executed, 
         except (json.JSONDecodeError, IOError):
             log_data = []
 
-    log_data.append(entry)
+    if log_data and extra and log_data[-1].get("date", "")[:10] == now[:10] and \
+            log_data[-1].get("signal_as_of") == extra.get("signal_as_of"):
+        if not entry["orders"] and log_data[-1].get("orders"):
+            entry["orders"] = log_data[-1]["orders"]
+        log_data[-1] = entry
+    else:
+        log_data.append(entry)
 
     with open(trade_log_path, "w") as f:
         json.dump(log_data, f, indent=2, ensure_ascii=False)

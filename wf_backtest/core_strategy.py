@@ -8,7 +8,10 @@ see research/evaluate_core.py and research/evaluate_universe.py):
   - RISK_ON  when close > SMA * (1 + band_in)   (re-entry needs +1 % confirmation)
   - RISK_OFF when close < SMA * (1 - band_out)  (exit as soon as close < SMA)
   - otherwise the previous state is kept.
-  - Decided with data up to the close of day t only; traded on day t+1.
+  - timing "sameday" (default): decided ~15:25-15:50 ET on day t with the live index price as
+    the day's close (see core_intraday.py), traded immediately before the close.
+  - timing "nextday": decided with data up to the close of day t only,
+    traded on day t+1 (~10:45 ET). Switch with the repository variable TRADE_TIMING / env CORE_TIMING.
   - RISK_ON  -> sleeve exposure = leverage via 1x (SPY/QQQ) / 2x daily (SSO/QLD)
   - RISK_OFF -> sleeve in the T-bill ETF (SGOV)
   - Portfolio signal: RISK_ON (all sleeves on), PARTIAL, RISK_OFF (all off).
@@ -46,6 +49,7 @@ CONFIG = {
         {"name": "Nasdaq-100", "signal_ticker": "^NDX", "fallback_symbol": "QQQ",
          "etf_1x": "QQQ", "etf_2x": "QLD", "weight": 0.5},
     ],
+    "timing": "sameday",           # "sameday" | "nextday" (env CORE_TIMING overrides)
     "sma_days": 200,
     "band_in": 0.01,
     "band_out": 0.0,
@@ -59,6 +63,16 @@ CONFIG = {
     "backtest_start": "2007-06-01",
     "cost_per_turnover": 0.0005,
 }
+
+
+TIMINGS = ("nextday", "sameday")
+
+
+def resolve_timing(cfg: dict = CONFIG) -> str:
+    timing = (os.environ.get("CORE_TIMING") or cfg.get("timing") or "sameday").strip().lower()
+    if timing not in TIMINGS:
+        raise ValueError(f"unknown timing {timing!r} (allowed: {TIMINGS})")
+    return timing
 
 
 # ── Rule ────────────────────────────────────────────────────────────────────
@@ -189,9 +203,10 @@ def validate_close(close: pd.Series, cfg: dict, now_ny: datetime) -> str | None:
     return None
 
 
-# ── Backtest with the traded ETFs (decide at close t, trade at open t+1) ──────
+# ── Backtest with the traded ETFs (nextday: decide at close t, trade at open t+1;
+#    sameday: decide and trade at close t) ─────────────────────────────────────
 
-def backtest_real(states: dict, cfg: dict = CONFIG) -> dict | None:
+def backtest_real(states: dict, cfg: dict = CONFIG, timing: str = "nextday") -> dict | None:
     """states: {sleeve name: trend_state series}; rebalanced daily to the target weights."""
     syms = list(dict.fromkeys([cfg["etf_cash_hist"], cfg["benchmark"]] +
                               [sl[k] for sl in cfg["sleeves"] for k in ("etf_1x", "etf_2x")]))
@@ -222,10 +237,14 @@ def backtest_real(states: dict, cfg: dict = CONFIG) -> dict | None:
     combos = {k: _weights(k) for k in set(keys)}
     W_dec = np.array([combos[k] for k in keys])
     off_dec = 1.0 - st.astype(float) @ np.array([sl["weight"] for sl in cfg["sleeves"]])
-    W_new = np.vstack([np.zeros((1, len(syms))), W_dec[:-1]])     # held from open t+1
+    W_new = np.vstack([np.zeros((1, len(syms))), W_dec[:-1]])     # held from open t+1 (sameday: from close t)
     W_old = np.vstack([np.zeros((1, len(syms))), W_new[:-1]])
     turn = np.abs(np.diff(W_new, axis=0, prepend=W_new[:1])).sum(1)
-    strat = (1 + (W_old * gap).sum(1)) * (1 + (W_new * intra).sum(1)) - 1 - turn * cfg["cost_per_turnover"]
+    if timing == "sameday":
+        close_ret = c.pct_change().fillna(0.0).to_numpy()
+        strat = (W_new * close_ret).sum(1) - turn * cfg["cost_per_turnover"]
+    else:
+        strat = (1 + (W_old * gap).sum(1)) * (1 + (W_new * intra).sum(1)) - 1 - turn * cfg["cost_per_turnover"]
     strat = pd.Series(strat, index=idx).iloc[1:]
     bh = c[cfg["benchmark"]].pct_change().loc[strat.index].fillna(0.0)
     rf = c[cash_sym].pct_change().loc[strat.index].fillna(0.0)    # T-bill proxy, as in research/
@@ -251,6 +270,7 @@ def backtest_real(states: dict, cfg: dict = CONFIG) -> dict | None:
     yb = (1 + bh).groupby(bh.index.year).prod() - 1
     return {
         "period": f"{strat.index[0].date()} .. {strat.index[-1].date()}",
+        "timing": timing,
         "benchmark": cfg["benchmark"],
         "strategy": _m(strat),
         "buy_hold": _m(bh),
@@ -265,10 +285,12 @@ def backtest_real(states: dict, cfg: dict = CONFIG) -> dict | None:
 # ── Signal ──────────────────────────────────────────────────────────────────
 
 def compute_core_signal(cfg: dict = CONFIG, now_ny: datetime | None = None,
-                        with_backtest: bool = True) -> dict:
+                        with_backtest: bool = True, timing: str | None = None) -> dict:
+    from wf_backtest import core_intraday
     now_ny = now_ny or datetime.now(NY)
+    timing = timing or resolve_timing(cfg)
     out = {"status": "error", "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-           "config": cfg}
+           "config": cfg, "timing": timing, "intraday": False}
     sleeves, states, history = [], {}, []
     for sl in cfg["sleeves"]:
         try:
@@ -281,6 +303,22 @@ def compute_core_signal(cfg: dict = CONFIG, now_ny: datetime | None = None,
             out["error"] = f"{sl['name']}: {err}"
             out["as_of"] = close.index[-1].strftime("%Y-%m-%d") if len(close) else None
             return out
+
+        live = None
+        if timing == "sameday" and core_intraday.session_is_running(now_ny):
+            # today's close is not known yet -> use the checked live price as the day's close
+            try:
+                live = core_intraday.estimate_index_close(
+                    sl, float(close.iloc[-1]), close.index[-1].date(), now_ny.astimezone(timezone.utc))
+                close = core_intraday.splice_live_bar(close, live["price"], now_ny)
+            except Exception as e:
+                out["error"] = f"{sl['name']}: live quote failed: {e}"
+                return out
+            err = validate_close(close, cfg, now_ny)    # jump check includes the live price
+            if err:
+                out["error"] = f"{sl['name']}: {err}"
+                return out
+            source = f"{source} + live {live['price']} ({live['source']})"
 
         state = trend_state(close, cfg["sma_days"], cfg["band_in"], cfg["band_out"])
         sma = close.rolling(cfg["sma_days"]).mean()
@@ -295,6 +333,7 @@ def compute_core_signal(cfg: dict = CONFIG, now_ny: datetime | None = None,
             "signal": "RISK_ON" if state.iloc[-1] > 0 else "RISK_OFF",
             "as_of": close.index[-1].strftime("%Y-%m-%d"),
             "source": source,
+            "live": live,
             "index": {
                 "close": round(float(close.iloc[-1]), 2),
                 "sma": round(float(sma.iloc[-1]), 2),
@@ -314,6 +353,7 @@ def compute_core_signal(cfg: dict = CONFIG, now_ny: datetime | None = None,
         "status": "ok",
         "error": None,
         "as_of": dates[0],
+        "intraday": all(s["live"] for s in sleeves),
         "source": ", ".join(s["source"] for s in sleeves),
         "signal": "RISK_ON" if all(on.values()) else "RISK_OFF" if not any(on.values()) else "PARTIAL",
         "exposure": round(float(cfg["leverage"]) * sum(sl["weight"] for sl in cfg["sleeves"] if on[sl["name"]]), 4),
@@ -322,7 +362,7 @@ def compute_core_signal(cfg: dict = CONFIG, now_ny: datetime | None = None,
         "switch_history": sorted(history, key=lambda h: h["date"])[-12:],
     })
     if with_backtest:
-        out["backtest"] = backtest_real(states, cfg)
+        out["backtest"] = backtest_real(states, cfg, timing)
     return out
 
 

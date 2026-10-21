@@ -81,6 +81,26 @@ python -m trading.alpaca_trader --execute
 python -m trading.alpaca_trader --execute --live
 ```
 
+## 6. Same-Day-Handel (Core-Strategie)
+
+Standard: Signal und Orders 7–35 min vor US-Handelsschluss am Signaltag (`TRADE_TIMING` leer oder `sameday`).
+
+Zurückschalten auf Handel am Folgetag (Signal aus dem Vortagesschluss, Orders um 14:45 UTC) ohne Code-Deploy:
+**Settings → Secrets and variables → Actions → Variables → `TRADE_TIMING` = `nextday`**.
+
+| Baustein | Aufgabe |
+|----------|---------|
+| `daily.yml` → Job `gate` + `trading/trade_window.py` | wählt pro Lauf Timing und prüft mit der Alpaca-Marktuhr das Zeitfenster (Sommer-/Winterzeit, Feiertage, früher Schluss) |
+| 4 Cron-Läufe (19:28/19:41 und 20:28/20:41 UTC) | der zweite Lauf je Zeitzone ist das Backup bei verspätetem GitHub-Cron; er handelt nur, wenn sich das Signal geändert hat |
+| `wf_backtest/core_intraday.py` | Live-Indexstand: Alpaca-Snapshot SPY/QQQ skaliert auf den letzten Index-Schluss, Gegenprüfung mit yfinance (>1 % Abweichung = kein Signal) |
+| `alpaca_trader.py` | handelt ein Live-Signal nur, wenn es <15 min alt ist, vom heutigen Tag stammt und noch ≥90 s bis Handelsschluss bleiben |
+
+Bekannte Grenzen: An frühen Handelsschlüssen (13:00 ET) wird übersprungen, der Folgetag holt es nach. Fällt ein Lauf
+aus, bleibt die Position bis zum nächsten Lauf unverändert. An Ex-Dividenden-Tagen weicht der ETF-Proxy um die
+Dividende (SPY ~0,3 %, QQQ ~0,15 %) vom Index ab.
+
+Tests: `python -m unittest test_same_day -v`
+
 ## Portfolio-Aufteilung
 
 | Kategorie   | Gewicht | Alpaca Symbol |
