@@ -11620,5 +11620,41 @@
     "cum_deposits": 8000.0,
     "core_signal": "RISK_ON",
     "signal_as_of": "2026-10-19"
+  },
+  {
+    "date": "2026-11-04 10:52 UTC",
+    "equity": 7786.22,
+    "cash": 95.81,
+    "invested": 7690.41,
+    "pct_invested": 98.8,
+    "n_positions": 2,
+    "positions": {
+      "QLD": {
+        "qty": 45.09,
+        "price": 82.78,
+        "value": 3732.55
+      },
+      "SSO": {
+        "qty": 57.594,
+        "price": 68.72,
+        "value": 3957.86
+      }
+    },
+    "targets": {
+      "SSO": {
+        "dollars": 3854.18,
+        "reason": "Core RISK_ON 50%"
+      },
+      "QLD": {
+        "dollars": 3854.18,
+        "reason": "Core RISK_ON 50%"
+      }
+    },
+    "orders": [],
+    "executed": true,
+    "cum_deposits": 8000.0,
+    "core_signal": "RISK_ON",
+    "signal_as_of": "2026-11-03",
+    "timing": "nextday"
   }
 ]
