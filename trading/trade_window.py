@@ -27,7 +27,7 @@ LEGACY_CRON = "45 14 * * 1-5"        # Handel am Folgetag (muss zu daily.yml pas
 MIN_MINUTES_TO_CLOSE = 7
 MAX_MINUTES_TO_CLOSE = 35
 TIMINGS = ("nextday", "sameday")
-DEFAULT_TIMING = "sameday"
+DEFAULT_TIMING = "nextday"
 
 
 class Decision(NamedTuple):

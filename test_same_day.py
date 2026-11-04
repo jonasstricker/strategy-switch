@@ -153,9 +153,10 @@ class Gate(unittest.TestCase):
     def d(self, event, schedule="", repo="", inp="", secs=1200.0):
         return tw.decide(event, schedule, repo, inp, lambda: secs)
 
-    def test_default_uses_sameday(self):
-        self.assertFalse(self.d("schedule", tw.LEGACY_CRON).go)
-        d = self.d("schedule", "28 19 * * 1-5", secs=20 * 60)
+    def test_default_uses_nextday(self):
+        self.assertTrue(self.d("schedule", tw.LEGACY_CRON).go)
+        self.assertEqual(self.d("schedule", tw.LEGACY_CRON).timing, "nextday")
+        d = self.d("schedule", "28 19 * * 1-5", repo="sameday", secs=20 * 60)
         self.assertTrue(d.go)
         self.assertEqual(d.timing, "sameday")
 
@@ -168,7 +169,7 @@ class Gate(unittest.TestCase):
             self.assertEqual(self.d("schedule", "41 20 * * 1-5", repo="sameday", secs=secs).go, go, secs)
 
     def test_dispatch(self):
-        self.assertEqual(self.d("workflow_dispatch", inp="auto"), tw.Decision(True, "sameday", "manueller Lauf (sameday)"))
+        self.assertEqual(self.d("workflow_dispatch", inp="auto"), tw.Decision(True, "nextday", "manueller Lauf (nextday)"))
         self.assertEqual(self.d("workflow_dispatch", repo="nextday", inp="auto").timing, "nextday")
         self.assertEqual(self.d("workflow_dispatch", repo="sameday", inp="nextday").timing, "nextday")
         with self.assertRaises(ValueError):

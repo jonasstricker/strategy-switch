@@ -81,23 +81,16 @@ python -m trading.alpaca_trader --execute
 python -m trading.alpaca_trader --execute --live
 ```
 
-## 6. Same-Day-Handel (Core-Strategie)
+## 6. Handels-Timing (Core-Strategie)
 
-Standard: Signal und Orders 7–35 min vor US-Handelsschluss am Signaltag (`TRADE_TIMING` leer oder `sameday`).
+Standard: Handel am Folgetag (`nextday`).
+Signal wird nach US-Börsenschluss (21:00 UTC) aus den offiziellen Schlusskursen berechnet,
+Orders werden am Folgetag um 14:45 UTC (nach US-Börsenöffnung) bei Alpaca ausgeführt.
+Dies ist robust gegen typische GitHub-Actions-Verzögerungen von 1–4 Stunden, da der US-Markt 6,5 Stunden geöffnet ist.
 
-Zurückschalten auf Handel am Folgetag (Signal aus dem Vortagesschluss, Orders um 14:45 UTC) ohne Code-Deploy:
-**Settings → Secrets and variables → Actions → Variables → `TRADE_TIMING` = `nextday`**.
-
-| Baustein | Aufgabe |
-|----------|---------|
-| `daily.yml` → Job `gate` + `trading/trade_window.py` | wählt pro Lauf Timing und prüft mit der Alpaca-Marktuhr das Zeitfenster (Sommer-/Winterzeit, Feiertage, früher Schluss) |
-| 4 Cron-Läufe (19:28/19:41 und 20:28/20:41 UTC) | der zweite Lauf je Zeitzone ist das Backup bei verspätetem GitHub-Cron; er handelt nur, wenn sich das Signal geändert hat |
-| `wf_backtest/core_intraday.py` | Live-Indexstand: Alpaca-Snapshot SPY/QQQ skaliert auf den letzten Index-Schluss, Gegenprüfung mit yfinance (>1 % Abweichung = kein Signal) |
-| `alpaca_trader.py` | handelt ein Live-Signal nur, wenn es <15 min alt ist, vom heutigen Tag stammt und noch ≥90 s bis Handelsschluss bleiben |
-
-Bekannte Grenzen: An frühen Handelsschlüssen (13:00 ET) wird übersprungen, der Folgetag holt es nach. Fällt ein Lauf
-aus, bleibt die Position bis zum nächsten Lauf unverändert. An Ex-Dividenden-Tagen weicht der ETF-Proxy um die
-Dividende (SPY ~0,3 %, QQQ ~0,15 %) vom Index ab.
+Umschalten auf Same-Day-Handel (Signal und Orders 7–35 min vor US-Handelsschluss) über Repository-Variable:
+**Settings → Secrets and variables → Actions → Variables → `TRADE_TIMING` = `sameday`**.
+(Hinweis: Auf kostenlosen GitHub-Runnern wird Same-Day wegen Runner-Warteschlangen oft verpasst.)
 
 Tests: `python -m unittest test_same_day -v`
 

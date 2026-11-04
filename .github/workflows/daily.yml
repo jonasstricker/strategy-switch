@@ -2,18 +2,10 @@ name: Daily Strategy Calculation
 
 on:
   schedule:
-    # Mo-Fr 21:00 UTC (nach US-Börsenschluss) — Info-Berechnung Aktien-Switching (nur Dashboard, kein Trading)
+    # Mo-Fr 21:00 UTC (nach US-Börsenschluss) — Tägliche Signal- und Dashboard-Berechnung (inkl. Core-Signal)
     - cron: '0 21 * * 1-5'
-    # Mo-Fr 14:45 UTC (nach US-Eröffnung) — Fallback für Folgetag-Handel (nur aktiv bei TRADE_TIMING=nextday)
+    # Mo-Fr 14:45 UTC (nach US-Eröffnung) — Core-Handel auf Alpaca (Folgetag, robust gegen Cron-Verzögerungen)
     - cron: '45 14 * * 1-5'
-    # Same-Day-Handel (Standard, TRADE_TIMING leer oder sameday): Signal und Orders 7-35 min vor US-Handelsschluss.
-    # Je zwei Läufe für Sommerzeit (Schluss 20:00 UTC) und Winterzeit (21:00 UTC); das Gate prüft das
-    # Zeitfenster mit der Alpaca-Marktuhr (Feiertage, früher Schluss) — der zweite Lauf ist das Backup
-    # für verspätete GitHub-Cron-Läufe und handelt nur, wenn sich das Signal inzwischen geändert hat.
-    - cron: '28 19 * * 1-5'
-    - cron: '41 19 * * 1-5'
-    - cron: '28 20 * * 1-5'
-    - cron: '41 20 * * 1-5'
   workflow_dispatch:  # Manueller Trigger über GitHub UI
     inputs:
       job:
@@ -26,7 +18,7 @@ on:
           - compute
           - both
       timing:
-        description: 'Core timing (auto = Repository-Variable TRADE_TIMING)'
+        description: 'Core timing (auto = Repository-Variable TRADE_TIMING, Standard nextday)'
         required: false
         default: 'auto'
         type: choice
@@ -69,6 +61,16 @@ jobs:
           mkdir -p docs/data
           cp wf_backtest/mobile_signals.json docs/data/mobile_signals.json
 
+      # Core-Signal berechnen (garantiert, dass docs/data/core_signal.json jeden Abend nach Börsenschluss aktualisiert wird)
+      - name: Core signal
+        env:
+          ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          ALPACA_LIVE_KEY_ID: ${{ secrets.ALPACA_LIVE_KEY_ID }}
+          ALPACA_LIVE_SECRET_KEY: ${{ secrets.ALPACA_LIVE_SECRET_KEY }}
+          CORE_TIMING: "nextday"
+        run: python -m wf_backtest.core_strategy
+
       # Zweiter Versuch des Holdings-Archivs (falls der Lauf am Morgen fehlschlug)
       - name: Archive ETF holdings (tax evidence)
         if: ${{ !cancelled() }}
@@ -82,12 +84,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/data/mobile_signals.json
+          [ -f docs/data/core_signal.json ] && git add docs/data/core_signal.json
           [ -d tax_evidence ] && git add tax_evidence
           [ -f docs/data/equity_quota.csv ] && git add docs/data/equity_quota.csv
           if git diff --staged --quiet; then
             echo "No changes"
           else
-            git commit -m "📊 Signals $(date -u +%Y-%m-%d)"
+            git commit -m "📊 Signals & Core $(date -u +%Y-%m-%d)"
             for i in 1 2 3 4 5; do
               git pull --rebase && git push && break
               echo "Push attempt $i failed, retrying..."
@@ -99,7 +102,7 @@ jobs:
   gate:
     if: >-
       github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'both' || github.event.inputs.job == 'core')
-      || github.event_name == 'schedule' && github.event.schedule != '0 21 * * 1-5'
+      || github.event_name == 'schedule' && github.event.schedule == '45 14 * * 1-5'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:

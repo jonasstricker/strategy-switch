@@ -49,7 +49,7 @@ CONFIG = {
         {"name": "Nasdaq-100", "signal_ticker": "^NDX", "fallback_symbol": "QQQ",
          "etf_1x": "QQQ", "etf_2x": "QLD", "weight": 0.5},
     ],
-    "timing": "sameday",           # "sameday" | "nextday" (env CORE_TIMING overrides)
+    "timing": "nextday",           # "nextday" (Standard) | "sameday" (env CORE_TIMING overrides)
     "sma_days": 200,
     "band_in": 0.01,
     "band_out": 0.0,
@@ -69,7 +69,7 @@ TIMINGS = ("nextday", "sameday")
 
 
 def resolve_timing(cfg: dict = CONFIG) -> str:
-    timing = (os.environ.get("CORE_TIMING") or cfg.get("timing") or "sameday").strip().lower()
+    timing = (os.environ.get("CORE_TIMING") or cfg.get("timing") or "nextday").strip().lower()
     if timing not in TIMINGS:
         raise ValueError(f"unknown timing {timing!r} (allowed: {TIMINGS})")
     return timing
