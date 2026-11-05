@@ -21021,5 +21021,55 @@
     "core_signal": "RISK_ON",
     "signal_as_of": "2026-11-03",
     "timing": "nextday"
+  },
+  {
+    "date": "2026-11-05 21:14 UTC",
+    "equity": 87388.34,
+    "cash": 1014.94,
+    "invested": 86373.4,
+    "pct_invested": 98.8,
+    "n_positions": 2,
+    "positions": {
+      "QLD": {
+        "qty": 564.419,
+        "price": 72.06,
+        "value": 40672.03
+      },
+      "SSO": {
+        "qty": 720.728,
+        "price": 63.41,
+        "value": 45701.36
+      }
+    },
+    "targets": {
+      "SSO": {
+        "dollars": 43257.23,
+        "reason": "Core PARTIAL 50%"
+      },
+      "SGOV": {
+        "dollars": 43257.23,
+        "reason": "Core PARTIAL 50%"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "QLD",
+        "side": "sell",
+        "qty": 564.419,
+        "value": 40672.03,
+        "status": "accepted"
+      },
+      {
+        "symbol": "SGOV",
+        "side": "buy",
+        "qty": 10.052,
+        "value": 1009.77,
+        "status": "accepted"
+      }
+    ],
+    "executed": true,
+    "core_signal": "PARTIAL",
+    "signal_as_of": "2026-11-05",
+    "timing": "nextday"
   }
 ]
