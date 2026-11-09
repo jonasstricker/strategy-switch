@@ -11751,5 +11751,49 @@
     "core_signal": "PARTIAL",
     "signal_as_of": "2026-11-05",
     "timing": "nextday"
+  },
+  {
+    "date": "2026-11-09 23:36 UTC",
+    "equity": 7315.93,
+    "cash": 16.91,
+    "invested": 7299.02,
+    "pct_invested": 99.8,
+    "n_positions": 2,
+    "positions": {
+      "SGOV": {
+        "qty": 34.262,
+        "price": 100.5,
+        "value": 3443.33
+      },
+      "SSO": {
+        "qty": 57.594,
+        "price": 66.95,
+        "value": 3855.69
+      }
+    },
+    "targets": {
+      "SSO": {
+        "dollars": 3621.39,
+        "reason": "Core PARTIAL 50%"
+      },
+      "SGOV": {
+        "dollars": 3621.39,
+        "reason": "Core PARTIAL 50%"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "SSO",
+        "side": "sell",
+        "qty": 3.499,
+        "value": 234.24,
+        "status": "accepted"
+      }
+    ],
+    "executed": true,
+    "cum_deposits": 8000.0,
+    "core_signal": "PARTIAL",
+    "signal_as_of": "2026-11-09",
+    "timing": "nextday"
   }
 ]
