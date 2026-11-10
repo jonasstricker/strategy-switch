@@ -11797,31 +11797,31 @@
     "timing": "nextday"
   },
   {
-    "date": "2026-11-10 14:56 UTC",
-    "equity": 7275.36,
+    "date": "2026-11-10 21:01 UTC",
+    "equity": 7281.09,
     "cash": 247.89,
-    "invested": 7027.47,
+    "invested": 7033.2,
     "pct_invested": 96.6,
     "n_positions": 2,
     "positions": {
       "SGOV": {
         "qty": 34.262,
-        "price": 100.51,
-        "value": 3443.67
+        "price": 100.52,
+        "value": 3444.0
       },
       "SSO": {
         "qty": 54.095,
-        "price": 66.25,
-        "value": 3583.79
+        "price": 66.35,
+        "value": 3589.2
       }
     },
     "targets": {
       "SSO": {
-        "dollars": 3601.3,
+        "dollars": 3604.14,
         "reason": "Core PARTIAL 50%"
       },
       "SGOV": {
-        "dollars": 3601.3,
+        "dollars": 3604.14,
         "reason": "Core PARTIAL 50%"
       }
     },
