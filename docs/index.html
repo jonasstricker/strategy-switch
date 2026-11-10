@@ -1528,7 +1528,7 @@
       const accts = [['🔴 Live', coreLogs.live], ['🧪 Paper', coreLogs.paper]].filter(([, l]) => l.length);
       let h = '<div class="section"><div class="section-title">🏦 Depot bei Alpaca (Core-Läufe)</div>';
       if (!accts.length) return h + `<div style="font-size:13px;color:#8b949e;">Noch kein Core-Handelslauf protokolliert.
-        Gehandelt wird Mo–Fr kurz vor US-Börsenschluss (ca. 15:30–15:50 ET); danach stehen hier Depotwert, Ergebnis und Orders (Live und Paper).</div></div>`;
+        Gehandelt wird Mo–Fr ab 14:45 UTC (nach US-Börseneröffnung); danach stehen hier Depotwert, Ergebnis und Orders (Live und Paper).</div></div>`;
       h += '<div class="metrics-grid" style="margin-bottom:6px;">';
       for (const [label, l] of accts) {
         const a = l[0], z = l[l.length - 1], dep = e => Number(e.cum_deposits || 0);
@@ -1541,7 +1541,58 @@
           '<br>Letzter Lauf ' + esc(z.date) + ': ' + ord.length + ' Order(s)' + (bad ? ' · ⚠️ ' + bad + ' Fehler' : ''),
           pnl >= 0 ? 'positive' : 'negative');
       }
-      return h + '</div><div style="font-size:12px;color:#8b949e;">Depotwert jeweils zu Beginn des Laufs (vor den Orders).</div></div>';
+      h += '</div><div style="font-size:12px;color:#8b949e;margin-bottom:10px;">Depotwert jeweils zu Beginn des Laufs (vor den Orders).</div>';
+
+      const liveLog = coreLogs.live;
+      if (liveLog && liveLog.length) {
+        const last = liveLog[liveLog.length - 1];
+        const pos = last.positions || {};
+        const posKeys = Object.keys(pos);
+        if (posKeys.length) {
+          h += '<div style="margin-top:10px;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px 12px;font-size:12px;">' +
+               '<div style="font-weight:600;color:#e6edf3;margin-bottom:6px;">Aktuelle Positionen (🔴 Live, Stand ' + esc(last.date) + '):</div>' +
+               '<div style="display:flex;flex-wrap:wrap;gap:12px;color:#c9d1d9;">';
+          for (const k of posKeys) {
+            const p = pos[k];
+            const pctVal = last.equity > 0 ? ((p.value / last.equity) * 100).toFixed(1) : '—';
+            h += `<div><strong>${esc(k)}</strong>: ${p.qty} Stk · $${num(p.value)} (${pctVal}%)</div>`;
+          }
+          if (last.cash > 0) {
+            const cpct = last.equity > 0 ? ((last.cash / last.equity) * 100).toFixed(1) : '—';
+            h += `<div><strong>Cash</strong>: $${num(last.cash)} (${cpct}%)</div>`;
+          }
+          h += '</div></div>';
+        }
+
+        const allOrders = [];
+        for (const entry of liveLog) {
+          for (const o of (entry.orders || [])) {
+            allOrders.push({
+              date: String(entry.date).slice(0, 10),
+              sig: entry.core_signal,
+              side: o.side,
+              symbol: o.symbol,
+              qty: o.qty,
+              val: o.value,
+              status: o.status
+            });
+          }
+        }
+        if (allOrders.length) {
+          const recent = allOrders.slice(-8).reverse();
+          h += '<div style="margin-top:8px;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:10px 12px;font-size:12px;">' +
+               '<div style="font-weight:600;color:#e6edf3;margin-bottom:6px;">Letzte ausgeführte Trades (🔴 Live):</div>' +
+               '<div style="display:flex;flex-direction:column;gap:4px;color:#8b949e;">';
+          for (const o of recent) {
+            const isBuy = o.side === 'buy';
+            const color = isBuy ? '#3fb950' : '#f85149';
+            const icon = isBuy ? '🟢 KAUF' : '🔴 VERKAUF';
+            h += `<div><span style="color:#e6edf3;">${esc(o.date)}</span>: <span style="font-weight:600;color:${color};">${icon}</span> ${o.qty}× <strong>${esc(o.symbol)}</strong> (~$${num(o.val)}) · Status: <span style="color:#e6edf3;">${esc(o.status)}</span></div>`;
+          }
+          h += '</div></div>';
+        }
+      }
+      return h + '</div>';
     }
 
     function quotaByFund() {
