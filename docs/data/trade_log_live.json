@@ -11882,5 +11882,49 @@
     "core_signal": "RISK_ON",
     "signal_as_of": "2026-11-11",
     "timing": "nextday"
+  },
+  {
+    "date": "2026-11-12 21:37 UTC",
+    "equity": 7362.7,
+    "cash": 3452.35,
+    "invested": 3910.35,
+    "pct_invested": 53.1,
+    "n_positions": 2,
+    "positions": {
+      "QLD": {
+        "qty": 3.016,
+        "price": 81.55,
+        "value": 245.95
+      },
+      "SSO": {
+        "qty": 54.095,
+        "price": 67.74,
+        "value": 3664.4
+      }
+    },
+    "targets": {
+      "SSO": {
+        "dollars": 3644.54,
+        "reason": "Core RISK_ON 50%"
+      },
+      "QLD": {
+        "dollars": 3644.54,
+        "reason": "Core RISK_ON 50%"
+      }
+    },
+    "orders": [
+      {
+        "symbol": "QLD",
+        "side": "buy",
+        "qty": 41.674,
+        "value": 3398.51,
+        "status": "accepted"
+      }
+    ],
+    "executed": true,
+    "cum_deposits": 8000.0,
+    "core_signal": "RISK_ON",
+    "signal_as_of": "2026-11-12",
+    "timing": "nextday"
   }
 ]
